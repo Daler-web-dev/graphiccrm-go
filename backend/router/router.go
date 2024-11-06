@@ -18,4 +18,6 @@ func Initalize(router *fiber.App) {
 	users.Get("/:id", handlers.GetUserById)
 	users.Patch("/:id", handlers.UpdateUser)
 	users.Delete("/:id", handlers.DeleteUser)
+
+	router.Post("/login", handlers.Login)
 }
