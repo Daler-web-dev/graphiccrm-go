@@ -3,18 +3,13 @@ package handlers
 import (
 	"backend/database"
 	"backend/model"
+	"backend/utils"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
 	guuid "github.com/google/uuid"
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
-
-func hashAndSalt(pwd []byte) string {
-	hash, _ := bcrypt.GenerateFromPassword(pwd, bcrypt.MinCost)
-	return string(hash)
-}
 
 func CreateUser(c *fiber.Ctx) error {
 	type CreateUserRequest struct {
@@ -35,7 +30,7 @@ func CreateUser(c *fiber.Ctx) error {
 
 	err := db.Create(&model.User{
 		Username: json.Username,
-		Password: hashAndSalt([]byte(json.Password)),
+		Password: utils.HashAndSalt([]byte(json.Password)),
 		ID:       guuid.New(),
 		Role:     json.Role,
 	}).Error
@@ -135,7 +130,7 @@ func UpdateUser(c *fiber.Ctx) error {
 	}
 	if json.Password != "" {
 		// Assuming password hashing is done before saving (for example, bcrypt)
-		hashedPassword := hashAndSalt([]byte(json.Password))
+		hashedPassword := utils.HashAndSalt([]byte(json.Password))
 		found.Password = hashedPassword
 	}
 	if json.Role != "" {

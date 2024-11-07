@@ -3,15 +3,16 @@ package handlers
 import (
 	"backend/database"
 	"backend/model"
+	"backend/utils"
+	"os"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
-var jwtSecretKey = []byte("your-secret-key")
+var jwtSecretKey = []byte(os.Getenv("jwt_secret"))
 
 type User model.User
 type Claims struct {
@@ -44,7 +45,7 @@ func Login(c *fiber.Ctx) error {
 			"message": "Username not found",
 		})
 	}
-	if !comparePasswords(found.Password, []byte(json.Password)) {
+	if !utils.ComparePasswords(found.Password, []byte(json.Password)) {
 		return c.JSON(fiber.Map{
 			"code":    401,
 			"message": "Invalid Password",
@@ -74,10 +75,4 @@ func Login(c *fiber.Ctx) error {
 		"message": "success",
 		"token":   tokenString,
 	})
-}
-
-func comparePasswords(hashedPwd string, plainPwd []byte) bool {
-	byteHash := []byte(hashedPwd)
-	err := bcrypt.CompareHashAndPassword(byteHash, plainPwd)
-	return err == nil
 }
