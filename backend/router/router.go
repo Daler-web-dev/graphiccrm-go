@@ -2,6 +2,7 @@ package router
 
 import (
 	"backend/handlers"
+	"backend/middleware"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -12,7 +13,7 @@ func Initalize(router *fiber.App) {
 		return c.Status(200).SendString("Hello to the crm world!")
 	})
 
-	users := router.Group("/users")
+	users := router.Group("/users", middleware.ProtectRoute("admin"))
 	users.Get("/", handlers.GetUsers)
 	users.Post("/", handlers.CreateUser)
 	users.Get("/:id", handlers.GetUserById)

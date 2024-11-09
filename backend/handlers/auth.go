@@ -4,22 +4,10 @@ import (
 	"backend/database"
 	"backend/model"
 	"backend/utils"
-	"os"
-	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
-
-var jwtSecretKey = []byte(os.Getenv("jwt_secret"))
-
-type User model.User
-type Claims struct {
-	Username string `json:"username"`
-	Role     model.Role
-	jwt.StandardClaims
-}
 
 func Login(c *fiber.Ctx) error {
 	type LoginRequest struct {
@@ -36,8 +24,9 @@ func Login(c *fiber.Ctx) error {
 		})
 	}
 
-	found := User{}
-	query := User{Username: json.Username}
+	found := model.User{}
+
+	query := model.User{Username: json.Username}
 	err := db.First(&found, &query).Error
 	if err == gorm.ErrRecordNotFound {
 		return c.JSON(fiber.Map{
@@ -52,16 +41,7 @@ func Login(c *fiber.Ctx) error {
 		})
 	}
 
-	// Create the JWT token
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, Claims{
-		Username: found.Username,
-		Role:     found.Role,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(), // Token expires in 24 hours
-		},
-	})
-
-	tokenString, err := token.SignedString(jwtSecretKey)
+	tokenString, err := utils.GenerateJWT(found)
 
 	if err != nil {
 		return c.JSON(fiber.Map{
