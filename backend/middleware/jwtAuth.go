@@ -2,10 +2,12 @@ package middleware
 
 import (
 	"backend/model"
+	"crypto/subtle"
 	"errors"
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
@@ -21,56 +23,62 @@ type Claims struct {
 	jwt.StandardClaims
 }
 
-// Middleware to check JWT and role
 func ProtectRoute(requiredRole model.Role) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		// Extract token from Authorization header
+		// Check Authorization header
 		authHeader := c.Get("Authorization")
 		if authHeader == "" {
 			return c.Status(http.StatusUnauthorized).JSON(fiber.Map{
 				"code":    401,
-				"message": "Missing Authorization header",
+				"message": "Unauthorized",
 			})
 		}
 
-		// Bearer token validation
-		tokenString := strings.Split(authHeader, " ")[1]
-		if tokenString == "" {
+		// Split and validate header format
+		headerParts := strings.Split(authHeader, " ")
+		if len(headerParts) != 2 || headerParts[0] != "Bearer" {
 			return c.Status(http.StatusUnauthorized).JSON(fiber.Map{
 				"code":    401,
-				"message": "Invalid token",
+				"message": "Invalid Authorization header format",
 			})
 		}
 
-		// Parse and validate the token
+		// Token string with size check
+		tokenString := headerParts[1]
+		if len(tokenString) > 1024 {
+			return c.Status(http.StatusUnauthorized).JSON(fiber.Map{
+				"code":    401,
+				"message": "Token too large",
+			})
+		}
+
+		// Parse token
 		claims := &Claims{}
-		_, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-			// Ensure token is signed with correct signing method
+		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, errors.New("unexpected signing method")
 			}
 			return jwtSecretKey, nil
 		})
 
-		if err != nil {
+		// Token validity and expiration check
+		if err != nil || !token.Valid || claims.ExpiresAt < time.Now().Unix() {
 			return c.Status(http.StatusUnauthorized).JSON(fiber.Map{
 				"code":    401,
-				"message": "Invalid or expired token",
+				"message": "Unauthorized",
 			})
 		}
 
-		// Role check (if the user's role matches the required role)
-		if requiredRole != "" && claims.Role != requiredRole {
+		// Role check with constant-time comparison
+		if requiredRole != "" && subtle.ConstantTimeCompare([]byte(claims.Role), []byte(requiredRole)) != 1 {
 			return c.Status(http.StatusForbidden).JSON(fiber.Map{
 				"code":    403,
 				"message": "Insufficient role",
 			})
 		}
 
-		// Add claims to context
+		// Store user claims in context
 		c.Locals("user", claims)
-
-		// Proceed to next handler
 		return c.Next()
 	}
 }
