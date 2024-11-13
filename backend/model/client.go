@@ -11,7 +11,6 @@ type Client struct {
 	Name            string     `json:"name"`
 	ContactInfo     string     `json:"contactInfo"`
 	SalespersonID   guuid.UUID `json:"salespersonId"`
-	Salesperson     User       `gorm:"foreignKey:SalespersonID;references:ID" json:"salesperson"`
 	PurchaseHistory []Order    `gorm:"foreignKey:ClientID" json:"purchaseHistory"`
 	CreatedAt       time.Time  `json:"createdAt"`
 	UpdatedAt       time.Time  `json:"updatedAt"`

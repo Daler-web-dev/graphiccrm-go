@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"backend/auth"
 	"backend/model"
 	"os"
 	"time"
@@ -10,20 +11,15 @@ import (
 
 var jwtSecretKey = []byte(os.Getenv("jwt_secret"))
 
-type Claims struct {
-	Username string     `json:"username"`
-	Role     model.Role `json:"role"`
-	jwt.StandardClaims
-}
-
 func GenerateJWT(user model.User) (string, error) {
-	// Создаем claims с полем ExpiresAt (exp), которое будет проверяться автоматически
-	claims := &Claims{
+
+	claims := &auth.Claims{
+		ID:       user.ID,
 		Username: user.Username,
 		Role:     user.Role,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(), // Поле exp (стандартное для срока действия)
-			IssuedAt:  time.Now().Unix(),                     // Поле iat
+			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
+			IssuedAt:  time.Now().Unix(),
 		},
 	}
 

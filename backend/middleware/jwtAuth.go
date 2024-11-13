@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"backend/auth"
 	"backend/model"
 	"crypto/subtle"
 	"errors"
@@ -16,14 +17,8 @@ import (
 // JWT Secret key
 var jwtSecretKey = []byte(os.Getenv("jwt_secret"))
 
-// Claims structure
-type Claims struct {
-	Username string `json:"username"`
-	Role     model.Role
-	jwt.StandardClaims
-}
-
-func ProtectRoute(requiredRole model.Role) fiber.Handler {
+// ProtectRoute middleware with support for multiple roles
+func ProtectRoute(allowedRoles ...model.Role) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		// Check Authorization header
 		authHeader := c.Get("Authorization")
@@ -53,7 +48,7 @@ func ProtectRoute(requiredRole model.Role) fiber.Handler {
 		}
 
 		// Parse token
-		claims := &Claims{}
+		claims := &auth.Claims{}
 		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, errors.New("unexpected signing method")
@@ -69,8 +64,16 @@ func ProtectRoute(requiredRole model.Role) fiber.Handler {
 			})
 		}
 
-		// Role check with constant-time comparison
-		if requiredRole != "" && subtle.ConstantTimeCompare([]byte(claims.Role), []byte(requiredRole)) != 1 {
+		// Role check with constant-time comparison for each allowed role
+		roleAllowed := false
+		for _, allowedRole := range allowedRoles {
+			if subtle.ConstantTimeCompare([]byte(claims.Role), []byte(allowedRole)) == 1 {
+				roleAllowed = true
+				break
+			}
+		}
+
+		if !roleAllowed {
 			return c.Status(http.StatusForbidden).JSON(fiber.Map{
 				"code":    403,
 				"message": "Insufficient role",
@@ -82,14 +85,3 @@ func ProtectRoute(requiredRole model.Role) fiber.Handler {
 		return c.Next()
 	}
 }
-
-// // Example of a protected route
-// func ProtectedRoute(c *fiber.Ctx) error {
-// 	// Retrieve user info from context
-// 	user := c.Locals("user").(*Claims)
-// 	return c.JSON(fiber.Map{
-// 		"code":    200,
-// 		"message": "Success",
-// 		"data":    user.Username,
-// 	})
-// }

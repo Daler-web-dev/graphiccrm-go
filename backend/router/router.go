@@ -20,5 +20,8 @@ func Initalize(router *fiber.App) {
 	users.Patch("/:id", handlers.UpdateUser)
 	users.Delete("/:id", handlers.DeleteUser)
 
+	clients := router.Group("/clients", middleware.ProtectRoute("admin", "seller"))
+	clients.Post("/", handlers.CreateClient)
+
 	router.Post("/login", handlers.Login)
 }
