@@ -4,18 +4,14 @@ import (
 	"backend/auth"
 	"backend/database"
 	"backend/model"
-	"log"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
 
-// CreateClient handles creating a new client
 func CreateClient(c *fiber.Ctx) error {
-	// Извлечение информации о пользователе из контекста
 	user := c.Locals("user").(*auth.Claims)
 
-	// Проверка роли пользователя
 	if user.Role != "seller" && user.Role != "admin" {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"code":    403,
@@ -32,7 +28,15 @@ func CreateClient(c *fiber.Ctx) error {
 			"message": "Invalid request",
 		})
 	}
-	log.Println(user.Id)
+
+	// Проверка уникальности ContactInfo
+	var existingClient model.Client
+	if err := database.DB.Where("contact_info = ?", client.ContactInfo).First(&existingClient).Error; err == nil {
+		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
+			"code":    409,
+			"message": "Client with this contact info already exists",
+		})
+	}
 
 	client.ID = uuid.New()
 	client.SalespersonID = user.ID
