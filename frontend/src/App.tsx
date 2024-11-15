@@ -1,5 +1,5 @@
 import { Outlet, Route, Routes } from "react-router-dom";
-import MainLayout from "./layouts/mainLayout";
+import MainLayout from "./layouts/MainLayout";
 
 function App() {
 	return (

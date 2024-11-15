@@ -2,6 +2,7 @@ module.exports = {
   root: true,
   env: {
     browser: true,
+    node: true, // Разрешает использование CommonJS
     es2020: true
   },
   extends: [
