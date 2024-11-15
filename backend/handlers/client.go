@@ -56,3 +56,11 @@ func CreateClient(c *fiber.Ctx) error {
 		"data":    client,
 	})
 }
+
+func GetAllClients(c *fiber.Ctx) {
+	db := database.DB
+	Clients := []model.Client{}
+
+	db.Model(&model.Client{}).Order("ID asc").Limit(100).Find(&Clients)
+
+}

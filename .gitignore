@@ -1,2 +1,8 @@
-backend-forked
-backend-study
+# Игнорировать форк и учебную версию бэкенда
+backend-forked/
+backend-study/
+
+# Игнорировать бинарные файлы и временные файлы Go
+*.exe
+*.out
+*.test
