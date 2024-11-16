@@ -1,5 +1,6 @@
 import { Outlet, Route, Routes } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
+import { Login } from "./components/client/Login";
 
 function App() {
 	return (
@@ -22,13 +23,14 @@ function App() {
 					path="/auth"
 					element={
 						<div>
-							another layout should be placed here <Outlet />{" "}
+							{/* another layout should be placed here */}
+							<Outlet />{" "}
 						</div>
 					}
 				>
 					<Route
 						path="/auth/signin"
-						element={<div>Login page</div>}
+						element={<Login />}
 					/>
 					<Route
 						path="/auth/signup"
