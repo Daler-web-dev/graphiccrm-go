@@ -22,6 +22,7 @@ func Initalize(router *fiber.App) {
 
 	clients := router.Group("/clients", middleware.ProtectRoute("admin", "seller"))
 	clients.Post("/", handlers.CreateClient)
+	clients.Get("/", handlers.GetAllClients)
 
 	router.Post("/login", handlers.Login)
 }
