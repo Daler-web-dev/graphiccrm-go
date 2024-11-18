@@ -1,5 +1,7 @@
-import { Container } from '../server/Container';
+import { toast } from '@/hooks/use-toast';
+import { Container } from './Container';
 import { useForm, SubmitHandler } from "react-hook-form"
+import { useNavigate } from 'react-router-dom';
 
 type Inputs = {
     login: string
@@ -7,15 +9,23 @@ type Inputs = {
 }
 
 export const Login = () => {
+    const navigate = useNavigate()
     const {
         register,
         handleSubmit,
-        watch,
         formState: { errors },
     } = useForm<Inputs>();
-    const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
 
-    console.log(watch("login"));
+    const onSubmit: SubmitHandler<Inputs> = (data) => {
+        console.log(data);
+        toast({
+            title: "Авторизация",
+            description: "Авторизация прошла успешно",
+            variant: "default"
+        })
+        navigate("/");
+    }
+
     return (
         <Container className="flex justify-center items-center min-h-screen">
             <div className="flex flex-col justify-center items-center gap-20">
@@ -26,7 +36,7 @@ export const Login = () => {
                     onSubmit={handleSubmit(onSubmit)}
                     className="w-full max-w-[400px] flex flex-col justify-center items-center gap-2"
                 >
-                    <div className="w-full flex flex-col justify-center items-start">
+                    <div className="w-full flex flex-col justify-center items-start gap-1">
                         <label
                             htmlFor="login"
                             className="font-normal text-sm text-[#1C1B1F] cursor-pointer"
@@ -45,7 +55,7 @@ export const Login = () => {
                             </span>
                         )}
                     </div>
-                    <div className="w-full flex flex-col justify-center items-start">
+                    <div className="w-full flex flex-col justify-center items-start gap-1">
                         <label
                             htmlFor="password"
                             className="font-normal text-sm text-[#1C1B1F] cursor-pointer"
