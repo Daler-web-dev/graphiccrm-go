@@ -1,7 +1,7 @@
 import { Outlet, Route, Routes } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
-import { Login } from "./components/custom/Login";
 import { Dashboard } from "./components/custom/Dashboard";
+import Signin from "./pages/Signin";
 
 function App() {
 	return (
@@ -56,10 +56,7 @@ function App() {
 						</div>
 					}
 				>
-					<Route
-						path="/auth/signin"
-						element={<Login />}
-					/>
+					<Route path="/auth/signin" element={<Signin />} />
 				</Route>
 			</Routes>
 		</>
