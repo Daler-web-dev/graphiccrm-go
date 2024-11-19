@@ -1,3 +1,4 @@
+import { Container } from "@/components/custom/Container";
 import { Header } from "@/components/custom/Header";
 import SideBar from "@/components/custom/SideBar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -19,11 +20,13 @@ const MainLayout: React.FC = () => {
 	// 	fetchData().then((res) => console.log(res));
 	// }, []);
 	return (
-		<SidebarProvider className="flex h-screen">
+		<SidebarProvider className="flex">
 			<SideBar />
-			<main className="bg-cWhite w-full min-h-screen px-5">
-				<Header sideBarTrigger={<SidebarTrigger className="text-cDarkBlue" />} />
-				<Outlet />
+			<main className="bg-cWhite w-full">
+				<Container>
+					<Header sideBarTrigger={<SidebarTrigger className="text-cDarkBlue" />} />
+					<Outlet />
+				</Container>
 			</main>
 		</SidebarProvider>
 	);

@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { TrendingUp } from "lucide-react"
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+import { TrendingUp } from "lucide-react";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import {
     Card,
@@ -9,13 +9,13 @@ import {
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
     ChartConfig,
     ChartContainer,
     ChartTooltip,
     ChartTooltipContent,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
 
 const chartData = [
     { month: "January", desktop: 100 },
@@ -30,18 +30,18 @@ const chartData = [
     { month: "October", desktop: 180 },
     { month: "November", desktop: 150 },
     { month: "December", desktop: 200 },
-]
+];
 
 const chartConfig = {
     desktop: {
         label: "Desktop",
         color: "hsl(var(--chart-1))",
     },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 export function Chart() {
     return (
-        <Card>
+        <Card className="">
             <CardHeader className="w-full flex justify-between items-center px-8">
                 <div>
                     <CardTitle className="text-cBlack">Dashboard</CardTitle>
@@ -53,7 +53,13 @@ export function Chart() {
                     <CardDescription className="text-cLightBlue">
                         Overall Sum
                     </CardDescription>
-                    <CardTitle className="flex justify-center items-center gap-5 text-cBlack">77,777,777 Sum <div className="text-white p-2 rounded-3xl bg-cLightBlue flex justify-center items-center gap-2 font-medium text-xs"><TrendingUp className="h-4 w-4" />23.5%</div></CardTitle>
+                    <CardTitle className="flex justify-center items-center gap-5 text-cBlack">
+                        77,777,777 Sum
+                        <div className="text-white p-2 rounded-3xl bg-cLightBlue flex justify-center items-center gap-2 font-medium text-xs">
+                            <TrendingUp className="h-4 w-4" />
+                            23.5%
+                        </div>
+                    </CardTitle>
                 </div>
             </CardHeader>
             <CardContent>
@@ -62,16 +68,30 @@ export function Chart() {
                         accessibilityLayer
                         data={chartData}
                         margin={{
-                            left: 12,
-                            right: 12,
+                            top: 10,
+                            left: -20,
+                            right: 0,
                         }}
                     >
                         <defs>
-                            <linearGradient id="desktopGradient" x1="0" y1="0" x2="0" y2="1">
+                            <linearGradient
+                                id="desktopGradient"
+                                x1="0"
+                                y1="0"
+                                x2="0"
+                                y2="1"
+                            >
                                 <stop offset="10%" stopColor="#4991EF" stopOpacity={1} />
                                 <stop offset="100%" stopColor="#4991EF" stopOpacity={0} />
                             </linearGradient>
                         </defs>
+                        {/* Добавляем ось Y */}
+                        <YAxis
+                            tickLine={false}
+                            axisLine={false}
+                            tickMargin={8}
+                            tickFormatter={(value) => `${value}`}
+                        />
                         <CartesianGrid vertical={false} />
                         <XAxis
                             dataKey="month"
@@ -95,5 +115,5 @@ export function Chart() {
                 </ChartContainer>
             </CardContent>
         </Card>
-    )
+    );
 }
