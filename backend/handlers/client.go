@@ -5,9 +5,12 @@ import (
 	"backend/database"
 	"backend/model"
 	"backend/utils"
+	"errors"
+	"log"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
+	guuid "github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 func CreateClient(c *fiber.Ctx) error {
@@ -39,7 +42,7 @@ func CreateClient(c *fiber.Ctx) error {
 		})
 	}
 
-	client.ID = uuid.New()
+	client.ID = guuid.New()
 	client.SalespersonID = user.ID
 
 	// Сохранение клиента в базе данных
@@ -79,4 +82,46 @@ func GetAllClients(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(respons)
+}
+
+func GetClientById(c *fiber.Ctx) error {
+	db := database.DB
+	param := c.Params("id")
+	id, err := guuid.Parse(param)
+	user := c.Locals("user").(*auth.Claims)
+	Client := model.Client{}
+
+	if err != nil {
+		return c.JSON(fiber.Map{
+			"code":    400,
+			"message": "Invalid UUID Format",
+		})
+	}
+
+	query := db
+	if user.Role == "seller" {
+		query = query.Where("salesperson_id = ?", user.ID)
+	}
+
+	err = query.Where("id = ?", id).First(&Client).Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"code":    404,
+				"message": "Client not found",
+			})
+		}
+		log.Println("Database error:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"code":    500,
+			"message": "Internal Server Error",
+		})
+	}
+
+	// Успешный ответ
+	return c.JSON(fiber.Map{
+		"code": 200,
+		"data": Client,
+	})
 }
