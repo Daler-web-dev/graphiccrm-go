@@ -23,7 +23,7 @@ const MainLayout: React.FC = () => {
 		<SidebarProvider className="flex">
 			<SideBar />
 			<main className="bg-cWhite w-full">
-				<Container>
+				<Container className="py-8">
 					<Header sideBarTrigger={<SidebarTrigger className="text-cDarkBlue" />} />
 					<Outlet />
 				</Container>

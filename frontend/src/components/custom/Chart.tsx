@@ -18,23 +18,23 @@ import {
 } from "@/components/ui/chart";
 
 const chartData = [
-	{ month: "January", desktop: 100 },
-	{ month: "February", desktop: 125 },
-	{ month: "March", desktop: 140 },
-	{ month: "April", desktop: 100 },
-	{ month: "May", desktop: 130 },
-	{ month: "June", desktop: 160 },
-	{ month: "July", desktop: 200 },
-	{ month: "August", desktop: 230 },
-	{ month: "September", desktop: 210 },
-	{ month: "October", desktop: 180 },
-	{ month: "November", desktop: 150 },
-	{ month: "December", desktop: 200 },
+	{ month: "Январь", desktop: 100 },
+	{ month: "Февраль", desktop: 125 },
+	{ month: "Март", desktop: 140 },
+	{ month: "Апрель", desktop: 100 },
+	{ month: "Май", desktop: 130 },
+	{ month: "Июнь", desktop: 160 },
+	{ month: "Июль", desktop: 200 },
+	{ month: "Август", desktop: 230 },
+	{ month: "Сентябрь", desktop: 210 },
+	{ month: "Октябрь", desktop: 180 },
+	{ month: "Ноябрь", desktop: 150 },
+	{ month: "Декабрь", desktop: 200 },
 ];
 
 const chartConfig = {
 	desktop: {
-		label: "Desktop",
+		label: "Продажи:",
 		color: "hsl(var(--chart-1))",
 	},
 } satisfies ChartConfig;
@@ -44,17 +44,17 @@ export function Chart() {
 		<Card className="">
 			<CardHeader className="w-full flex justify-between items-center px-8">
 				<div>
-					<CardTitle className="text-cBlack">Dashboard</CardTitle>
+					<CardTitle className="text-cBlack">Дэшборд</CardTitle>
 					<CardDescription className="text-cLightBlue">
-						Yearly turnover
+						Годовой оборот
 					</CardDescription>
 				</div>
 				<div>
 					<CardDescription className="text-cLightBlue">
-						Overall Sum
+						Общая сумма
 					</CardDescription>
 					<CardTitle className="flex justify-center items-center gap-5 text-cBlack">
-						77,777,777 Sum
+						77,777,777 сум
 						<div className="text-white p-2 rounded-3xl bg-cLightBlue flex justify-center items-center gap-2 font-medium text-xs">
 							<TrendingUp className="h-4 w-4" />
 							23.5%
@@ -93,7 +93,6 @@ export function Chart() {
 								/>
 							</linearGradient>
 						</defs>
-						{/* Добавляем ось Y */}
 						<YAxis
 							tickLine={false}
 							axisLine={false}
