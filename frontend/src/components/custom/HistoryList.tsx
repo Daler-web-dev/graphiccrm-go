@@ -12,7 +12,7 @@ interface Props {
     description?: string
 }
 
-export const HistoryLIst: React.FC<Props> = ({ className, data, title, description }) => {
+export const HistoryList: React.FC<Props> = ({ className, data, title, description }) => {
     const navigate = useNavigate()
 
     return (

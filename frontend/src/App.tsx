@@ -4,6 +4,8 @@ import Signin from "./pages/Signin";
 import { Users } from "./pages/users/page";
 import { Dashboard } from "./pages/dashboard/page";
 import { User } from "./pages/users/[id]/page";
+import { History } from "./pages/history/page";
+import { HistoryView } from "./pages/history/[id]/page";
 
 function App() {
 	return (
@@ -21,11 +23,11 @@ function App() {
 					/>
 					<Route
 						path="/history"
-						element={<div>some page with data</div>}
+						element={<History />}
 					/>
 					<Route
 						path="/history/:id"
-						element={<div>dynamic page</div>}
+						element={<HistoryView />}
 					/>
 					<Route
 						path="/warehouse"

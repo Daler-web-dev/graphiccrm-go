@@ -1,4 +1,4 @@
-import { HistoryLIst } from '@/components/custom/HistoryList';
+import { HistoryList } from '@/components/custom/HistoryList';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Edit, Trash2 } from 'lucide-react';
@@ -70,7 +70,7 @@ export const User: React.FC = () => {
                     </CardContent>
                 </Card>
             </div>
-            <HistoryLIst title='История' data={client.history} />
+            <HistoryList title='История' data={client.history} />
         </div>
     );
 };
