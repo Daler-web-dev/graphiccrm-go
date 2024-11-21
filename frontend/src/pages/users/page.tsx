@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -172,7 +173,7 @@ export const Users: React.FC = () => {
                     </TableHeader>
                     <TableBody>
                         {clients.map((client) => (
-                            <TableRow className='text-left cursor-pointer' onClick={() => navigate(`/users/${client.id}`)}>
+                            <TableRow className='text-left'>
                                 <TableCell className='flex gap-1 justify-start items-center'>
                                     <img src={client.image} alt="client image" loading='lazy' className='w-10 h-10 object-cover rounded-lg' />
                                     {client.name}
@@ -180,8 +181,7 @@ export const Users: React.FC = () => {
                                 <TableCell>{client.contact}</TableCell>
                                 <TableCell>{client.address}</TableCell>
                                 <TableCell className='flex gap-2'>
-                                    <Edit width={20} height={20} className='text-cDarkBlue' />
-                                    <Trash2 width={20} height={20} color='red' />
+                                    <Button onClick={() => navigate(`/users/${client.id}`)}>Просмотр</Button>
                                 </TableCell>
                             </TableRow>
                         ))}

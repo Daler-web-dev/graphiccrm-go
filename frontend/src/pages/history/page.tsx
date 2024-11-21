@@ -8,6 +8,11 @@ export const History: React.FC = () => {
     const orders = [
         {
             id: 3245,
+            client: {
+                name: 'Иван Кузьма',
+                contact: '+998979303666',
+                address: 'Улугбек, сзади магазина',
+            },
             orderNumber: 123456,
             date: '2022-10-01',
             total: 3000000,
@@ -16,6 +21,11 @@ export const History: React.FC = () => {
         },
         {
             id: 2345,
+            client: {
+                name: 'Алексей',
+                contact: '+998907803666',
+                address: 'Яшнабад, 1-й проезд, 8-й дом',
+            },
             orderNumber: 1324567,
             date: '2022-01-11',
             total: 13220000,
@@ -24,6 +34,11 @@ export const History: React.FC = () => {
         },
         {
             id: 3124536,
+            client: {
+                name: 'Максим',
+                contact: '+998977703666',
+                address: 'Хамид Олимов, 31',
+            },
             orderNumber: 756343,
             date: '2022-07-19',
             total: 6600000,
@@ -32,6 +47,11 @@ export const History: React.FC = () => {
         },
         {
             id: 123,
+            client: {
+                name: 'Андрей',
+                contact: '+998987703666',
+                address: 'Юнусабад, 18-й квартал, 3-й дом',
+            },
             orderNumber: 123456,
             date: '2022-10-01',
             total: 3000000,
@@ -40,6 +60,11 @@ export const History: React.FC = () => {
         },
         {
             id: 456,
+            client: {
+                name: 'Артур',
+                contact: '+998937703666',
+                address: 'М.Улугбек, 32',
+            },
             orderNumber: 1324567,
             date: '2022-01-11',
             total: 13220000,
@@ -48,6 +73,11 @@ export const History: React.FC = () => {
         },
         {
             id: 789,
+            client: {
+                name: 'Николай',
+                contact: '+998917703666',
+                address: 'Яшнабад, 2-й проезд, 12-й дом',
+            },
             orderNumber: 756343,
             date: '2022-07-19',
             total: 6600000,
@@ -56,6 +86,11 @@ export const History: React.FC = () => {
         },
         {
             id: 101,
+            client: {
+                name: 'Вадим',
+                contact: '+998778789789',
+                address: 'Яшнабад, 2-й проезд, 12-й дом',
+            },
             orderNumber: 123456,
             date: '2022-10-01',
             total: 3000000,
@@ -64,6 +99,11 @@ export const History: React.FC = () => {
         },
         {
             id: 202,
+            client: {
+                name: 'Дмитрий',
+                contact: '+998778789789',
+                address: 'Яшнабад, 2-й проезд, 12-й дом',
+            },
             orderNumber: 1324567,
             date: '2022-01-11',
             total: 13220000,
@@ -72,6 +112,11 @@ export const History: React.FC = () => {
         },
         {
             id: 303,
+            client: {
+                name: 'Егор',
+                contact: '+998778789789',
+                address: 'Яшнабад, 2-й проезд, 12-й дом',
+            },
             orderNumber: 756343,
             date: '2022-07-19',
             total: 6600000,
@@ -80,6 +125,11 @@ export const History: React.FC = () => {
         },
         {
             id: 404,
+            client: {
+                name: 'Павел',
+                contact: '+998778789789',
+                address: 'Яшнабад, 2-й проезд, 12-й дом',
+            },
             orderNumber: 123456,
             date: '2022-10-01',
             total: 3000000,
@@ -88,6 +138,11 @@ export const History: React.FC = () => {
         },
         {
             id: 505,
+            client: {
+                name: 'Виктор',
+                contact: '+998778789789',
+                address: 'Яшнабад, 2-й проезд, 12-й дом',
+            },
             orderNumber: 1324567,
             date: '2022-01-11',
             total: 13220000,
@@ -96,6 +151,11 @@ export const History: React.FC = () => {
         },
         {
             id: 606,
+            client: {
+                name: 'Анатолий',
+                contact: '+998778789789',
+                address: 'Яшнабад, 2-й проезд, 12-й дом',
+            },
             orderNumber: 756343,
             date: '2022-07-19',
             total: 6600000,
@@ -106,6 +166,11 @@ export const History: React.FC = () => {
     const debts = [
         {
             id: 707,
+            client: {
+                name: 'Игорь',
+                contact: '+998778789789',
+                address: 'Яшнабад, 2-й проезд, 12-й дом',
+            },
             orderNumber: 912345,
             date: '2022-02-22',
             total: 4200000,
@@ -114,6 +179,11 @@ export const History: React.FC = () => {
         },
         {
             id: 808,
+            client: {
+                name: 'Сергей',
+                contact: '+998778789789',
+                address: 'Яшнабад, 2-й проезд, 12-й дом',
+            },
             orderNumber: 456789,
             date: '2022-03-03',
             total: 5400000,
@@ -122,6 +192,11 @@ export const History: React.FC = () => {
         },
         {
             id: 909,
+            client: {
+                name: 'Александр',
+                contact: '+998778789789',
+                address: 'Яшнабад, 2-й проезд, 12-й дом',
+            },
             orderNumber: 135792,
             date: '2022-04-04',
             total: 2700000,
@@ -130,6 +205,11 @@ export const History: React.FC = () => {
         },
         {
             id: 1010,
+            client: {
+                name: 'Аркадий',
+                contact: '+998778789789',
+                address: 'Яшнабад, 2-й проезд, 12-й дом',
+            },
             orderNumber: 246801,
             date: '2022-05-05',
             total: 8100000,
@@ -138,6 +218,11 @@ export const History: React.FC = () => {
         },
         {
             id: 1111,
+            client: {
+                name: 'Григорий',
+                contact: '+998778789789',
+                address: 'Яшнабад, 2-й проезд, 12-й дом',
+            },
             orderNumber: 357912,
             date: '2022-06-06',
             total: 9900000,
@@ -146,6 +231,11 @@ export const History: React.FC = () => {
         },
         {
             id: 1212,
+            client: {
+                name: 'Юрий',
+                contact: '+998778789789',
+                address: 'Яшнабад, 2-й проезд, 12-й дом',
+            },
             orderNumber: 467890,
             date: '2022-07-07',
             total: 6300000,
@@ -154,7 +244,7 @@ export const History: React.FC = () => {
         },
     ]
     return (
-        <div className='relative'>
+        <div className='w-full relative'>
             <Tabs defaultValue="orders">
                 <TabsList className='absolute -top-16 right-0'>
                     <TabsTrigger value="orders">Заказы</TabsTrigger>
@@ -163,17 +253,17 @@ export const History: React.FC = () => {
                 <TabsContent value="orders"><HistoryList title='История заказов' description='Здесь вы можете просмотреть историю заказов' data={orders} /></TabsContent>
                 <TabsContent value="debts"><HistoryList title='История заказов' description='Здесь вы можете просмотреть историю заказов' data={debts} /></TabsContent>
             </Tabs>
-            <Card className='w-full fixed bottom-0 right-5'>
+            <Card className='w-full mt-5'>
                 <CardContent>
                     <Table>
                         <TableHeader>
-                            <TableRow>
+                            <TableRow className='hover:bg-transparent'>
                                 <TableHead className='font-medium text-xl text-cLightBlue'>Итого количество</TableHead>
                                 <TableHead className='font-medium text-xl text-cLightBlue'>Итого сумма</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            <TableRow className='text-left'>
+                            <TableRow className='text-left hover:bg-transparent'>
                                 <TableCell className='font-bold text-2xl'>{orders.length}</TableCell>
                                 <TableCell className='font-bold text-2xl'>{orders.reduce((acc, order) => acc + order.total, 0)} сум</TableCell>
                             </TableRow>
