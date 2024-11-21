@@ -1,20 +1,30 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Edit, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 
 export const Categories: React.FC = () => {
+    const [categories, setCategories] = useState<{ id: number; title: string }[]>([
+        { id: 1, title: 'Категория 1' },
+        { id: 2, title: 'Категория 2' },
+        { id: 3, title: 'Категория 3' },
+        { id: 4, title: 'Категория 4' },
+    ]);
+    const [newCategory, setNewCategory] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<{ id: number; title: string } | null>(null);
     const [modalType, setModalType] = useState<'edit' | 'delete' | null>(null);
 
-    const categories = [
-        { id: 1, title: 'Категория 1', value: 'категория1' },
-        { id: 2, title: 'Категория 2', value: 'категория2' },
-        { id: 3, title: 'Категория 3', value: 'категория3' },
-        { id: 4, title: 'Категория 4', value: 'категория4' },
-    ];
+    const addCategory = () => {
+        if (newCategory.trim()) {
+            setCategories((prev) => [
+                ...prev,
+                { id: Date.now(), title: newCategory.trim() },
+            ]);
+            setNewCategory('');
+        }
+    };
 
     const closeModal = () => {
         setSelectedCategory(null);
@@ -32,12 +42,16 @@ export const Categories: React.FC = () => {
     };
 
     const confirmEdit = () => {
-        console.log(`Редактировать: ${selectedCategory?.id}, новое название: ${selectedCategory?.title}`);
+        setCategories((prev) =>
+            prev.map((cat) =>
+                cat.id === selectedCategory?.id ? { ...cat, title: selectedCategory.title } : cat
+            )
+        );
         closeModal();
     };
 
     const confirmDelete = () => {
-        console.log(`Удалить: ${selectedCategory?.id}`);
+        setCategories((prev) => prev.filter((cat) => cat.id !== selectedCategory?.id));
         closeModal();
     };
 
@@ -46,6 +60,18 @@ export const Categories: React.FC = () => {
             <CardHeader className="flex flex-col justify-center items-start">
                 <CardTitle>Категории</CardTitle>
                 <CardDescription>Список категорий</CardDescription>
+                <div className="flex gap-2 pt-5 w-full">
+                    <input
+                        type="text"
+                        value={newCategory}
+                        onChange={(e) => setNewCategory(e.target.value)}
+                        placeholder="Добавить новую категорию"
+                        className="w-full border rounded-lg p-2"
+                    />
+                    <Button onClick={addCategory} variant="secondary">
+                        Добавить
+                    </Button>
+                </div>
             </CardHeader>
             <CardContent>
                 <Table>
