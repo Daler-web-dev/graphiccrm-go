@@ -8,6 +8,7 @@ import { History } from "./pages/history/page";
 import { HistoryView } from "./pages/history/[id]/page";
 import { Warehouse } from "./pages/warehouse/page";
 import { Product } from "./pages/warehouse/[id]/page";
+import { Prices } from "./pages/prices/page";
 
 function App() {
 	return (
@@ -41,7 +42,7 @@ function App() {
 					/>
 					<Route
 						path="/prices"
-						element={<div>some page with data</div>}
+						element={<Prices />}
 					/>
 					<Route
 						path="/prices/:id"
@@ -49,6 +50,10 @@ function App() {
 					/>
 					<Route
 						path="/categories"
+						element={<div>some page with data</div>}
+					/>
+					<Route
+						path="/agents"
 						element={<div>some page with data</div>}
 					/>
 				</Route>
