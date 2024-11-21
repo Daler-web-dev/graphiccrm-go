@@ -9,6 +9,7 @@ import { HistoryView } from "./pages/history/[id]/page";
 import { Warehouse } from "./pages/warehouse/page";
 import { Product } from "./pages/warehouse/[id]/page";
 import { Prices } from "./pages/prices/page";
+import { Categories } from "./pages/caterogies/page";
 
 function App() {
 	return (
@@ -45,12 +46,8 @@ function App() {
 						element={<Prices />}
 					/>
 					<Route
-						path="/prices/:id"
-						element={<div>dynamic page</div>}
-					/>
-					<Route
 						path="/categories"
-						element={<div>some page with data</div>}
+						element={<Categories />}
 					/>
 					<Route
 						path="/agents"
