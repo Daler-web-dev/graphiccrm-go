@@ -11,9 +11,12 @@ interface Props {
 export const Header: React.FC<Props> = ({ className, sideBarTrigger }) => {
     const { pathname } = useLocation()
     return (
-        <div className={cn("flex justify-start items-center gap-5", className)}>
-            {sideBarTrigger}
-            <BreadCrumb path={pathname} />
+        <div className={cn("flex justify-start flex-col items-start gap-1 pb-5", className)}>
+            <h2 className='text-3xl font-semibold text-cBlack'>Здравствуйте, Sharif Aka</h2>
+            <div className='flex justify-start items-center gap-5'>
+                {sideBarTrigger}
+                <BreadCrumb path={pathname} />
+            </div>
         </div>
     );
 };

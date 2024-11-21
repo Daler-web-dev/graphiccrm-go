@@ -1,10 +1,10 @@
-import { Chart } from "./Chart";
-import TopRatedList from "./TopRatedList";
+import { Chart } from "@/components/custom/Chart";
+import TopRatedList from "@/components/custom/TopRatedList";
 
 
 export const Dashboard = () => {
     return (
-        <div className="pt-5 pb-5">
+        <div className="">
             <Chart />
             <br />
             <TopRatedList />

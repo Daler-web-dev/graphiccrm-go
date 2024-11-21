@@ -1,5 +1,5 @@
 import { TopRated } from "./TopRated";
-import { User, Box } from "lucide-react"; // Importing Lucide icons
+import { User, Box } from "lucide-react";
 
 const clients = [
     {
@@ -52,12 +52,11 @@ const products = [
 export default function TopRatedList() {
     return (
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-            {/* Top Clients Section */}
             <div className="rounded-md border p-4 bg-white shadow">
                 <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-lg font-medium">Top Clients</h2>
+                    <h2 className="text-lg font-medium">Топ клиенты</h2>
                     <button className="text-sm font-medium text-blue-500 hover:underline">
-                        See more
+                        Увидеть список
                     </button>
                 </div>
                 <TopRated
@@ -66,7 +65,7 @@ export default function TopRatedList() {
                         { key: "id", label: "No" },
                         {
                             key: "name",
-                            label: "User Name",
+                            label: "Имя",
                             render: (value, row) => (
                                 <div className="flex items-center">
                                     <User className="text-gray-400 mr-2" />
@@ -77,10 +76,10 @@ export default function TopRatedList() {
                                 </div>
                             ),
                         },
-                        { key: "buySum", label: "Buy sum" },
+                        { key: "buySum", label: "Сумма покупок" },
                         {
                             key: "contact",
-                            label: "Contacts",
+                            label: "Контакт",
                             render: (value) => (
                                 <div className="flex items-center">
                                     <span>{value}</span>
@@ -91,13 +90,11 @@ export default function TopRatedList() {
                     data={clients}
                 />
             </div>
-
-            {/* Top Products Section */}
             <div className="rounded-md border p-4 bg-white shadow">
                 <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-lg font-medium">Top Products</h2>
+                    <h2 className="text-lg font-medium">Топ продукты</h2>
                     <button className="text-sm font-medium text-blue-500 hover:underline">
-                        See more
+                        Увидеть список
                     </button>
                 </div>
                 <TopRated
@@ -106,7 +103,7 @@ export default function TopRatedList() {
                         { key: "id", label: "No" },
                         {
                             key: "name",
-                            label: "Product Name",
+                            label: "Наименование",
                             render: (value, row) => (
                                 <div className="flex items-center">
                                     <Box className="text-gray-400 mr-2" />
@@ -117,8 +114,8 @@ export default function TopRatedList() {
                                 </div>
                             ),
                         },
-                        { key: "countSold", label: "Count of Sold" },
-                        { key: "priceSum", label: "Price Sum" },
+                        { key: "countSold", label: "Количество продаж" },
+                        { key: "priceSum", label: "Сумма продаж" },
                     ]}
                     data={products}
                 />

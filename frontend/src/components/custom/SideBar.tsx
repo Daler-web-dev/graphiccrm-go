@@ -42,8 +42,8 @@ export default function Component() {
     const { pathname } = useLocation()
 
     return (
-        <Sidebar variant="sidebar" collapsible="icon" className="border-r bg-white">
-            <SidebarHeader className="py-5">
+        <Sidebar variant="sidebar" collapsible="icon" className="border-r bg-white py-8">
+            <SidebarHeader>
                 <div className="flex items-center justify-between">
                     <div className="text-3xl font-bold bg-cGradientBg bg-clip-text text-transparent group-data-[collapsible=icon]:hidden px-3.5">ЛОГО</div>
                     <h1 className="hidden text-3xl leading-6 font-bold bg-cGradientBg bg-clip-text text-transparent group-data-[collapsible=icon]:block">
@@ -66,7 +66,7 @@ export default function Component() {
                 </SidebarMenu>
             </SidebarContent>
 
-            <SidebarFooter className="mt-auto border-t p-4">
+            <SidebarFooter className="mt-auto border-t px-4">
                 <div className="space-y-2 group-data-[collapsible=icon]:hidden">
                     <h2 className="text-3xl font-medium">Имя Фамилия</h2>
                     <p className="text-xl text-muted-foreground">Разрешение/Статус</p>

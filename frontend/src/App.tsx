@@ -1,7 +1,11 @@
 import { Outlet, Route, Routes } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
-import { Dashboard } from "./components/custom/Dashboard";
 import Signin from "./pages/Signin";
+import { Users } from "./pages/users/page";
+import { Dashboard } from "./pages/dashboard/page";
+import { User } from "./pages/users/[id]/page";
+import { History } from "./pages/history/page";
+import { HistoryView } from "./pages/history/[id]/page";
 
 function App() {
 	return (
@@ -11,19 +15,19 @@ function App() {
 					<Route index element={<Dashboard />} />
 					<Route
 						path="/users"
-						element={<div>some page with data</div>}
+						element={<Users />}
 					/>
 					<Route
 						path="/users/:id"
-						element={<div>dynamic page</div>}
+						element={<User />}
 					/>
 					<Route
 						path="/history"
-						element={<div>some page with data</div>}
+						element={<History />}
 					/>
 					<Route
 						path="/history/:id"
-						element={<div>dynamic page</div>}
+						element={<HistoryView />}
 					/>
 					<Route
 						path="/warehouse"
