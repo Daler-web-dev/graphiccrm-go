@@ -1,11 +1,15 @@
 import { Outlet, Route, Routes } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
-import Signin from "./pages/Signin";
+import Signin from "./pages/signin/Signin";
 import { Users } from "./pages/users/page";
-import { Dashboard } from "./pages/dashboard/page";
+import { Dashboard } from "./pages/page";
 import { User } from "./pages/users/[id]/page";
 import { History } from "./pages/history/page";
 import { HistoryView } from "./pages/history/[id]/page";
+import { Warehouse } from "./pages/warehouse/page";
+import { Product } from "./pages/warehouse/[id]/page";
+import { Prices } from "./pages/prices/page";
+import { Categories } from "./pages/caterogies/page";
 
 function App() {
 	return (
@@ -31,22 +35,22 @@ function App() {
 					/>
 					<Route
 						path="/warehouse"
-						element={<div>some page with data</div>}
+						element={<Warehouse />}
 					/>
 					<Route
 						path="/warehouse/:id"
-						element={<div>dynamic page</div>}
+						element={<Product />}
 					/>
 					<Route
 						path="/prices"
-						element={<div>some page with data</div>}
-					/>
-					<Route
-						path="/prices/:id"
-						element={<div>dynamic page</div>}
+						element={<Prices />}
 					/>
 					<Route
 						path="/categories"
+						element={<Categories />}
+					/>
+					<Route
+						path="/agents"
 						element={<div>some page with data</div>}
 					/>
 				</Route>
