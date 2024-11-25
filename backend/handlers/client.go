@@ -67,7 +67,6 @@ func CreateClient(c *fiber.Ctx) error {
 		"data":    client,
 	})
 }
-
 func GetAllClients(c *fiber.Ctx) error {
 	user := c.Locals("user").(*auth.Claims)
 	Clients := []model.Client{}
@@ -90,7 +89,6 @@ func GetAllClients(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(respons)
 }
-
 func GetClientById(c *fiber.Ctx) error {
 	db := database.DB
 	param := c.Params("id")
@@ -133,20 +131,11 @@ func GetClientById(c *fiber.Ctx) error {
 }
 func UpdateClient(c *fiber.Ctx) error {
 	type UpdateClientRequest struct {
-		Name        string `json:"name" validate:"required"`
-		ContactInfo string `json:"contactInfo" validate:"required"`
+		Name        *string `json:"name" validate:"omitempty,min=2"`
+		ContactInfo *string `json:"contactInfo" validate:"omitempty"`
+		Address     *string `json:"address" validate:"omitempty,min=5"`
 	}
-
-	json := new(UpdateClientRequest)
 	clientID, err := guuid.Parse(c.Params("id"))
-
-	if err := c.BodyParser(json); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"code":    400,
-			"message": "Invalid request body",
-		})
-	}
-
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"code":    400,
@@ -154,18 +143,23 @@ func UpdateClient(c *fiber.Ctx) error {
 		})
 	}
 
-	validate := validator.New()
-	err = validate.Struct(json)
-	if err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+	var json UpdateClientRequest
+	if err := c.BodyParser(&json); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"code":    400,
+			"message": "Invalid request body",
+		})
+	}
+
+	if err := validator.New().Struct(json); err != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+			"code":    422,
 			"message": err.Error(),
 		})
 	}
 
-	db := database.DB
 	var client model.Client
-
+	db := database.DB
 	if err := db.First(&client, "id = ?", clientID).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
@@ -180,15 +174,22 @@ func UpdateClient(c *fiber.Ctx) error {
 	}
 
 	var existingClient model.Client
-	if err := db.First(&existingClient, "contactInfo = ? AND id != ?", json.ContactInfo, clientID).Error; err == nil {
+	if err := db.First(&existingClient, "contact_info = ? AND id != ?", json.ContactInfo, clientID).Error; err == nil {
 		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
 			"code":    409,
 			"message": "ContactInfo is already used by another client",
 		})
 	}
 
-	client.Name = json.Name
-	client.ContactInfo = json.ContactInfo
+	if json.Name != nil {
+		client.Name = *json.Name
+	}
+	if json.ContactInfo != nil {
+		client.ContactInfo = *json.ContactInfo
+	}
+	if json.Address != nil {
+		client.Address = *json.Address
+	}
 	if err := db.Save(&client).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"code":    500,
