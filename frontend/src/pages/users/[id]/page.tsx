@@ -55,15 +55,15 @@ export const User: React.FC = () => {
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <div className='flex justify-between items-center p-4 bg-cWhite rounded-2xl'>
+                        <div className='flex justify-between items-center p-3 bg-cWhite rounded-2xl'>
                             <p className='font-normal text-xl'>Адрес</p>
                             <span className='font-semibold text-xl'>{client?.address}</span>
                         </div>
-                        <div className='flex justify-between items-center p-4 rounded-2xl'>
+                        <div className='flex justify-between items-center p-3 rounded-2xl'>
                             <p className='font-normal text-xl'>Контакт</p>
                             <span className='font-semibold text-xl'>{client?.contact}</span>
                         </div>
-                        <div className='flex justify-center flex-col items-start text-left p-4 rounded-2xl bg-cWhite'>
+                        <div className='flex justify-center flex-col items-start text-left p-3 rounded-2xl bg-cWhite'>
                             <p className='font-normal text-xl'>Дополнительная информация</p>
                             <span className='font-normal text-base'>{client?.info}</span>
                         </div>
