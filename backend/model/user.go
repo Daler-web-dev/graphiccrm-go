@@ -21,6 +21,6 @@ type User struct {
 	Role      Role       `json:"role"`
 	CreatedAt time.Time  `json:"createdAt"`
 	UpdatedAt time.Time  `json:"updatedAt"`
-	Clients   []Client   `gorm:"foreignKey:SalespersonID"`
-	Orders    []Order    `gorm:"foreignKey:SalespersonID"`
+	Clients   []Client   `gorm:"foreignKey:SalespersonID" json:"clients"`
+	Orders    []Order    `gorm:"foreignKey:SalespersonID" json:"orders"`
 }

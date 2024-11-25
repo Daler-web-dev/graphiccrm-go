@@ -6,6 +6,7 @@ import (
 	"backend/utils"
 	"log"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	guuid "github.com/google/uuid"
 	"gorm.io/gorm"
@@ -13,9 +14,9 @@ import (
 
 func CreateUser(c *fiber.Ctx) error {
 	type CreateUserRequest struct {
-		Username string     `json:"username"`
-		Password string     `json:"password"`
-		Role     model.Role `json:"role"`
+		Username string     `json:"username" validate:"required,min=3,max=50"`
+		Password string     `json:"password" validate:"required,min=4,max=100"`
+		Role     model.Role `json:"role" validate:"required,oneof=admin manager seller"`
 	}
 
 	db := database.DB
@@ -28,7 +29,16 @@ func CreateUser(c *fiber.Ctx) error {
 		})
 	}
 
-	err := db.Create(&model.User{
+	validate := validator.New()
+	err := validate.Struct(json)
+	if err != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+			"code":    400,
+			"message": err.Error(),
+		})
+	}
+
+	err = db.Create(&model.User{
 		Username: json.Username,
 		Password: utils.HashAndSalt([]byte(json.Password)),
 		ID:       guuid.New(),
