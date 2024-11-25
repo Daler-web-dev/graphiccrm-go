@@ -10,6 +10,7 @@ import { Warehouse } from "./pages/warehouse/page";
 import { Product } from "./pages/warehouse/[id]/page";
 import { Prices } from "./pages/prices/page";
 import { Categories } from "./pages/caterogies/page";
+import { Agents } from "./pages/agents/page";
 
 function App() {
 	return (
@@ -51,7 +52,7 @@ function App() {
 					/>
 					<Route
 						path="/agents"
-						element={<div>some page with data</div>}
+						element={<Agents />}
 					/>
 				</Route>
 				{/* auth route layout */}
