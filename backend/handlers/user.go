@@ -18,7 +18,6 @@ func CreateUser(c *fiber.Ctx) error {
 		Password string     `json:"password" validate:"required,min=4,max=100"`
 		Role     model.Role `json:"role" validate:"required,oneof=admin manager seller"`
 	}
-
 	db := database.DB
 	json := new(CreateUserRequest)
 
@@ -50,7 +49,7 @@ func CreateUser(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"code":    200,
+		"code":    201,
 		"message": "success",
 	})
 }
@@ -77,7 +76,10 @@ func GetUserById(c *fiber.Ctx) error {
 			"message": "User not found",
 		})
 	}
-	return c.Status(fiber.StatusOK).JSON(user)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"code": 200,
+		"data": user,
+	})
 }
 func GetUsers(c *fiber.Ctx) error {
 	db := database.DB
@@ -93,25 +95,15 @@ func GetUsers(c *fiber.Ctx) error {
 
 func UpdateUser(c *fiber.Ctx) error {
 	type UpdateUserRequest struct {
-		Username string     `json:"username"`
-		Password string     `json:"password"`
-		Role     model.Role `json:"role"`
+		Username *string     `json:"username" validate:"required,min=3,max=50"`
+		Password *string     `json:"password" validate:"required,min=4,max=100"`
+		Role     *model.Role `json:"role" validate:"required,oneof=admin manager seller"`
 	}
 
 	db := database.DB
-	json := new(UpdateUserRequest)
-
-	// Parse the JSON body
-	if err := c.BodyParser(json); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"code":    400,
-			"message": "Invalid JSON",
-		})
-	}
-
-	// Parse the user ID from the URL parameter
 	param := c.Params("id")
 	id, err := guuid.Parse(param)
+
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"code":    400,
@@ -119,7 +111,21 @@ func UpdateUser(c *fiber.Ctx) error {
 		})
 	}
 
-	// Find the existing user in the database
+	var json UpdateUserRequest
+	if err := c.BodyParser(&json); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"code":    400,
+			"message": "Invalid JSON",
+		})
+	}
+
+	if err := validator.New().Struct(json); err != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+			"code":    422,
+			"message": err.Error(),
+		})
+	}
+
 	found := model.User{}
 	err = db.First(&found, "id = ?", id).Error
 	if err == gorm.ErrRecordNotFound {
@@ -134,20 +140,17 @@ func UpdateUser(c *fiber.Ctx) error {
 		})
 	}
 
-	// Update the fields if they are provided
-	if json.Username != "" {
-		found.Username = json.Username
+	if json.Username != nil {
+		found.Username = *json.Username
 	}
-	if json.Password != "" {
-		// Assuming password hashing is done before saving (for example, bcrypt)
-		hashedPassword := utils.HashAndSalt([]byte(json.Password))
+	if json.Password != nil {
+		hashedPassword := utils.HashAndSalt([]byte(*json.Password))
 		found.Password = hashedPassword
 	}
-	if json.Role != "" {
-		found.Role = json.Role
+	if json.Role != nil {
+		found.Role = *json.Role
 	}
 
-	// Save the updated user data
 	if err := db.Save(&found).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"code":    500,
@@ -155,7 +158,6 @@ func UpdateUser(c *fiber.Ctx) error {
 		})
 	}
 
-	// Return a success response
 	return c.JSON(fiber.Map{
 		"code":    200,
 		"message": "User updated successfully",
