@@ -3,6 +3,7 @@ package handlers
 import (
 	"backend/database"
 	"backend/model"
+	"backend/utils"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -53,7 +54,21 @@ func CreateCategory(c *fiber.Ctx) error {
 	})
 }
 
-// func GetAllCategories(c *fiber.Ctx) error {}
+func GetAllCategories(c *fiber.Ctx) error {
+	Categories := []model.Category{}
+
+	respons, err := utils.Paginate(database.DB, c, map[string]interface{}{}, &Categories)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"code":    500,
+			"message": "Failed to retrieve categories",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(respons)
+}
+
 // func GetCategoryById(c *fiber.Ctx) error  {}
 // func UpdateCategory(c *fiber.Ctx) error   {}
 // func DeleteCategory(c *fiber.Ctx) error   {}
