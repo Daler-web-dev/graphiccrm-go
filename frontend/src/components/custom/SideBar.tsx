@@ -1,6 +1,4 @@
-'use client'
-
-import { LayoutGrid, Users, History, Building2, DollarSign, List, LogOut, BookCheck } from 'lucide-react'
+import { LayoutGrid, Users, History, Building2, DollarSign, List, LogOut, SquareUser } from 'lucide-react'
 
 import {
     Sidebar,
@@ -63,7 +61,7 @@ export default function Component() {
                     <SidebarLink href="/warehouse" icon={Building2} label="Склад" pathname={pathname} />
                     <SidebarLink href="/prices" icon={DollarSign} label="Цены" pathname={pathname} />
                     <SidebarLink href="/categories" icon={List} label="Категории" pathname={pathname} />
-                    <SidebarLink href="/agents" icon={BookCheck} label="Агенты" pathname={pathname} />
+                    <SidebarLink href="/agents" icon={SquareUser} label="Агенты" pathname={pathname} />
                 </SidebarMenu>
             </SidebarContent>
 
