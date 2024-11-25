@@ -202,3 +202,39 @@ func UpdateClient(c *fiber.Ctx) error {
 		"data": client,
 	})
 }
+func DeleteClient(c *fiber.Ctx) error {
+	param := c.Params("id")
+	id, err := guuid.Parse(param)
+
+	if err != nil {
+		return c.JSON(fiber.Map{
+			"code":    400,
+			"message": "Invalid ID format",
+		})
+	}
+
+	db := database.DB
+	var found model.Client
+	err = db.First(&found, "id = ?", id).Error
+	if err == gorm.ErrRecordNotFound {
+		return c.JSON(fiber.Map{
+			"code":    404,
+			"message": "User not found",
+		})
+	}
+
+	err = db.Delete(&model.Client{}, "id = ?", id).Error
+
+	if err != nil {
+		return c.JSON(fiber.Map{
+			"code":    500,
+			"message": "Failed to delete user",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"code":    200,
+		"message": "User was removed",
+		"data":    found,
+	})
+}

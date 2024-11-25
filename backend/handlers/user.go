@@ -4,7 +4,6 @@ import (
 	"backend/database"
 	"backend/model"
 	"backend/utils"
-	"log"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -53,7 +52,6 @@ func CreateUser(c *fiber.Ctx) error {
 		"message": "success",
 	})
 }
-
 func GetUserById(c *fiber.Ctx) error {
 	db := database.DB
 	param := c.Params("id")
@@ -82,17 +80,19 @@ func GetUserById(c *fiber.Ctx) error {
 	})
 }
 func GetUsers(c *fiber.Ctx) error {
-	db := database.DB
 	Users := []model.User{}
-	db.Model(&model.User{}).Order("ID asc").Limit(100).Find(&Users)
 
-	return c.JSON(fiber.Map{
-		"code":    200,
-		"message": "success",
-		"data":    Users,
-	})
+	respons, err := utils.Paginate(database.DB, c, map[string]interface{}{}, &Users)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"code":    500,
+			"message": "Failed to retrieve clients",
+		})
+	}
+
+	return c.JSON(respons)
 }
-
 func UpdateUser(c *fiber.Ctx) error {
 	type UpdateUserRequest struct {
 		Username *string     `json:"username" validate:"required,min=3,max=50"`
@@ -176,7 +176,6 @@ func DeleteUser(c *fiber.Ctx) error {
 		})
 	}
 
-	// Проверка, существует ли пользователь с таким ID
 	var found model.User
 	err = db.First(&found, "id = ?", id).Error
 	if err == gorm.ErrRecordNotFound {
@@ -186,11 +185,9 @@ func DeleteUser(c *fiber.Ctx) error {
 		})
 	}
 
-	// Удаление пользователя
 	err = db.Delete(&model.User{}, "id = ?", id).Error
 
 	if err != nil {
-		log.Println("Error deleting user:", err)
 		return c.JSON(fiber.Map{
 			"code":    500,
 			"message": "Failed to delete user",

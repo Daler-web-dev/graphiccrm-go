@@ -25,6 +25,7 @@ func Initalize(router *fiber.App) {
 	clients.Get("/", handlers.GetAllClients)
 	clients.Get("/:id", handlers.GetClientById)
 	clients.Patch("/:id", handlers.UpdateClient)
+	clients.Delete("/:id", handlers.DeleteClient)
 
 	router.Post("/login", handlers.Login)
 }
