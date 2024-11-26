@@ -214,15 +214,6 @@ func DeleteClient(c *fiber.Ctx) error {
 	}
 
 	db := database.DB
-	var found model.Client
-	err = db.First(&found, "id = ?", id).Error
-	if err == gorm.ErrRecordNotFound {
-		return c.JSON(fiber.Map{
-			"code":    404,
-			"message": "Client not found",
-		})
-	}
-
 	err = db.Delete(&model.Client{}, "id = ?", id).Error
 
 	if err != nil {
@@ -235,6 +226,5 @@ func DeleteClient(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"code":    200,
 		"message": "Client was removed",
-		"data":    found,
 	})
 }
