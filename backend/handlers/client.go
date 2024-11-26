@@ -219,7 +219,7 @@ func DeleteClient(c *fiber.Ctx) error {
 	if err == gorm.ErrRecordNotFound {
 		return c.JSON(fiber.Map{
 			"code":    404,
-			"message": "User not found",
+			"message": "Client not found",
 		})
 	}
 
@@ -228,13 +228,13 @@ func DeleteClient(c *fiber.Ctx) error {
 	if err != nil {
 		return c.JSON(fiber.Map{
 			"code":    500,
-			"message": "Failed to delete user",
+			"message": "Failed to delete Client",
 		})
 	}
 
 	return c.JSON(fiber.Map{
 		"code":    200,
-		"message": "User was removed",
+		"message": "Client was removed",
 		"data":    found,
 	})
 }

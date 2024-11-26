@@ -29,10 +29,12 @@ func Initalize(router *fiber.App) {
 
 	categoriesAdmin := router.Group("/categories", middleware.ProtectRoute("admin"))
 	categoriesAdmin.Post("/", handlers.CreateCategory)
+	categoriesAdmin.Delete("/:id", handlers.DeleteCategory)
+	categoriesAdmin.Patch("/:id", handlers.UpdateCategory)
 
 	categoriesForAll := router.Group("/categories", middleware.ProtectRoute("admin", "seller", "manager"))
 	categoriesForAll.Get("/", handlers.GetAllCategories)
-	// categoriesForAll.Get("/:id", handlers.GetCategoryById)
+	categoriesForAll.Get("/:id", handlers.GetCategoryById)
 
 	router.Post("/login", handlers.Login)
 }

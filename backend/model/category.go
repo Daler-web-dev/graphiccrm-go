@@ -1,8 +1,12 @@
 package model
 
-import guuid "github.com/google/uuid"
+import (
+	guuid "github.com/google/uuid"
+	"gorm.io/gorm"
+)
 
 type Category struct {
-	ID   guuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
-	Name string     `json:"name" validate:"required" `
+	ID        guuid.UUID     `gorm:"type:uuid;primaryKey" json:"id"`
+	Name      string         `json:"name" validate:"required" `
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at"`
 }
