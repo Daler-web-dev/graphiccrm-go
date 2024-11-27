@@ -113,7 +113,8 @@ export const Warehouse: React.FC = () => {
 
     return (
         <>
-            <Card>
+            <Card className='relative'>
+                <Button className='absolute -top-16 right-0' onClick={() => navigate("/warehouse/addProduct")}>Добавить продукт</Button>
                 <CardHeader className='flex justify-between items-center'>
                     <div className='w-full flex flex-col justify-start items-start gap-1'>
                         <CardTitle>Список товаров</CardTitle>

@@ -6,6 +6,7 @@ import { Warehouse } from "./pages/warehouse/page";
 import { HistoryView } from "./pages/history/[id]/page";
 import { History } from "./pages/history/page";
 import { Dashboard } from "./pages/page";
+import { AddProduct } from "./pages/warehouse/addProduct/page";
 
 function App() {
 	return (
@@ -28,6 +29,10 @@ function App() {
 					<Route
 						path="/warehouse/:id"
 						element={<Product />}
+					/>
+					<Route
+						path="/warehouse/addProduct"
+						element={<AddProduct />}
 					/>
 				</Route>
 				<Route
