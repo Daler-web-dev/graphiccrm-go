@@ -250,27 +250,49 @@ export const History: React.FC = () => {
                     <TabsTrigger value="orders">Заказы</TabsTrigger>
                     <TabsTrigger value="debts">Долги</TabsTrigger>
                 </TabsList>
-                <TabsContent value="orders"><HistoryList title='История заказов' description='Здесь вы можете просмотреть историю заказов' data={orders} /></TabsContent>
-                <TabsContent value="debts"><HistoryList title='История заказов' description='Здесь вы можете просмотреть историю заказов' data={debts} /></TabsContent>
+                <TabsContent value="orders">
+                    <HistoryList title='История заказов' description='Здесь вы можете просмотреть историю заказов' data={orders} />
+                    <Card className='w-full mt-5'>
+                        <CardContent>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow className='hover:bg-transparent'>
+                                        <TableHead className='font-medium text-xl text-cLightBlue'>Итого количество</TableHead>
+                                        <TableHead className='font-medium text-xl text-cLightBlue'>Итого сумма</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    <TableRow className='text-left hover:bg-transparent'>
+                                        <TableCell className='font-bold text-2xl'>{orders.length}</TableCell>
+                                        <TableCell className='font-bold text-2xl'>{orders.reduce((acc, order) => acc + order.total, 0)} сум</TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+                <TabsContent value="debts">
+                    <HistoryList title='История заказов' description='Здесь вы можете просмотреть историю заказов' data={debts} />
+                    <Card className='w-full mt-5'>
+                        <CardContent>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow className='hover:bg-transparent'>
+                                        <TableHead className='font-medium text-xl text-cLightBlue'>Итого количество</TableHead>
+                                        <TableHead className='font-medium text-xl text-cLightBlue'>Итого сумма</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    <TableRow className='text-left hover:bg-transparent'>
+                                        <TableCell className='font-bold text-2xl'>{debts.length}</TableCell>
+                                        <TableCell className='font-bold text-2xl'>{debts.reduce((acc, order) => acc + order.total, 0)} сум</TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
             </Tabs>
-            <Card className='w-full mt-5'>
-                <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow className='hover:bg-transparent'>
-                                <TableHead className='font-medium text-xl text-cLightBlue'>Итого количество</TableHead>
-                                <TableHead className='font-medium text-xl text-cLightBlue'>Итого сумма</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            <TableRow className='text-left hover:bg-transparent'>
-                                <TableCell className='font-bold text-2xl'>{orders.length}</TableCell>
-                                <TableCell className='font-bold text-2xl'>{orders.reduce((acc, order) => acc + order.total, 0)} сум</TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
         </div>
     );
 };

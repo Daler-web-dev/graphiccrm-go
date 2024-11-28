@@ -29,12 +29,11 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ register, previewPlacehol
             />
             <label
                 htmlFor="imageUpload"
-                className="cursor-pointer absolute top-0 left-0 right-0 bottom-[60px] opacity-0"
+                className="cursor-pointer absolute top-0 left-0 right-0 bottom-0 opacity-0"
             >
                 <input
                     type="file"
                     id="imageUpload"
-                    className="hidden"
                     accept=".webp,.png,.jpg,.jpeg"
                     {...register}
                     onChange={handleFileChange}
