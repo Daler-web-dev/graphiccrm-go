@@ -82,7 +82,7 @@ export const AddProduct: React.FC = () => {
                             <input
                                 {...register('price')}
                                 id="price"
-                                className="w-[40%] outline-1 outline-gray-400 py-1.5 px-3 rounded-xl text-lg"
+                                className="w-[40%] outline-1 outline-gray-400 py-1.5 px-3 rounded-xl text-lg border border-cWhite"
                                 placeholder="Укажите стоимость"
                             />
                         </div>
@@ -103,7 +103,7 @@ export const AddProduct: React.FC = () => {
                             </label>
                             <input
                                 id="inWarehouse"
-                                className="w-[40%] outline-1 outline-gray-400 py-1.5 px-3 rounded-xl text-lg"
+                                className="w-[40%] outline-1 outline-gray-400 py-1.5 px-3 rounded-xl text-lg border border-cWhite"
                                 {...register('inWarehouse')}
                                 placeholder="Укажите количество на складе"
                             />
@@ -125,7 +125,7 @@ export const AddProduct: React.FC = () => {
                             </label>
                             <input
                                 id='width'
-                                className='w-[40%] outline-1 outline-gray-400 py-1.5 px-3 rounded-xl text-lg'
+                                className='w-[40%] outline-1 outline-gray-400 py-1.5 px-3 rounded-xl text-lg border border-cWhite'
                                 {...register("width")}
                                 placeholder='Укажите ширину'
                             />
