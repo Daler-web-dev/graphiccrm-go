@@ -9,6 +9,7 @@ import { HistoryView } from "./pages/history/[id]/page";
 import { NewOrder } from "./pages/newOrder/page";
 import { Editor } from "./pages/newOrder/editor/page";
 import { Checkout } from "./pages/newOrder/checkout/page";
+import { AddClient } from "./pages/users/addClient/page";
 
 function App() {
 	return (
@@ -23,6 +24,10 @@ function App() {
 					<Route
 						path="/users/:id"
 						element={<User />}
+					/>
+					<Route
+						path="/users/addClient"
+						element={<AddClient />}
 					/>
 					<Route
 						path="/history"
