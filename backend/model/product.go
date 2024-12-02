@@ -8,11 +8,11 @@ import (
 
 type Product struct {
 	ID         guuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
-	Name       string     `json:"name"`
-	Type       string     `json:"type"`
-	Unit       string     `json:"unit"`
-	Price      float64    `json:"price,omitempty"`
-	StockLevel int        `json:"stockLevel"`
+	Name       string     `json:"name" validate:"required,min=3,max=100"`
+	CategoryID string     `gorm:"type:uuid;not null" json:"categoryId" validate:"required,uuid"`
+	Category   *Category  `gorm:"foreignKey:CategoryID" json:"category"`
+	Price      float64    `json:"price,omitempty" validate:"gte=0"`
+	Amount     int64      `json:"amount" validate:"required,gte=0"`
 	CreatedAt  time.Time  `json:"createdAt"`
 	UpdatedAt  time.Time  `json:"updatedAt"`
 }

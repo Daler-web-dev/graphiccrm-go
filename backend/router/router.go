@@ -36,5 +36,9 @@ func Initalize(router *fiber.App) {
 	categoriesForAll.Get("/", handlers.GetAllCategories)
 	categoriesForAll.Get("/:id", handlers.GetCategoryById)
 
+	products := router.Group("/products", middleware.ProtectRoute("admin"))
+	products.Get("/", handlers.GetAllProducts)
+	products.Post("/", handlers.CreateProduct)
+
 	router.Post("/login", handlers.Login)
 }
