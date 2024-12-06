@@ -13,6 +13,7 @@ type Product struct {
 	Category   *Category  `gorm:"foreignKey:CategoryID" json:"category"`
 	Price      float64    `json:"price,omitempty" validate:"gte=0"`
 	Amount     int64      `json:"amount" validate:"required,gte=0"`
+	Images     []string   `gorm:"type:text[]" json:"images" validate:"required,dive,url,min=1,max=10"`
 	CreatedAt  time.Time  `json:"createdAt"`
 	UpdatedAt  time.Time  `json:"updatedAt"`
 }
