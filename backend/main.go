@@ -17,9 +17,9 @@ func main() {
 	app := fiber.New()
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://127.0.0.1:5500",                  // comma string format e.g. "localhost, nikschaefer.tech"
-		AllowMethods: "GET,POST,HEAD,PUT,DELETE,PATCH,OPTIONS", // Методы
-		AllowHeaders: "Authorization, Content-Type",            // Разрешённые заголовки
+		AllowOrigins: "*",
+		AllowMethods: "GET,POST,HEAD,PUT,DELETE,PATCH,OPTIONS",
+		AllowHeaders: "Authorization, Content-Type",
 	}))
 
 	app.Use(middleware.Security)
