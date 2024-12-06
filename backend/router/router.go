@@ -40,5 +40,8 @@ func Initalize(router *fiber.App) {
 	products.Get("/", handlers.GetAllProducts)
 	products.Post("/", handlers.CreateProduct)
 
+	uploads := router.Group("/upload", middleware.ProtectRoute("admin", "seller", "manager"))
+	uploads.Post("/", handlers.UploadImage)
+
 	router.Post("/login", handlers.Login)
 }

@@ -13,7 +13,7 @@ import (
 func GetAllProducts(c *fiber.Ctx) error {
 	Products := []model.Product{}
 
-	respons, err := utils.Paginate(database.DB, c, map[string]interface{}{}, &Products)
+	respons, err := utils.Paginate(database.DB.Preload("Category"), c, map[string]interface{}{}, &Products)
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
