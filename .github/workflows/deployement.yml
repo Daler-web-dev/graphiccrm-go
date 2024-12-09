@@ -19,9 +19,9 @@ jobs:
                   username: ${{ secrets.SSH_USER_PROD }}
                   source: ./
                   target: /var/www/app
-                  script: |
-                      sudo mkdir /var/www/
-                      sudo mkdir /var/www/app
+                  # script: |
+                  #     sudo mkdir /var/www/
+                  #     sudo mkdir /var/www/app
 
             - name: Rebuild project
               uses: appleboy/ssh-action@master
