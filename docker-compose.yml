@@ -1,6 +1,24 @@
 version: "3.9"
 
 services:
+    traefik:
+        image: traefik:v2.9
+        container_name: traefik
+        command:
+            - --api.insecure=true
+            - --providers.docker=true
+            - --entrypoints.web.address=:80
+            # - --entrypoints.websecure.address=:443
+            # - --certificatesresolvers.myresolver.acme.tlschallenge=true
+            # - --certificatesresolvers.myresolver.acme.email=dsarifkulo021@gmail.com
+            # - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+        ports:
+            - "80:80"
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            # - ./traefik_data:/letsencrypt
+        networks:
+            - dropin
     backend:
         build:
             context: ./backend
@@ -10,6 +28,12 @@ services:
             - dropin
         ports:
             - "8080:8080"
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
+            - "traefik.http.routers.backend.entrypoints=web"
+            - traefik.http.services.backend.loadbalancer.server.port=8080
+            # - "traefik.http.routers.backend.tls.certresolver=myresolver"
         environment:
             - ENV=production
             - jwt_secret=${jwt_secret}
@@ -25,6 +49,12 @@ services:
         container_name: frontend
         networks:
             - dropin
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.frontend.rule=PathPrefix(`/`) && !PathPrefix(`/api`)"
+            - "traefik.http.routers.frontend.entrypoints=web"
+            - traefik.http.services.frontend.loadbalancer.server.port=3000
+            # - "traefik.http.routers.frontend.tls.certresolver=myresolver"
         ports:
             - "3000:3000"
         depends_on:
