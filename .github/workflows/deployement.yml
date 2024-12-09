@@ -18,7 +18,7 @@ jobs:
                   host: ${{ secrets.SSH_HOST_PROD }}
                   username: ${{ secrets.SSH_USER_PROD }}
                   source: ./
-                  target: /var/www/app
+                  target: ./app
                   # script: |
                   #     sudo mkdir /var/www/
                   #     sudo mkdir /var/www/app
@@ -33,6 +33,6 @@ jobs:
                   command_timeout: 60m
                   script: |
                       chown -R ${USER} .
-                      docker compose --env-file /var/www/.env -f  /var/www/app/docker-compose.yml up -d --build
+                      docker compose --env-file ./app/.env -f  ./app/docker-compose.yml up -d --build
                       docker image rm app_backend app_frontend app_seller app_warehouse -f
                       # rm -rf /var/www/app/
