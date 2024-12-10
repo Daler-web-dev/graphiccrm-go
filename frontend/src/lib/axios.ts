@@ -6,10 +6,10 @@ import Axios, {
 	AxiosHeaders,
 } from "axios";
 
-const serverUrl = "https://dummyjson.com"; // process.env.REACT_APP_SERVER_URL as string | undefined;
+const serverUrl = import.meta.env.VITE_PUBLIC_API as string | undefined;
 
 if (!serverUrl) {
-	throw new Error("REACT_APP_SERVER_URL is not defined");
+	throw new Error("VITE_PUBLIC_API is not defined");
 }
 
 export const baseURL = `${serverUrl}`;
@@ -32,7 +32,7 @@ axios.interceptors.request.use(
 
 		if (token) {
 			config.headers.set("Authorization", `Bearer ${token}`);
-			config.headers.set("Access-Control-Allow-Credentials", "true");
+			// config.headers.set("Access-Control-Allow-Credentials", "true");
 			config.headers.set("Content-Type", "application/json");
 		}
 

@@ -3,11 +3,12 @@ import { toast } from "@/hooks/use-toast";
 import { Container } from "@/components/custom/Container";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { postRequest } from "@/lib/apiHandlers";
 
 interface SigninProps {}
 
 type Inputs = {
-	login: string;
+	username: string;
 	password: string;
 };
 
@@ -19,14 +20,26 @@ const Signin: React.FC<SigninProps> = () => {
 		formState: { errors },
 	} = useForm<Inputs>();
 
-	const onSubmit: SubmitHandler<Inputs> = (data) => {
-		console.log(data);
+	const onSubmit: SubmitHandler<Inputs> = async (data) => {
+		const res = await postRequest({
+			url: "/login",
+			data,
+		});
+
+		if (res.code === 200) {
+			toast({
+				title: "Авторизация",
+				description: "Авторизация прошла успешно",
+				variant: "default",
+			});
+			navigate("/");
+			return;
+		}
 		toast({
 			title: "Авторизация",
-			description: "Авторизация прошла успешно",
-			variant: "default",
+			description: res.message,
+			variant: "destructive",
 		});
-		navigate("/");
 	};
 	return (
 		<Container className="flex justify-center items-center min-h-screen">
@@ -47,11 +60,11 @@ const Signin: React.FC<SigninProps> = () => {
 						</label>
 						<input
 							id="login"
-							{...register("login", { required: true })}
+							{...register("username", { required: true })}
 							className="w-full border border-[#79747E] rounded-xl py-2 px-4 text-base font-normal placeholder:text-sm"
 							placeholder="Логин"
 						/>
-						{errors.login && (
+						{errors.username && (
 							<span className="font-normal text-sm text-red-500">
 								Поле обязательно для заполнения
 							</span>

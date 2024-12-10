@@ -15,13 +15,9 @@ export const getRequest = async ({ url, params = {} }: RequestOptions) => {
 	}
 };
 
-export const postRequest = async ({
-	url,
-	data = {},
-	params = {},
-}: RequestOptions) => {
+export const postRequest = async ({ url, data = {} }: RequestOptions) => {
 	try {
-		const res = await axios.post(url, data, { params });
+		const res = await axios.post(url, data);
 		return res.data;
 	} catch (err) {
 		return err;
