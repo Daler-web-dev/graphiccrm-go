@@ -48,15 +48,15 @@ func CreateProduct(c *fiber.Ctx) error {
 
 	DB := database.DB
 
-	var category model.Category
-	if err := DB.First(&category, "id = ?", product.CategoryID).Error; err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"code":    400,
-			"message": "Invalid category ID",
-		})
-	}
+	// var category model.Category
+	// if err := DB.First(&category, "id = ?", product.CategoryID).Error; err != nil {
+	// 	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+	// 		"code":    400,
+	// 		"message": "Invalid category ID",
+	// 	})
+	// }
 	product.ID = guuid.New()
-	product.Category = &category
+	// product.Category = &category
 
 	err := DB.Create(&product).Error
 
