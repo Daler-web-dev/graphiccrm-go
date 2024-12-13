@@ -146,27 +146,6 @@ func GetOrderByID(c *fiber.Ctx) error {
 func GetAllOrders(c *fiber.Ctx) error {
 	Orders := []model.Order{}
 
-	// preloads := c.Query("preload", "")
-
-	// query := database.DB
-
-	// if preloads != "" {
-	// 	preloadList := strings.Split(preloads, ",")
-	// 	for _, preload := range preloadList {
-	// 		preload = strings.TrimSpace(preload)
-	// 		switch preload {
-	// 		case "client":
-	// 			query = query.Preload("Client")
-	// 		case "salesperson":
-	// 			query = query.Preload("Salesperson")
-	// 		case "products":
-	// 			query = query.Preload("Products")
-	// 		case "product":
-	// 			query = query.Preload("Products.Product")
-	// 		}
-	// 	}
-	// }
-
 	respons, err := utils.Paginate(database.DB, c, map[string]interface{}{}, &Orders)
 
 	if err != nil {
