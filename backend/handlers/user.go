@@ -11,12 +11,32 @@ import (
 	"gorm.io/gorm"
 )
 
+// CreateUserRequest структура для создания пользователя
+type CreateUserRequest struct {
+	Username string     `json:"username" validate:"required,min=3,max=50"`
+	Password string     `json:"password" validate:"required,min=4,max=100"`
+	Role     model.Role `json:"role" validate:"required,oneof=admin manager seller"`
+}
+
+// UpdateUserRequest структура для обновления пользователя
+type UpdateUserRequest struct {
+	Username *string     `json:"username" validate:"required,min=3,max=50"`
+	Password *string     `json:"password" validate:"required,min=4,max=100"`
+	Role     *model.Role `json:"role" validate:"required,oneof=admin manager seller"`
+}
+
+// @Summary Создать пользователя
+// @Description Создаёт нового пользователя в системе
+// @Tags Пользователи
+// @Accept json
+// @Produce json
+// @Param data body CreateUserRequest true "Данные пользователя"
+// @Success 201 {object} map[string]string "Пользователь успешно создан"
+// @Failure 400 {object} map[string]string "Некорректный JSON"
+// @Failure 422 {object} map[string]string "Ошибка валидации данных"
+// @Failure 500 {object} map[string]string "Ошибка на сервере"
+// @Router /users [post]
 func CreateUser(c *fiber.Ctx) error {
-	type CreateUserRequest struct {
-		Username string     `json:"username" validate:"required,min=3,max=50"`
-		Password string     `json:"password" validate:"required,min=4,max=100"`
-		Role     model.Role `json:"role" validate:"required,oneof=admin manager seller"`
-	}
 	db := database.DB
 	json := new(CreateUserRequest)
 
@@ -52,6 +72,18 @@ func CreateUser(c *fiber.Ctx) error {
 		"message": "success",
 	})
 }
+
+// @Summary Получить пользователя
+// @Description Возвращает информацию о пользователе по его ID
+// @Tags Пользователи
+// @Accept json
+// @Produce json
+// @Param id path string true "ID пользователя"
+// @Success 200 {object} model.User "Данные пользователя"
+// @Failure 400 {object} map[string]string "Неверный формат ID"
+// @Failure 404 {object} map[string]string "Пользователь не найден"
+// @Failure 500 {object} map[string]string "Ошибка на сервере"
+// @Router /users/{id} [get]
 func GetUserById(c *fiber.Ctx) error {
 	db := database.DB
 	param := c.Params("id")
@@ -79,6 +111,17 @@ func GetUserById(c *fiber.Ctx) error {
 		"data": user,
 	})
 }
+
+// @Summary Получить список пользователей
+// @Description Возвращает список всех пользователей с поддержкой пагинации
+// @Tags Пользователи
+// @Accept json
+// @Produce json
+// @Param page query int false "Номер страницы (по умолчанию 1)"
+// @Param size query int false "Размер страницы (по умолчанию 10)"
+// @Success 200 {object} map[string]interface{} "Список пользователей"
+// @Failure 500 {object} map[string]string "Ошибка на сервере"
+// @Router /users [get]
 func GetUsers(c *fiber.Ctx) error {
 	Users := []model.User{}
 
@@ -93,13 +136,21 @@ func GetUsers(c *fiber.Ctx) error {
 
 	return c.JSON(respons)
 }
-func UpdateUser(c *fiber.Ctx) error {
-	type UpdateUserRequest struct {
-		Username *string     `json:"username" validate:"required,min=3,max=50"`
-		Password *string     `json:"password" validate:"required,min=4,max=100"`
-		Role     *model.Role `json:"role" validate:"required,oneof=admin manager seller"`
-	}
 
+// @Summary Обновить данные пользователя
+// @Description Обновляет информацию о пользователе по его ID
+// @Tags Пользователи
+// @Accept json
+// @Produce json
+// @Param id path string true "ID пользователя"
+// @Param data body UpdateUserRequest true "Обновляемые данные пользователя"
+// @Success 200 {object} map[string]interface{} "Пользователь успешно обновлён"
+// @Failure 400 {object} map[string]string "Неверный формат ID или JSON"
+// @Failure 404 {object} map[string]string "Пользователь не найден"
+// @Failure 422 {object} map[string]string "Ошибка валидации данных"
+// @Failure 500 {object} map[string]string "Ошибка на сервере"
+// @Router /users/{id} [put]
+func UpdateUser(c *fiber.Ctx) error {
 	db := database.DB
 	param := c.Params("id")
 	id, err := guuid.Parse(param)
@@ -164,6 +215,18 @@ func UpdateUser(c *fiber.Ctx) error {
 		"user":    found,
 	})
 }
+
+// @Summary Удалить пользователя
+// @Description Удаляет пользователя из системы по его ID
+// @Tags Пользователи
+// @Accept json
+// @Produce json
+// @Param id path string true "ID пользователя"
+// @Success 200 {object} map[string]interface{} "Пользователь успешно удалён"
+// @Failure 400 {object} map[string]string "Неверный формат ID"
+// @Failure 404 {object} map[string]string "Пользователь не найден"
+// @Failure 500 {object} map[string]string "Ошибка на сервере"
+// @Router /users/{id} [delete]
 func DeleteUser(c *fiber.Ctx) error {
 	db := database.DB
 	param := c.Params("id")

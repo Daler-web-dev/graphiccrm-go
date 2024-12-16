@@ -1,0 +1,414 @@
+definitions:
+  handlers.CreateUserRequest:
+    properties:
+      password:
+        maxLength: 100
+        minLength: 4
+        type: string
+      role:
+        allOf:
+        - $ref: '#/definitions/model.Role'
+        enum:
+        - admin
+        - manager
+        - seller
+      username:
+        maxLength: 50
+        minLength: 3
+        type: string
+    required:
+    - password
+    - role
+    - username
+    type: object
+  handlers.UpdateUserRequest:
+    properties:
+      password:
+        maxLength: 100
+        minLength: 4
+        type: string
+      role:
+        allOf:
+        - $ref: '#/definitions/model.Role'
+        enum:
+        - admin
+        - manager
+        - seller
+      username:
+        maxLength: 50
+        minLength: 3
+        type: string
+    required:
+    - password
+    - role
+    - username
+    type: object
+  model.Category:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updatedAt:
+        type: string
+    required:
+    - name
+    type: object
+  model.Client:
+    properties:
+      address:
+        type: string
+      contactInfo:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      purchaseHistory:
+        items:
+          $ref: '#/definitions/model.Order'
+        type: array
+      salespersonId:
+        type: string
+      updatedAt:
+        type: string
+    required:
+    - name
+    type: object
+  model.Order:
+    properties:
+      client:
+        $ref: '#/definitions/model.Client'
+      clientId:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: string
+      paymentMethod:
+        enum:
+        - cash
+        - transfer
+        - credit
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/model.OrderItem'
+        type: array
+      salesperson:
+        $ref: '#/definitions/model.User'
+      salespersonId:
+        type: string
+      status:
+        enum:
+        - pending
+        - in_production
+        - completed
+        - paid
+        type: string
+      totalPrice:
+        type: number
+      updatedAt:
+        type: string
+    required:
+    - clientId
+    - paymentMethod
+    - status
+    type: object
+  model.OrderItem:
+    properties:
+      id:
+        type: string
+      orderId:
+        type: string
+      product:
+        $ref: '#/definitions/model.Product'
+      productId:
+        type: string
+      quantity:
+        type: number
+      totalPrice:
+        description: PricePerUnit float64    `json:"pricePerUnit"`
+        type: number
+      unit:
+        type: string
+    required:
+    - productId
+    - unit
+    type: object
+  model.Product:
+    properties:
+      amount:
+        minimum: 0
+        type: number
+      category:
+        $ref: '#/definitions/model.Category'
+      categoryId:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: string
+      images:
+        items:
+          type: string
+        type: array
+      name:
+        maxLength: 100
+        minLength: 3
+        type: string
+      price:
+        minimum: 0
+        type: number
+      updatedAt:
+        type: string
+    required:
+    - amount
+    - categoryId
+    - images
+    - name
+    type: object
+  model.Role:
+    enum:
+    - admin
+    - manager
+    - seller
+    type: string
+    x-enum-varnames:
+    - AdminRole
+    - Manager
+    - Seller
+  model.User:
+    properties:
+      clients:
+        items:
+          $ref: '#/definitions/model.Client'
+        type: array
+      createdAt:
+        type: string
+      id:
+        type: string
+      orders:
+        items:
+          $ref: '#/definitions/model.Order'
+        type: array
+      role:
+        $ref: '#/definitions/model.Role'
+      updatedAt:
+        type: string
+      username:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is a sample swagger for Fiber
+  termsOfService: http://swagger.io/terms/
+  title: Fiber CRM-API
+  version: "1.0"
+paths:
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает список всех пользователей с поддержкой пагинации
+      parameters:
+      - description: Номер страницы (по умолчанию 1)
+        in: query
+        name: page
+        type: integer
+      - description: Размер страницы (по умолчанию 10)
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список пользователей
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Ошибка на сервере
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить список пользователей
+      tags:
+      - Пользователи
+    post:
+      consumes:
+      - application/json
+      description: Создаёт нового пользователя в системе
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Пользователь успешно создан
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Некорректный JSON
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: Ошибка валидации данных
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка на сервере
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Создать пользователя
+      tags:
+      - Пользователи
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Удаляет пользователя из системы по его ID
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Пользователь успешно удалён
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Неверный формат ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Пользователь не найден
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка на сервере
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Удалить пользователя
+      tags:
+      - Пользователи
+    get:
+      consumes:
+      - application/json
+      description: Возвращает информацию о пользователе по его ID
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Данные пользователя
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: Неверный формат ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Пользователь не найден
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка на сервере
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получить пользователя
+      tags:
+      - Пользователи
+    put:
+      consumes:
+      - application/json
+      description: Обновляет информацию о пользователе по его ID
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Обновляемые данные пользователя
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Пользователь успешно обновлён
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Неверный формат ID или JSON
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Пользователь не найден
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: Ошибка валидации данных
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка на сервере
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Обновить данные пользователя
+      tags:
+      - Пользователи
+swagger: "2.0"
