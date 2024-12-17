@@ -24,7 +24,7 @@ import (
 func main() {
 	godotenv.Load()
 	app := fiber.New()
-	app.Get("/swagger/*", swagger.HandlerDefault) // добавляем документацию по адресу /swagger/
+	app.Get("/api/swagger/*", swagger.HandlerDefault) // добавляем документацию по адресу /swagger/
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "http://localhost:5173/",
