@@ -11,6 +11,18 @@ import (
 	"github.com/google/uuid"
 )
 
+// UploadImage Загрузка одной картинки
+// @Summary		Загрузка одной картинки
+// @Description	Эта функция позволяет загружать одно изображение на сервер с проверкой размера и типа файла
+// @Tags			Images
+// @Accept			multipart/form-data
+// @Produce		json
+// @Param			image	formData	file					true	"Файл изображения"
+// @Success		201		{object}	map[string]interface{}	"Информация о загруженном файле: имя и URL"
+// @Failure		400		{object}	map[string]interface{}	"Неверный запрос или ошибка валидации"
+// @Failure		500		{object}	map[string]interface{}	"Ошибка сервера при сохранении файла"
+//
+// @Router			/images/upload [post]
 func UploadImage(c *fiber.Ctx) error {
 	file, err := c.FormFile("image")
 	if err != nil {

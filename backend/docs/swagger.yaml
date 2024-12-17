@@ -210,6 +210,372 @@ info:
   title: Fiber CRM-API
   version: "1.0"
 paths:
+  /images/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Эта функция позволяет загружать одно изображение на сервер с проверкой
+        размера и типа файла
+      parameters:
+      - description: Файл изображения
+        in: formData
+        name: image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: 'Информация о загруженном файле: имя и URL'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Неверный запрос или ошибка валидации
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Ошибка сервера при сохранении файла
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Загрузка одной картинки
+      tags:
+      - Images
+  /images/upload-many:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Эта функция позволяет загружать несколько изображений на сервер
+      parameters:
+      - description: Файлы изображений
+        in: formData
+        name: images
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Список загруженных файлов с их URL
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Неверный запрос или ошибка валидации
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Ошибка сервера при сохранении файла
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Загрузить несколько изображений
+      tags:
+      - Images
+  /orders:
+    get:
+      description: Эта функция возвращает список всех заказов с поддержкой пагинации.
+      parameters:
+      - default: 1
+        description: Номер страницы
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Количество элементов на странице
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список заказов с информацией о пагинации
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Ошибка сервера при получении списка заказов
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Получить список всех заказов
+      tags:
+      - Orders
+    post:
+      consumes:
+      - application/json
+      description: Эта функция позволяет продавцам и администраторам создать новый
+        заказ. Заказ должен содержать как минимум один продукт.
+      parameters:
+      - description: Данные нового заказа
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/model.Order'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Информация о созданном заказе
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Неверный запрос или некорректные данные заказа
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Недостаточно прав для создания заказа
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Один из указанных продуктов не найден
+          schema:
+            additionalProperties: true
+            type: object
+        "422":
+          description: Ошибка валидации данных
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Ошибка сервера при создании заказа
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Создать заказ
+      tags:
+      - Orders
+  /orders/{id}:
+    get:
+      description: Эта функция возвращает информацию о заказе по его уникальному идентификатору.
+        Заказ включает все продукты в нём.
+      parameters:
+      - description: UUID заказа
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Информация о заказе
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Некорректный формат UUID
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Заказ не найден
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Ошибка сервера при получении данных заказа
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Получить заказ
+      tags:
+      - Orders
+  /products:
+    get:
+      description: Эта функция возвращает список всех продуктов с пагинацией и возможностью
+        подгрузки категорий
+      parameters:
+      - default: 1
+        description: Номер страницы
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Количество элементов на странице
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список продуктов с информацией о пагинации
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Ошибка сервера при получении списка продуктов
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Получить список продуктов
+      tags:
+      - Products
+    post:
+      consumes:
+      - application/json
+      description: Эта функция позволяет создать новый продукт
+      parameters:
+      - description: Данные нового продукта
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/model.Product'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Информация о созданном продукте
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Неверный формат запроса
+          schema:
+            additionalProperties: true
+            type: object
+        "422":
+          description: Ошибка валидации данных
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Ошибка сервера при создании продукта
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Создать продукт
+      tags:
+      - Products
+  /products/{id}:
+    delete:
+      description: Эта функция удаляет продукт по его уникальному идентификатору
+      parameters:
+      - description: ID продукта
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Сообщение об успешном удалении
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Неверный формат запроса или отсутствующий ID
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Продукт не найден
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Ошибка сервера при удалении продукта
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Удалить продукт
+      tags:
+      - Products
+    get:
+      description: Эта функция возвращает информацию о продукте по его уникальному
+        идентификатору
+      parameters:
+      - description: ID продукта
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Информация о продукте
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Неверный запрос или отсутствующий ID
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Продукт не найден
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Ошибка сервера при получении продукта
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Получить продукт
+      tags:
+      - Products
+    put:
+      consumes:
+      - application/json
+      description: Эта функция обновляет информацию о продукте по его уникальному
+        идентификатору
+      parameters:
+      - description: ID продукта
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Данные для обновления продукта
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/model.Product'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Информация об обновлённом продукте
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Неверный формат запроса или отсутствующий ID
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Продукт не найден
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Ошибка сервера при обновлении продукта
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Обновить продукт
+      tags:
+      - Products
   /users:
     get:
       consumes:

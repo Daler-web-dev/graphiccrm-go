@@ -16,6 +16,21 @@ import (
 	"gorm.io/gorm/clause"
 )
 
+// CreateOrder Создать новый заказ
+//	@Summary		Создать заказ
+//	@Description	Эта функция позволяет продавцам и администраторам создать новый заказ. Заказ должен содержать как минимум один продукт.
+//	@Tags			Orders
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			order	body		model.Order				true	"Данные нового заказа"
+//	@Success		201		{object}	map[string]interface{}	"Информация о созданном заказе"
+//	@Failure		400		{object}	map[string]interface{}	"Неверный запрос или некорректные данные заказа"
+//	@Failure		403		{object}	map[string]interface{}	"Недостаточно прав для создания заказа"
+//	@Failure		422		{object}	map[string]interface{}	"Ошибка валидации данных"
+//	@Failure		404		{object}	map[string]interface{}	"Один из указанных продуктов не найден"
+//	@Failure		500		{object}	map[string]interface{}	"Ошибка сервера при создании заказа"
+//	@Router			/orders [post]
 func CreateOrder(c *fiber.Ctx) error {
 	user := c.Locals("user").(*auth.Claims)
 
@@ -108,6 +123,19 @@ func CreateOrder(c *fiber.Ctx) error {
 		"order":   order,
 	})
 }
+
+// GetOrderByID Получить заказ по ID
+//	@Summary		Получить заказ
+//	@Description	Эта функция возвращает информацию о заказе по его уникальному идентификатору. Заказ включает все продукты в нём.
+//	@Tags			Orders
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id	path		string					true	"UUID заказа"
+//	@Success		200	{object}	map[string]interface{}	"Информация о заказе"
+//	@Failure		400	{object}	map[string]interface{}	"Некорректный формат UUID"
+//	@Failure		404	{object}	map[string]interface{}	"Заказ не найден"
+//	@Failure		500	{object}	map[string]interface{}	"Ошибка сервера при получении данных заказа"
+//	@Router			/orders/{id} [get]
 func GetOrderByID(c *fiber.Ctx) error {
 	id, err := guuid.Parse(c.Params("id"))
 
@@ -143,6 +171,17 @@ func GetOrderByID(c *fiber.Ctx) error {
 	})
 }
 
+// GetAllOrders Получить список заказов
+//	@Summary		Получить список всех заказов
+//	@Description	Эта функция возвращает список всех заказов с поддержкой пагинации.
+//	@Tags			Orders
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			page	query		int						false	"Номер страницы"					default(1)
+//	@Param			limit	query		int						false	"Количество элементов на странице"	default(10)
+//	@Success		200		{object}	map[string]interface{}	"Список заказов с информацией о пагинации"
+//	@Failure		500		{object}	map[string]interface{}	"Ошибка сервера при получении списка заказов"
+//	@Router			/orders [get]
 func GetAllOrders(c *fiber.Ctx) error {
 	Orders := []model.Order{}
 

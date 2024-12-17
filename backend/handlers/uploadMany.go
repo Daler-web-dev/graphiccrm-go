@@ -11,6 +11,17 @@ import (
 	"github.com/google/uuid"
 )
 
+//	@Summary		Загрузить несколько изображений
+//	@Description	Эта функция позволяет загружать несколько изображений на сервер
+//	@Tags			Images
+//	@Accept			multipart/form-data
+//	@Produce		json
+//	@Param			images	formData	file					true	"Файлы изображений"	collectionFormat:	"multi"
+//	@Success		201		{object}	map[string]interface{}	"Список загруженных файлов с их URL"
+//	@Failure		400		{object}	map[string]interface{}	"Неверный запрос или ошибка валидации"
+//	@Failure		500		{object}	map[string]interface{}	"Ошибка сервера при сохранении файла"
+//
+//	@Router			/images/upload-many [post]
 func UploadMany(c *fiber.Ctx) error {
 	form, err := c.MultipartForm()
 	if err != nil {
