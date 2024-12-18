@@ -1,5 +1,5 @@
 # Указываем базовый образ
-FROM golang:1.20-alpine
+FROM golang:1.23-alpine
 
 # Устанавливаем рабочую директорию внутри контейнера
 WORKDIR /app

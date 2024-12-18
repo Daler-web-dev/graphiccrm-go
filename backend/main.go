@@ -7,12 +7,11 @@ import (
 	"backend/utils"
 	"log"
 
-	"github.com/gofiber/swagger"
-
 	_ "backend/docs"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/swagger"
 	"github.com/joho/godotenv"
 )
 
@@ -24,7 +23,7 @@ import (
 func main() {
 	godotenv.Load()
 	app := fiber.New()
-	app.Get("/api/swagger/*", swagger.HandlerDefault) // добавляем документацию по адресу /swagger/
+	app.Get("/api/swagger/*", swagger.HandlerDefault)
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "http://localhost:5173/",

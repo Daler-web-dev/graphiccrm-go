@@ -1,8 +1,6 @@
 module backend
 
-go 1.22.0
-
-toolchain go1.23.1
+go 1.23
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
@@ -11,6 +9,7 @@ require (
 	github.com/gofiber/swagger v1.1.0
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
+	github.com/swaggo/swag v1.16.4
 	golang.org/x/crypto v0.31.0
 	gorm.io/driver/postgres v1.5.9
 	gorm.io/gorm v1.25.12
@@ -43,7 +42,6 @@ require (
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/swaggo/files/v2 v2.0.1 // indirect
-	github.com/swaggo/swag v1.16.4 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.58.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
