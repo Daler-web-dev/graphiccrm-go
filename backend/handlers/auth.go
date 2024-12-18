@@ -9,6 +9,19 @@ import (
 	"gorm.io/gorm"
 )
 
+// Login Авторизация пользователя
+//	@Summary		Авторизация пользователя
+//	@Description	Эта функция позволяет пользователю войти в систему с помощью имени пользователя и пароля, и получить JWT-токен для дальнейшей аутентификации.
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		object					true	"Данные для авторизации"
+//	@Success		200		{object}	map[string]interface{}	"Успешная авторизация, возвращается JWT-токен"
+//	@Failure		400		{object}	map[string]interface{}	"Некорректный формат JSON"
+//	@Failure		401		{object}	map[string]interface{}	"Неверный пароль"
+//	@Failure		404		{object}	map[string]interface{}	"Имя пользователя не найдено"
+//	@Failure		500		{object}	map[string]interface{}	"Ошибка при генерации токена"
+//	@Router			/auth/login [post]
 func Login(c *fiber.Ctx) error {
 	type LoginRequest struct {
 		Username string `json:"username"`

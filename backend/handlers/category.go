@@ -12,6 +12,18 @@ import (
 	"gorm.io/gorm"
 )
 
+// CreateCategory Создать категорию
+//	@Summary		Создать категорию
+//	@Description	Эта функция позволяет создать новую категорию.
+//	@Tags			Categories
+//	@Accept			json
+//	@Produce		json
+//	@Param			category	body		model.Category			true	"Данные категории"
+//	@Success		201			{object}	map[string]interface{}	"Категория успешно создана"
+//	@Failure		400			{object}	map[string]interface{}	"Некорректные данные запроса"
+//	@Failure		409			{object}	map[string]interface{}	"Категория с таким именем уже существует"
+//	@Failure		500			{object}	map[string]interface{}	"Ошибка сервера при создании категории"
+//	@Router			/categories [post]
 func CreateCategory(c *fiber.Ctx) error {
 	category := new(model.Category)
 
@@ -55,6 +67,17 @@ func CreateCategory(c *fiber.Ctx) error {
 		"data":    category,
 	})
 }
+
+// GetAllCategories Получить все категории
+//	@Summary		Получить все категории
+//	@Description	Эта функция позволяет получить список всех категорий с поддержкой пагинации.
+//	@Tags			Categories
+//	@Produce		json
+//	@Param			page		query		int						false	"Номер страницы"
+//	@Param			pageSize	query		int						false	"Размер страницы"
+//	@Success		200			{object}	map[string]interface{}	"Список категорий"
+//	@Failure		500			{object}	map[string]interface{}	"Ошибка сервера при получении категорий"
+//	@Router			/categories [get]
 func GetAllCategories(c *fiber.Ctx) error {
 	Categories := []model.Category{}
 
@@ -69,6 +92,18 @@ func GetAllCategories(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(respons)
 }
+
+// GetCategoryById Получить категорию по ID
+//	@Summary		Получить категорию
+//	@Description	Эта функция позволяет получить информацию о категории по её уникальному идентификатору.
+//	@Tags			Categories
+//	@Produce		json
+//	@Param			id	path		string					true	"UUID категории"
+//	@Success		200	{object}	map[string]interface{}	"Информация о категории"
+//	@Failure		400	{object}	map[string]interface{}	"Некорректный формат UUID"
+//	@Failure		404	{object}	map[string]interface{}	"Категория не найдена"
+//	@Failure		500	{object}	map[string]interface{}	"Ошибка сервера при получении категории"
+//	@Router			/categories/{id} [get]
 func GetCategoryById(c *fiber.Ctx) error {
 	param := c.Params("id")
 
@@ -104,6 +139,21 @@ func GetCategoryById(c *fiber.Ctx) error {
 		"data": Category,
 	})
 }
+
+// UpdateCategory Обновить категорию
+//	@Summary		Обновить категорию
+//	@Description	Эта функция позволяет обновить данные категории по её уникальному идентификатору.
+//	@Tags			Categories
+//	@Accept			json
+//	@Produce		json
+//	@Param			id			path		string					true	"UUID категории"
+//	@Param			category	body		model.Category			true	"Новые данные категории"
+//	@Success		200			{object}	map[string]interface{}	"Категория успешно обновлена"
+//	@Failure		400			{object}	map[string]interface{}	"Некорректные данные запроса"
+//	@Failure		404			{object}	map[string]interface{}	"Категория не найдена"
+//	@Failure		409			{object}	map[string]interface{}	"Имя категории уже используется"
+//	@Failure		500			{object}	map[string]interface{}	"Ошибка сервера при обновлении категории"
+//	@Router			/categories/{id} [put]
 func UpdateCategory(c *fiber.Ctx) error {
 	id, err := guuid.Parse(c.Params("id"))
 	if err != nil {
@@ -165,6 +215,17 @@ func UpdateCategory(c *fiber.Ctx) error {
 		"data": category,
 	})
 }
+
+// DeleteCategory Удалить категорию
+//	@Summary		Удалить категорию
+//	@Description	Эта функция позволяет удалить категорию из базы данных по её уникальному идентификатору.
+//	@Tags			Categories
+//	@Produce		json
+//	@Param			id	path		string					true	"UUID категории"
+//	@Success		200	{object}	map[string]interface{}	"Категория успешно удалена"
+//	@Failure		400	{object}	map[string]interface{}	"Некорректный формат UUID"
+//	@Failure		500	{object}	map[string]interface{}	"Ошибка сервера при удалении категории"
+//	@Router			/categories/{id} [delete]
 func DeleteCategory(c *fiber.Ctx) error {
 	param := c.Params("id")
 	id, err := guuid.Parse(param)
