@@ -4,10 +4,12 @@ import (
 	"backend/database"
 	"backend/model"
 	"backend/utils"
+	"errors"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	guuid "github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 // GetAllProducts Получить список всех продуктов
@@ -51,10 +53,41 @@ func GetAllProducts(c *fiber.Ctx) error {
 //
 //	@Router			/products/{id} [get]
 func GetProductById(c *fiber.Ctx) error {
-	return nil
+	db := database.DB
+	id, err := guuid.Parse(c.Params("id"))
+
+	if err != nil {
+		return c.JSON(fiber.Map{
+			"code":    400,
+			"message": "Invalid UUID Format",
+		})
+	}
+
+	Product := new(model.Product)
+	err = db.Where("id = ?", id).First(Product).Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"code":    404,
+				"message": "Product not found",
+			})
+		}
+
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"code":    500,
+			"message": "Internal Server Error",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"code": 200,
+		"data": Product,
+	})
 }
 
 // CreateProduct Создать новый продукт
+//
 //	@Summary		Создать продукт
 //	@Description	Эта функция позволяет создать новый продукт
 //	@Tags			Products
