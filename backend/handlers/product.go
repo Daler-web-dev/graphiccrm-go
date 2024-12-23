@@ -12,6 +12,17 @@ import (
 	"gorm.io/gorm"
 )
 
+type UpdateProductRequest struct {
+	Name       *string   `json:"name" validate:"omitempty,min=3,max=100"`
+	CategoryID *string   `json:"categoryId" validate:"omitempty,uuid"`
+	Width      *string   `json:"width" validate:"omitempty"`
+	Height     *string   `json:"height" validate:"omitempty"`
+	Price      *float64  `json:"price" validate:"omitempty,gte=0"`
+	Unit       *string   `json:"unit" validate:"omitempty,oneof=piece meter"`
+	Amount     *float64  `json:"amount" validate:"omitempty,gte=0"`
+	Images     *[]string `json:"images" validate:"omitempty,dive,url,min=1,max=10"`
+}
+
 // GetAllProducts Получить список всех продуктов
 //
 //	@Summary		Получить список продуктов
@@ -163,8 +174,82 @@ func CreateProduct(c *fiber.Ctx) error {
 //
 //	@Router			/products/{id} [put]
 func UpdateProduct(c *fiber.Ctx) error {
+	id, err := guuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"code":    400,
+			"message": "Invalid UUID format for Product ID",
+		})
+	}
 
-	return nil
+	var body UpdateProductRequest
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"code":    400,
+			"message": "Invalid request body",
+		})
+	}
+
+	if err := validator.New().Struct(body); err != nil {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+			"code":    422,
+			"message": err.Error(),
+		})
+	}
+
+	var product model.Product
+	db := database.DB
+
+	if err := db.First(&product, "id = ?", id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"code":    404,
+				"message": "Product not found",
+			})
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"code":    500,
+			"message": "Internal Server Error",
+		})
+	}
+
+	if body.Name != nil {
+		product.Name = *body.Name
+	}
+	if body.CategoryID != nil {
+		product.CategoryID = *body.CategoryID
+	}
+	if body.Width != nil {
+		product.Width = *body.Width
+	}
+	if body.Height != nil {
+		product.Height = *body.Height
+	}
+	if body.Price != nil {
+		product.Price = *body.Price
+	}
+	if body.Unit != nil {
+		product.Unit = *body.Unit
+	}
+	if body.Amount != nil {
+		product.Amount = *body.Amount
+	}
+	if body.Images != nil {
+		product.Images = *body.Images
+	}
+
+	if err := db.Save(&product).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"code":    500,
+			"message": "Failed to update product",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"code":    200,
+		"message": "Product updated successfully",
+		"data":    product,
+	})
 }
 
 // DeleteProduct Удалить продукт
