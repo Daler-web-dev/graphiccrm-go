@@ -55,12 +55,10 @@ function App() {
 						element={<Agents />}
 					/>
 				</Route>
-				{/* auth route layout */}
 				<Route
 					path="/auth"
 					element={
 						<div>
-							{/* another layout should be placed here */}
 							<Outlet />{" "}
 						</div>
 					}
