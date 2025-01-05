@@ -41,7 +41,7 @@ const chartConfig = {
 
 export function Chart() {
 	return (
-		<Card className="">
+		<Card>
 			<CardHeader className="w-full flex justify-between items-center px-8">
 				<div>
 					<CardTitle className="text-cBlack">Дэшборд</CardTitle>

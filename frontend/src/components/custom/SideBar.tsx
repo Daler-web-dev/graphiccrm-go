@@ -1,92 +1,49 @@
+import { useNavigate } from 'react-router-dom'
 import { LayoutGrid, Users, History, Building2, DollarSign, List, LogOut, SquareUser } from 'lucide-react'
 
-import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarHeader,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-} from '@/components/ui/sidebar'
-import { Button } from '../ui/button'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { toast } from '@/hooks/use-toast'
-import clsx from 'clsx'
-
-function SidebarLink({ href, icon: Icon, label, pathname }: { href: string; icon: React.ComponentType; label: string; pathname: string }) {
-    const isActive = pathname === href
-
+const SidebarItem = ({ href, icon: Icon, label, isActive }: { href: string; icon: React.ComponentType; label: string; isActive: boolean }) => {
+    const navigate = useNavigate()
     return (
-        <SidebarMenuItem>
-            <SidebarMenuButton variant={"custom"} asChild tooltip={label}>
-                <a
-                    href={href}
-                    className={clsx(
-                        "flex items-center gap-3 py-3 px-3 rounded-md text-base font-normal",
-                        isActive ? "bg-cGradientBg text-white shadow-md" : "text-cDarkBlue hover:bg-gray-100"
-                    )}
-                >
-                    <Icon />
-                    <span className="group-data-[collapsible=icon]:hidden">{label}</span>
-                </a>
-            </SidebarMenuButton>
-        </SidebarMenuItem>
+        <div
+            onClick={() => navigate(href)}
+            className={`flex items-center gap-3 p-3 rounded-md cursor-pointer ${isActive ? 'bg-blue-500 text-white' : 'text-gray-700 hover:bg-gray-100'}`}
+        >
+            <Icon />
+            <span className='text-base font-normal'>{label}</span>
+        </div>
     )
 }
 
-export default function Component() {
+export default function Sidebar() {
     const navigate = useNavigate()
-    const { pathname } = useLocation()
+    const currentPath = window.location.pathname
 
     return (
-        <Sidebar variant="sidebar" collapsible="icon" className="border-r bg-white py-8">
-            <SidebarHeader>
-                <div className="flex items-center justify-between">
-                    <div className="text-3xl font-bold bg-cGradientBg bg-clip-text text-transparent group-data-[collapsible=icon]:hidden px-3.5">ЛОГО</div>
-                    <h1 className="hidden text-3xl leading-6 font-bold bg-cGradientBg bg-clip-text text-transparent group-data-[collapsible=icon]:block">
-                        <div className="flex flex-col items-start">
-                            <span>ЛО</span>
-                            <span>ГО</span>
-                        </div>
-                    </h1>
-                </div>
-            </SidebarHeader>
+        <div className="w-64 fixed top-5 bottom-5 bg-white border rounded-lg flex flex-col">
+            <div className="text-4xl font-bold bg-cGradientBg bg-clip-text text-transparent py-5 text-start px-3.5">Графичекий редактор</div>
 
-            <SidebarContent className="px-3.5 pt-20">
-                <SidebarMenu>
-                    <SidebarLink href="/" icon={LayoutGrid} label="Панель управления" pathname={pathname} />
-                    <SidebarLink href="/users" icon={Users} label="Клиенты" pathname={pathname} />
-                    <SidebarLink href="/history" icon={History} label="История" pathname={pathname} />
-                    <SidebarLink href="/warehouse" icon={Building2} label="Склад" pathname={pathname} />
-                    <SidebarLink href="/prices" icon={DollarSign} label="Цены" pathname={pathname} />
-                    <SidebarLink href="/categories" icon={List} label="Категории" pathname={pathname} />
-                    <SidebarLink href="/agents" icon={SquareUser} label="Агенты" pathname={pathname} />
-                </SidebarMenu>
-            </SidebarContent>
+            <nav className="flex-1 px-4 py-6 space-y-2">
+                <SidebarItem href="/" icon={LayoutGrid} label="Панель управления" isActive={currentPath === '/'} />
+                <SidebarItem href="/users" icon={Users} label="Клиенты" isActive={currentPath === '/users'} />
+                <SidebarItem href="/history" icon={History} label="История" isActive={currentPath === '/history'} />
+                <SidebarItem href="/warehouse" icon={Building2} label="Склад" isActive={currentPath === '/warehouse'} />
+                <SidebarItem href="/prices" icon={DollarSign} label="Цены" isActive={currentPath === '/prices'} />
+                <SidebarItem href="/categories" icon={List} label="Категории" isActive={currentPath === '/categories'} />
+                <SidebarItem href="/agents" icon={SquareUser} label="Агенты" isActive={currentPath === '/agents'} />
+            </nav>
 
-            <SidebarFooter className="mt-auto border-t px-4">
-                <div className="space-y-2 group-data-[collapsible=icon]:hidden">
-                    <h2 className="text-3xl font-medium">Имя Фамилия</h2>
-                    <p className="text-xl text-muted-foreground">Разрешение/Статус</p>
-                    <p className="text-sm text-muted-foreground">Ваш токен истечет через несколько дней</p>
-                </div>
-                <Button
-                    variant={"ghost"}
+            <div className="px-4 border-t py-4">
+                <button
                     onClick={() => {
                         navigate('/auth/signin')
-                        toast({
-                            title: "Выход из системы",
-                            description: "Вы успешно вышли из системы",
-                            variant: "default",
-                        })
+                        alert('Вы успешно вышли из системы')
                     }}
-                    className="text-[#FF3D3D] hover:text-[#ff5050] flex justify-start p-1"
+                    className="flex items-center text-red-500 hover:text-red-600"
                 >
-                    <LogOut className="h-4 w-4" />
-                    <span className="group-data-[collapsible=icon]:hidden">Выход</span>
-                </Button>
-            </SidebarFooter>
-        </Sidebar>
+                    <LogOut />
+                    <span className="ml-2">Выход</span>
+                </button>
+            </div>
+        </div>
     )
 }
