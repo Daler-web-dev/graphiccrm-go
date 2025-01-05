@@ -10,6 +10,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	guuid "github.com/google/uuid"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type UpdateProductRequest struct {
@@ -75,7 +76,7 @@ func GetProductById(c *fiber.Ctx) error {
 	}
 
 	Product := new(model.Product)
-	err = db.Where("id = ?", id).First(Product).Error
+	err = db.Where("id = ?", id).Preload(clause.Associations).First(Product).Error
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
