@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export const Users: React.FC = () => {
+export const Clients: React.FC = () => {
     const navigate = useNavigate();
 
     const clients = [

@@ -1,9 +1,7 @@
 import { Outlet, Route, Routes } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import Signin from "./pages/signin/Signin";
-import { Users } from "./pages/users/page";
 import { Dashboard } from "./pages/page";
-import { User } from "./pages/users/[id]/page";
 import { History } from "./pages/history/page";
 import { HistoryView } from "./pages/history/[id]/page";
 import { Warehouse } from "./pages/warehouse/page";
@@ -11,6 +9,8 @@ import { Product } from "./pages/warehouse/[id]/page";
 import { Prices } from "./pages/prices/page";
 import { Categories } from "./pages/caterogies/page";
 import { Agents } from "./pages/agents/page";
+import { Clients } from "./pages/clients/page";
+import { Client } from "./pages/clients/[id]/page";
 
 function App() {
 	return (
@@ -20,11 +20,11 @@ function App() {
 					<Route index element={<Dashboard />} />
 					<Route
 						path="/users"
-						element={<Users />}
+						element={<Clients />}
 					/>
 					<Route
 						path="/users/:id"
-						element={<User />}
+						element={<Client />}
 					/>
 					<Route
 						path="/history"

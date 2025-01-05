@@ -6,7 +6,7 @@ import Axios, {
 	AxiosHeaders,
 } from "axios";
 
-const serverUrl = import.meta.env.VITE_PUBLIC_API as string | undefined;
+const serverUrl = import.meta.env.VITE_API_URL as string | undefined;
 
 if (!serverUrl) {
 	throw new Error("VITE_PUBLIC_API is not defined");
