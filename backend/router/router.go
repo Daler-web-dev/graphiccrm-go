@@ -13,7 +13,8 @@ func Initalize(router *fiber.App) {
 		return c.Status(200).SendString("Hello to the crm world!")
 	})
 
-	users := router.Group("/api/users", middleware.ProtectRoute("admin"))
+	// users := router.Group("/api/users", middleware.ProtectRoute("admin"))
+	users := router.Group("/api/users")
 	users.Get("/", handlers.GetUsers)
 	users.Post("/", handlers.CreateUser)
 	users.Get("/:id", handlers.GetUserById)
