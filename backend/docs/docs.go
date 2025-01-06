@@ -752,15 +752,16 @@ const docTemplate = `{
                     "200": {
                         "description": "Список заказов с информацией о пагинации",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Order"
+                            }
                         }
                     },
                     "500": {
                         "description": "Ошибка сервера при получении списка заказов",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }
@@ -797,43 +798,37 @@ const docTemplate = `{
                     "201": {
                         "description": "Информация о созданном заказе",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/model.Order"
                         }
                     },
                     "400": {
                         "description": "Неверный запрос или некорректные данные заказа",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "403": {
                         "description": "Недостаточно прав для создания заказа",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "404": {
                         "description": "Один из указанных продуктов не найден",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "422": {
                         "description": "Ошибка валидации данных",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "500": {
                         "description": "Ошибка сервера при создании заказа",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }
@@ -867,29 +862,25 @@ const docTemplate = `{
                     "200": {
                         "description": "Информация о заказе",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/model.Order"
                         }
                     },
                     "400": {
                         "description": "Некорректный формат UUID",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "404": {
                         "description": "Заказ не найден",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "500": {
                         "description": "Ошибка сервера при получении данных заказа",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }

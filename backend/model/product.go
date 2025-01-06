@@ -18,7 +18,7 @@ type Product struct {
 	Unit       string         `json:"unit" validate:"required,oneof=piece meter"`
 	Amount     float64        `json:"amount" validate:"required,gte=0"`
 	Images     []string       `gorm:"type:text[]" json:"images" validate:"required,dive,url,min=1,max=10"`
-	DeletedAt  gorm.DeletedAt `gorm:"index"  json:"deleted_at"`
+	DeletedAt  gorm.DeletedAt `gorm:"index" swaggerignore:"true" json:"deleted_at"`
 	CreatedAt  time.Time      `json:"createdAt"`
 	UpdatedAt  time.Time      `json:"updatedAt"`
 }

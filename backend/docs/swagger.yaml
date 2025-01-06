@@ -758,13 +758,13 @@ paths:
         "200":
           description: Список заказов с информацией о пагинации
           schema:
-            additionalProperties: true
-            type: object
+            items:
+              $ref: '#/definitions/model.Order'
+            type: array
         "500":
           description: Ошибка сервера при получении списка заказов
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       security:
       - BearerAuth: []
       summary: Получить список всех заказов
@@ -788,33 +788,27 @@ paths:
         "201":
           description: Информация о созданном заказе
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/model.Order'
         "400":
           description: Неверный запрос или некорректные данные заказа
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "403":
           description: Недостаточно прав для создания заказа
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "404":
           description: Один из указанных продуктов не найден
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "422":
           description: Ошибка валидации данных
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка сервера при создании заказа
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       security:
       - BearerAuth: []
       summary: Создать заказ
@@ -836,23 +830,19 @@ paths:
         "200":
           description: Информация о заказе
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/model.Order'
         "400":
           description: Некорректный формат UUID
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "404":
           description: Заказ не найден
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка сервера при получении данных заказа
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       security:
       - BearerAuth: []
       summary: Получить заказ
