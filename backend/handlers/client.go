@@ -18,6 +18,13 @@ type UpdateClientRequest struct {
 	ContactInfo *string `json:"contactInfo" validate:"omitempty"`
 	Address     *string `json:"address" validate:"omitempty,min=5"`
 }
+type CreateClientRequest struct {
+	Name        string `json:"name" validate:"required" `
+	Surname     string `json:"surname" validate:"required" `
+	ContactInfo string `json:"contactInfo" validate:"omitempty"`
+	Address     string `json:"address"`
+	Note        string `json:"Note" validate:"omitempty"`
+}
 
 // CreateClient Создать нового клиента
 //
@@ -27,21 +34,22 @@ type UpdateClientRequest struct {
 //	@Accept			json
 //	@Produce		json
 //	@Security		BearerAuth
-//	@Param			client	body		model.Client			true	"Данные нового клиента"
-//	@Success		201		{object}	map[string]interface{}	"Информация о созданном клиенте"
-//	@Failure		400		{object}	map[string]interface{}	"Некорректные данные запроса"
-//	@Failure		403		{object}	map[string]interface{}	"Недостаточно прав для создания клиента"
-//	@Failure		409		{object}	map[string]interface{}	"Контактные данные уже используются другим клиентом"
-//	@Failure		422		{object}	map[string]interface{}	"Ошибка валидации данных"
-//	@Failure		500		{object}	map[string]interface{}	"Ошибка сервера при создании клиента"
+//	@Param			client	body		CreateClientRequest	true	"Данные нового клиента"
+//	@Success		201		{object}	model.Client		"Информация о созданном клиенте"
+//	@Failure		400		{object}	APIError			"Некорректные данные запроса"
+//	@Failure		403		{object}	APIError			"Недостаточно прав для создания клиента"
+//	@Failure		409		{object}	APIError			"Контактные данные уже используются другим клиентом"
+//	@Failure		422		{object}	APIError			"Ошибка валидации данных"
+//	@Failure		500		{object}	APIError			"Ошибка сервера при создании клиента"
 //	@Router			/clients [post]
 func CreateClient(c *fiber.Ctx) error {
 	user := c.Locals("user").(*auth.Claims)
 
 	if user.Role != "seller" && user.Role != "admin" {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"code":    403,
+			"status":  403,
 			"message": "Insufficient permissions to create a client",
+			"success": false,
 		})
 	}
 
@@ -49,8 +57,9 @@ func CreateClient(c *fiber.Ctx) error {
 
 	if err := c.BodyParser(client); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"code":    400,
+			"status":  400,
 			"message": "Invalid request",
+			"success": false,
 		})
 	}
 
@@ -58,16 +67,18 @@ func CreateClient(c *fiber.Ctx) error {
 	err := validate.Struct(client)
 	if err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"code":    400,
+			"status":  400,
 			"message": err.Error(),
+			"success": false,
 		})
 	}
 
 	var existingClient model.Client
 	if err := database.DB.Where("contact_info = ?", client.ContactInfo).First(&existingClient).Error; err == nil {
 		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
-			"code":    409,
+			"status":  409,
 			"message": "Client with this contact info already exists",
+			"success": false,
 		})
 	}
 
@@ -77,15 +88,17 @@ func CreateClient(c *fiber.Ctx) error {
 	// Сохранение клиента в базе данных
 	if err := database.DB.Create(&client).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"code":    500,
+			"status":  500,
 			"message": "Could not create client",
+			"success": false,
 		})
 	}
 
 	// Возвращаем данные созданного клиента
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"code":    201,
+		"status":  201,
 		"message": "Client created successfully",
+		"success": true,
 		"data":    client,
 	})
 }
@@ -97,10 +110,10 @@ func CreateClient(c *fiber.Ctx) error {
 //	@Tags			Clients
 //	@Produce		json
 //	@Security		BearerAuth
-//	@Param			page	query		int						false	"Номер страницы"					default(1)
-//	@Param			limit	query		int						false	"Количество элементов на странице"	default(10)
-//	@Success		200		{object}	map[string]interface{}	"Список клиентов с информацией о пагинации"
-//	@Failure		500		{object}	map[string]interface{}	"Ошибка сервера при получении списка клиентов"
+//	@Param			page	query		int				false	"Номер страницы"					default(1)
+//	@Param			limit	query		int				false	"Количество элементов на странице"	default(10)
+//	@Success		200		{array}		model.Client	"Список клиентов с информацией о пагинации"
+//	@Failure		500		{object}	APIError		"Ошибка сервера при получении списка клиентов"
 //	@Router			/clients [get]
 func GetAllClients(c *fiber.Ctx) error {
 	user := c.Locals("user").(*auth.Claims)
@@ -117,8 +130,9 @@ func GetAllClients(c *fiber.Ctx) error {
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"code":    500,
+			"status":  500,
 			"message": "Failed to retrieve clients",
+			"success": false,
 		})
 	}
 
@@ -132,11 +146,11 @@ func GetAllClients(c *fiber.Ctx) error {
 //	@Tags			Clients
 //	@Produce		json
 //	@Security		BearerAuth
-//	@Param			id	path		string					true	"UUID клиента"
-//	@Success		200	{object}	map[string]interface{}	"Информация о клиенте"
-//	@Failure		400	{object}	map[string]interface{}	"Некорректный формат UUID"
-//	@Failure		404	{object}	map[string]interface{}	"Клиент не найден"
-//	@Failure		500	{object}	map[string]interface{}	"Ошибка сервера при получении данных клиента"
+//	@Param			id	path		string			true	"UUID клиента"
+//	@Success		200	{object}	model.Client	"Информация о клиенте"
+//	@Failure		400	{object}	APIError		"Некорректный формат UUID"
+//	@Failure		404	{object}	APIError		"Клиент не найден"
+//	@Failure		500	{object}	APIError		"Ошибка сервера при получении данных клиента"
 //	@Router			/clients/{id} [get]
 func GetClientById(c *fiber.Ctx) error {
 	db := database.DB
@@ -147,8 +161,9 @@ func GetClientById(c *fiber.Ctx) error {
 
 	if err != nil {
 		return c.JSON(fiber.Map{
-			"code":    400,
+			"status":  400,
 			"message": "Invalid UUID Format",
+			"success": false,
 		})
 	}
 
@@ -162,20 +177,24 @@ func GetClientById(c *fiber.Ctx) error {
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"code":    404,
+				"status":  404,
 				"message": "Client not found",
+				"success": false,
 			})
 		}
 
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"code":    500,
+			"status":  500,
 			"message": "Internal Server Error",
+			"success": false,
 		})
 	}
 
 	return c.JSON(fiber.Map{
-		"code": 200,
-		"data": Client,
+		"status":  200,
+		"success": true,
+		"message": "success",
+		"data":    Client,
 	})
 }
 
@@ -187,36 +206,39 @@ func GetClientById(c *fiber.Ctx) error {
 //	@Accept			json
 //	@Produce		json
 //	@Security		BearerAuth
-//	@Param			id		path		string					true	"UUID клиента"
-//	@Param			client	body		UpdateClientRequest		true	"Данные для обновления клиента"
-//	@Success		200		{object}	map[string]interface{}	"Информация об обновлённом клиенте"
-//	@Failure		400		{object}	map[string]interface{}	"Некорректный формат UUID или запроса"
-//	@Failure		404		{object}	map[string]interface{}	"Клиент не найден"
-//	@Failure		409		{object}	map[string]interface{}	"Контактные данные уже используются другим клиентом"
-//	@Failure		422		{object}	map[string]interface{}	"Ошибка валидации данных"
-//	@Failure		500		{object}	map[string]interface{}	"Ошибка сервера при обновлении клиента"
+//	@Param			id		path		string				true	"UUID клиента"
+//	@Param			client	body		UpdateClientRequest	true	"Данные для обновления клиента"
+//	@Success		200		{object}	model.Client		"Информация об обновлённом клиенте"
+//	@Failure		400		{object}	APIError			"Некорректный формат UUID или запроса"
+//	@Failure		404		{object}	APIError			"Клиент не найден"
+//	@Failure		409		{object}	APIError			"Контактные данные уже используются другим клиентом"
+//	@Failure		422		{object}	APIError			"Ошибка валидации данных"
+//	@Failure		500		{object}	APIError			"Ошибка сервера при обновлении клиента"
 //	@Router			/clients/{id} [put]
 func UpdateClient(c *fiber.Ctx) error {
 	clientID, err := guuid.Parse(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"code":    400,
+			"status":  400,
 			"message": "Invalid UUID format for Client ID",
+			"success": false,
 		})
 	}
 
 	var json UpdateClientRequest
 	if err := c.BodyParser(&json); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"code":    400,
+			"status":  400,
 			"message": "Invalid request body",
+			"success": false,
 		})
 	}
 
 	if err := validator.New().Struct(json); err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"code":    422,
+			"status":  422,
 			"message": err.Error(),
+			"success": false,
 		})
 	}
 
@@ -225,21 +247,24 @@ func UpdateClient(c *fiber.Ctx) error {
 	if err := db.First(&client, "id = ?", clientID).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"code":    404,
+				"status":  404,
 				"message": "Client not found",
+				"success": false,
 			})
 		}
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"code":    500,
+			"status":  500,
 			"message": "Internal Server Error",
+			"success": false,
 		})
 	}
 
 	var existingClient model.Client
 	if err := db.First(&existingClient, "contact_info = ? AND id != ?", json.ContactInfo, clientID).Error; err == nil {
 		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
-			"code":    409,
+			"status":  409,
 			"message": "ContactInfo is already used by another client",
+			"success": false,
 		})
 	}
 
@@ -254,14 +279,17 @@ func UpdateClient(c *fiber.Ctx) error {
 	}
 	if err := db.Save(&client).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"code":    500,
+			"status":  500,
 			"message": "Failed to update client",
+			"success": false,
 		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"code": 200,
-		"data": client,
+		"status":  200,
+		"success": true,
+		"message": "success",
+		"data":    client,
 	})
 }
 
@@ -272,10 +300,10 @@ func UpdateClient(c *fiber.Ctx) error {
 //	@Tags			Clients
 //	@Produce		json
 //	@Security		BearerAuth
-//	@Param			id	path		string					true	"UUID клиента"
-//	@Success		200	{object}	map[string]interface{}	"Клиент успешно удалён"
-//	@Failure		400	{object}	map[string]interface{}	"Некорректный формат UUID"
-//	@Failure		500	{object}	map[string]interface{}	"Ошибка сервера при удалении клиента"
+//	@Param			id	path		string			true	"UUID клиента"
+//	@Success		200	{object}	model.Client	"Клиент успешно удалён"
+//	@Failure		400	{object}	APIError		"Некорректный формат UUID"
+//	@Failure		500	{object}	APIError		"Ошибка сервера при удалении клиента"
 //	@Router			/clients/{id} [delete]
 func DeleteClient(c *fiber.Ctx) error {
 	param := c.Params("id")
@@ -283,23 +311,28 @@ func DeleteClient(c *fiber.Ctx) error {
 
 	if err != nil {
 		return c.JSON(fiber.Map{
-			"code":    400,
+			"status":  400,
+			"success": false,
 			"message": "Invalid ID format",
 		})
 	}
 
 	db := database.DB
-	err = db.Delete(&model.Client{}, "id = ?", id).Error
+	user := model.Client{}
+	err = db.Delete(&user, "id = ?", id).Error
 
 	if err != nil {
 		return c.JSON(fiber.Map{
-			"code":    500,
+			"status":  500,
+			"success": false,
 			"message": "Failed to delete Client",
 		})
 	}
 
 	return c.JSON(fiber.Map{
-		"code":    200,
+		"status":  200,
+		"data":    user,
+		"success": true,
 		"message": "Client was removed",
 	})
 }

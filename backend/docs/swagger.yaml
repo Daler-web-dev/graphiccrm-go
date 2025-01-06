@@ -8,6 +8,22 @@ definitions:
       success:
         type: boolean
     type: object
+  handlers.CreateClientRequest:
+    properties:
+      Note:
+        type: string
+      address:
+        type: string
+      contactInfo:
+        type: string
+      name:
+        type: string
+      surname:
+        type: string
+    required:
+    - name
+    - surname
+    type: object
   handlers.CreateUserRequest:
     properties:
       password:
@@ -489,13 +505,13 @@ paths:
         "200":
           description: Список клиентов с информацией о пагинации
           schema:
-            additionalProperties: true
-            type: object
+            items:
+              $ref: '#/definitions/model.Client'
+            type: array
         "500":
           description: Ошибка сервера при получении списка клиентов
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       security:
       - BearerAuth: []
       summary: Получить список клиентов
@@ -512,40 +528,34 @@ paths:
         name: client
         required: true
         schema:
-          $ref: '#/definitions/model.Client'
+          $ref: '#/definitions/handlers.CreateClientRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Информация о созданном клиенте
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/model.Client'
         "400":
           description: Некорректные данные запроса
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "403":
           description: Недостаточно прав для создания клиента
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "409":
           description: Контактные данные уже используются другим клиентом
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "422":
           description: Ошибка валидации данных
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка сервера при создании клиента
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       security:
       - BearerAuth: []
       summary: Создать клиента
@@ -567,18 +577,15 @@ paths:
         "200":
           description: Клиент успешно удалён
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/model.Client'
         "400":
           description: Некорректный формат UUID
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка сервера при удалении клиента
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       security:
       - BearerAuth: []
       summary: Удалить клиента
@@ -599,23 +606,19 @@ paths:
         "200":
           description: Информация о клиенте
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/model.Client'
         "400":
           description: Некорректный формат UUID
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "404":
           description: Клиент не найден
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка сервера при получении данных клиента
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       security:
       - BearerAuth: []
       summary: Получить клиента
@@ -644,33 +647,27 @@ paths:
         "200":
           description: Информация об обновлённом клиенте
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/model.Client'
         "400":
           description: Некорректный формат UUID или запроса
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "404":
           description: Клиент не найден
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "409":
           description: Контактные данные уже используются другим клиентом
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "422":
           description: Ошибка валидации данных
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка сервера при обновлении клиента
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       security:
       - BearerAuth: []
       summary: Обновить клиента

@@ -371,15 +371,16 @@ const docTemplate = `{
                     "200": {
                         "description": "Список клиентов с информацией о пагинации",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Client"
+                            }
                         }
                     },
                     "500": {
                         "description": "Ошибка сервера при получении списка клиентов",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }
@@ -408,7 +409,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Client"
+                            "$ref": "#/definitions/handlers.CreateClientRequest"
                         }
                     }
                 ],
@@ -416,43 +417,37 @@ const docTemplate = `{
                     "201": {
                         "description": "Информация о созданном клиенте",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/model.Client"
                         }
                     },
                     "400": {
                         "description": "Некорректные данные запроса",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "403": {
                         "description": "Недостаточно прав для создания клиента",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "409": {
                         "description": "Контактные данные уже используются другим клиентом",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "422": {
                         "description": "Ошибка валидации данных",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "500": {
                         "description": "Ошибка сервера при создании клиента",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }
@@ -486,29 +481,25 @@ const docTemplate = `{
                     "200": {
                         "description": "Информация о клиенте",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/model.Client"
                         }
                     },
                     "400": {
                         "description": "Некорректный формат UUID",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "404": {
                         "description": "Клиент не найден",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "500": {
                         "description": "Ошибка сервера при получении данных клиента",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }
@@ -552,43 +543,37 @@ const docTemplate = `{
                     "200": {
                         "description": "Информация об обновлённом клиенте",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/model.Client"
                         }
                     },
                     "400": {
                         "description": "Некорректный формат UUID или запроса",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "404": {
                         "description": "Клиент не найден",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "409": {
                         "description": "Контактные данные уже используются другим клиентом",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "422": {
                         "description": "Ошибка валидации данных",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "500": {
                         "description": "Ошибка сервера при обновлении клиента",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }
@@ -620,22 +605,19 @@ const docTemplate = `{
                     "200": {
                         "description": "Клиент успешно удалён",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/model.Client"
                         }
                     },
                     "400": {
                         "description": "Некорректный формат UUID",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "500": {
                         "description": "Ошибка сервера при удалении клиента",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }
@@ -1442,6 +1424,30 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "handlers.CreateClientRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "surname"
+            ],
+            "properties": {
+                "Note": {
+                    "type": "string"
+                },
+                "address": {
+                    "type": "string"
+                },
+                "contactInfo": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "surname": {
+                    "type": "string"
                 }
             }
         },
