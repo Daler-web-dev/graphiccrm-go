@@ -925,15 +925,16 @@ const docTemplate = `{
                     "200": {
                         "description": "Список продуктов с информацией о пагинации",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Product"
+                            }
                         }
                     },
                     "500": {
                         "description": "Ошибка сервера при получении списка продуктов",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }
@@ -965,29 +966,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Информация о созданном продукте",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/model.Product"
                         }
                     },
                     "400": {
                         "description": "Неверный формат запроса",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "422": {
                         "description": "Ошибка валидации данных",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "500": {
                         "description": "Ошибка сервера при создании продукта",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }
@@ -1016,29 +1013,25 @@ const docTemplate = `{
                     "200": {
                         "description": "Информация о продукте",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/model.Product"
                         }
                     },
                     "400": {
                         "description": "Неверный запрос или отсутствующий ID",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "404": {
                         "description": "Продукт не найден",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "500": {
                         "description": "Ошибка сервера при получении продукта",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }
@@ -1077,29 +1070,25 @@ const docTemplate = `{
                     "200": {
                         "description": "Информация об обновлённом продукте",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/model.Product"
                         }
                     },
                     "400": {
                         "description": "Неверный формат запроса или отсутствующий ID",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "404": {
                         "description": "Продукт не найден",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "500": {
                         "description": "Ошибка сервера при обновлении продукта",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }
@@ -1126,29 +1115,13 @@ const docTemplate = `{
                     "200": {
                         "description": "Сообщение об успешном удалении",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/model.Product"
                         }
                     },
                     "400": {
                         "description": "Неверный формат запроса или отсутствующий ID",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "404": {
-                        "description": "Продукт не найден",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Ошибка сервера при удалении продукта",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }

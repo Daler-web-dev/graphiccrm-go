@@ -318,8 +318,8 @@ func DeleteClient(c *fiber.Ctx) error {
 	}
 
 	db := database.DB
-	user := model.Client{}
-	err = db.Delete(&user, "id = ?", id).Error
+	client := model.Client{}
+	err = db.Delete(&client, "id = ?", id).Error
 
 	if err != nil {
 		return c.JSON(fiber.Map{
@@ -331,7 +331,7 @@ func DeleteClient(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{
 		"status":  200,
-		"data":    user,
+		"data":    client,
 		"success": true,
 		"message": "Client was removed",
 	})
