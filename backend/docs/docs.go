@@ -1203,17 +1203,16 @@ const docTemplate = `{
                     "200": {
                         "description": "Список пользователей",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.User"
+                            }
                         }
                     },
                     "500": {
                         "description": "Ошибка на сервере",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }
@@ -1245,37 +1244,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Пользователь успешно создан",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/model.User"
                         }
                     },
                     "400": {
                         "description": "Некорректный JSON",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "422": {
                         "description": "Ошибка валидации данных",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "500": {
                         "description": "Ошибка на сервере",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }
@@ -1313,28 +1300,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Неверный формат ID",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "404": {
                         "description": "Пользователь не найден",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "500": {
                         "description": "Ошибка на сервере",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }
@@ -1373,44 +1351,31 @@ const docTemplate = `{
                     "200": {
                         "description": "Пользователь успешно обновлён",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/model.User"
                         }
                     },
                     "400": {
                         "description": "Неверный формат ID или JSON",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "404": {
                         "description": "Пользователь не найден",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "422": {
                         "description": "Ошибка валидации данных",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "500": {
                         "description": "Ошибка на сервере",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }
@@ -1440,35 +1405,25 @@ const docTemplate = `{
                     "200": {
                         "description": "Пользователь успешно удалён",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/model.User"
                         }
                     },
                     "400": {
                         "description": "Неверный формат ID",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "404": {
                         "description": "Пользователь не найден",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "500": {
                         "description": "Ошибка на сервере",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }
@@ -1476,6 +1431,20 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "handlers.APIError": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "handlers.CreateUserRequest": {
             "type": "object",
             "required": [
@@ -1579,9 +1548,13 @@ const docTemplate = `{
         "model.Client": {
             "type": "object",
             "required": [
-                "name"
+                "name",
+                "surname"
             ],
             "properties": {
+                "Note": {
+                    "type": "string"
+                },
                 "address": {
                     "type": "string"
                 },
@@ -1604,6 +1577,9 @@ const docTemplate = `{
                     }
                 },
                 "salespersonId": {
+                    "type": "string"
+                },
+                "surname": {
                     "type": "string"
                 },
                 "updatedAt": {
@@ -1671,8 +1647,7 @@ const docTemplate = `{
         "model.OrderItem": {
             "type": "object",
             "required": [
-                "productId",
-                "unit"
+                "productId"
             ],
             "properties": {
                 "id": {
@@ -1691,11 +1666,8 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "totalPrice": {
-                    "description": "PricePerUnit float64    ` + "`" + `json:\"pricePerUnit\"` + "`" + `",
+                    "description": "Unit      string     ` + "`" + `json:\"unit\" validate:\"required, oneof=piece meter\"` + "`" + `\nPricePerUnit float64    ` + "`" + `json:\"pricePerUnit\"` + "`" + `",
                     "type": "number"
-                },
-                "unit": {
-                    "type": "string"
                 }
             }
         },
@@ -1705,7 +1677,8 @@ const docTemplate = `{
                 "amount",
                 "categoryId",
                 "images",
-                "name"
+                "name",
+                "unit"
             ],
             "properties": {
                 "amount": {
@@ -1719,6 +1692,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "createdAt": {
+                    "type": "string"
+                },
+                "height": {
                     "type": "string"
                 },
                 "id": {
@@ -1739,7 +1715,17 @@ const docTemplate = `{
                     "type": "number",
                     "minimum": 0
                 },
+                "unit": {
+                    "type": "string",
+                    "enum": [
+                        "piece",
+                        "meter"
+                    ]
+                },
                 "updatedAt": {
+                    "type": "string"
+                },
+                "width": {
                     "type": "string"
                 }
             }
@@ -1795,8 +1781,8 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "ec2-43-207-54-55.ap-northeast-1.compute.amazonaws.com",
-	BasePath:         "/api",
+	Host:             "",
+	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "Fiber CRM-API",
 	Description:      "This is a sample swagger for Fiber",

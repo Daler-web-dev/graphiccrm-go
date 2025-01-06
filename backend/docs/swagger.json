@@ -1195,17 +1195,16 @@
                     "200": {
                         "description": "Список пользователей",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.User"
+                            }
                         }
                     },
                     "500": {
                         "description": "Ошибка на сервере",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }
@@ -1237,37 +1236,25 @@
                     "201": {
                         "description": "Пользователь успешно создан",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/model.User"
                         }
                     },
                     "400": {
                         "description": "Некорректный JSON",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "422": {
                         "description": "Ошибка валидации данных",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "500": {
                         "description": "Ошибка на сервере",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }
@@ -1305,28 +1292,19 @@
                     "400": {
                         "description": "Неверный формат ID",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "404": {
                         "description": "Пользователь не найден",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "500": {
                         "description": "Ошибка на сервере",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }
@@ -1365,44 +1343,31 @@
                     "200": {
                         "description": "Пользователь успешно обновлён",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/model.User"
                         }
                     },
                     "400": {
                         "description": "Неверный формат ID или JSON",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "404": {
                         "description": "Пользователь не найден",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "422": {
                         "description": "Ошибка валидации данных",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "500": {
                         "description": "Ошибка на сервере",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }
@@ -1432,35 +1397,25 @@
                     "200": {
                         "description": "Пользователь успешно удалён",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/model.User"
                         }
                     },
                     "400": {
                         "description": "Неверный формат ID",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "404": {
                         "description": "Пользователь не найден",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "500": {
                         "description": "Ошибка на сервере",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     }
                 }
@@ -1468,6 +1423,20 @@
         }
     },
     "definitions": {
+        "handlers.APIError": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "handlers.CreateUserRequest": {
             "type": "object",
             "required": [
@@ -1571,9 +1540,13 @@
         "model.Client": {
             "type": "object",
             "required": [
-                "name"
+                "name",
+                "surname"
             ],
             "properties": {
+                "Note": {
+                    "type": "string"
+                },
                 "address": {
                     "type": "string"
                 },
@@ -1596,6 +1569,9 @@
                     }
                 },
                 "salespersonId": {
+                    "type": "string"
+                },
+                "surname": {
                     "type": "string"
                 },
                 "updatedAt": {
@@ -1663,8 +1639,7 @@
         "model.OrderItem": {
             "type": "object",
             "required": [
-                "productId",
-                "unit"
+                "productId"
             ],
             "properties": {
                 "id": {
@@ -1683,11 +1658,8 @@
                     "type": "number"
                 },
                 "totalPrice": {
-                    "description": "PricePerUnit float64    `json:\"pricePerUnit\"`",
+                    "description": "Unit      string     `json:\"unit\" validate:\"required, oneof=piece meter\"`\nPricePerUnit float64    `json:\"pricePerUnit\"`",
                     "type": "number"
-                },
-                "unit": {
-                    "type": "string"
                 }
             }
         },
@@ -1697,7 +1669,8 @@
                 "amount",
                 "categoryId",
                 "images",
-                "name"
+                "name",
+                "unit"
             ],
             "properties": {
                 "amount": {
@@ -1711,6 +1684,9 @@
                     "type": "string"
                 },
                 "createdAt": {
+                    "type": "string"
+                },
+                "height": {
                     "type": "string"
                 },
                 "id": {
@@ -1731,7 +1707,17 @@
                     "type": "number",
                     "minimum": 0
                 },
+                "unit": {
+                    "type": "string",
+                    "enum": [
+                        "piece",
+                        "meter"
+                    ]
+                },
                 "updatedAt": {
+                    "type": "string"
+                },
+                "width": {
                     "type": "string"
                 }
             }

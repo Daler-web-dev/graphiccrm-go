@@ -37,7 +37,9 @@ func Paginate(db *gorm.DB, c *fiber.Ctx, filter interface{}, result interface{})
 
 	// Формируем ответ с данными и метаинформацией
 	response := fiber.Map{
-		"data": result,
+		"data":    result,
+		"success": true,
+		"message": "success",
 		"pagination": fiber.Map{
 			"page":       page,
 			"pageSize":   pageSize,

@@ -1,4 +1,13 @@
 definitions:
+  handlers.APIError:
+    properties:
+      message:
+        type: string
+      status:
+        type: integer
+      success:
+        type: boolean
+    type: object
   handlers.CreateUserRequest:
     properties:
       password:
@@ -69,6 +78,8 @@ definitions:
     type: object
   model.Client:
     properties:
+      Note:
+        type: string
       address:
         type: string
       contactInfo:
@@ -85,10 +96,13 @@ definitions:
         type: array
       salespersonId:
         type: string
+      surname:
+        type: string
       updatedAt:
         type: string
     required:
     - name
+    - surname
     type: object
   model.Order:
     properties:
@@ -143,13 +157,12 @@ definitions:
       quantity:
         type: number
       totalPrice:
-        description: PricePerUnit float64    `json:"pricePerUnit"`
+        description: |-
+          Unit      string     `json:"unit" validate:"required, oneof=piece meter"`
+          PricePerUnit float64    `json:"pricePerUnit"`
         type: number
-      unit:
-        type: string
     required:
     - productId
-    - unit
     type: object
   model.Product:
     properties:
@@ -161,6 +174,8 @@ definitions:
       categoryId:
         type: string
       createdAt:
+        type: string
+      height:
         type: string
       id:
         type: string
@@ -175,13 +190,21 @@ definitions:
       price:
         minimum: 0
         type: number
+      unit:
+        enum:
+        - piece
+        - meter
+        type: string
       updatedAt:
+        type: string
+      width:
         type: string
     required:
     - amount
     - categoryId
     - images
     - name
+    - unit
     type: object
   model.Role:
     enum:
@@ -1039,14 +1062,13 @@ paths:
         "200":
           description: Список пользователей
           schema:
-            additionalProperties: true
-            type: object
+            items:
+              $ref: '#/definitions/model.User'
+            type: array
         "500":
           description: Ошибка на сервере
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       summary: Получить список пользователей
       tags:
       - Users
@@ -1067,27 +1089,19 @@ paths:
         "201":
           description: Пользователь успешно создан
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/model.User'
         "400":
           description: Некорректный JSON
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "422":
           description: Ошибка валидации данных
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка на сервере
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       summary: Создать пользователя
       tags:
       - Users
@@ -1108,26 +1122,19 @@ paths:
         "200":
           description: Пользователь успешно удалён
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/model.User'
         "400":
           description: Неверный формат ID
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "404":
           description: Пользователь не найден
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка на сервере
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       summary: Удалить пользователя
       tags:
       - Users
@@ -1151,21 +1158,15 @@ paths:
         "400":
           description: Неверный формат ID
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "404":
           description: Пользователь не найден
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка на сервере
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       summary: Получить пользователя
       tags:
       - Users
@@ -1191,32 +1192,23 @@ paths:
         "200":
           description: Пользователь успешно обновлён
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/model.User'
         "400":
           description: Неверный формат ID или JSON
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "404":
           description: Пользователь не найден
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "422":
           description: Ошибка валидации данных
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка на сервере
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       summary: Обновить данные пользователя
       tags:
       - Users
