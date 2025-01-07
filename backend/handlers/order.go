@@ -373,5 +373,50 @@ func UpdateOrder(c *fiber.Ctx) error {
 }
 
 func DeleteOrder(c *fiber.Ctx) error {
-	return nil
+	id, err := guuid.Parse(c.Params("id"))
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status":  400,
+			"success": false,
+			"message": "Invalid ID format",
+		})
+	}
+
+	db := database.DB
+	tx := db.Begin()
+	defer tx.Rollback()
+
+	err = tx.Where("order_id = ?", id).Delete(&model.OrderItem{}).Error
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  500,
+			"success": false,
+			"message": "Failed to delete OrderItems",
+		})
+	}
+
+	err = tx.Delete(&model.Order{}, id).Error
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  500,
+			"success": false,
+			"message": "Failed to delete Order",
+		})
+	}
+
+	err = tx.Commit().Error
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  500,
+			"success": false,
+			"message": "Failed to commit transaction",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"status":  200,
+		"success": true,
+		"message": "Order was removed",
+	})
 }

@@ -1,6 +1,8 @@
 package model
 
-import guuid "github.com/google/uuid"
+import (
+	guuid "github.com/google/uuid"
+)
 
 type OrderItem struct {
 	ID        guuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
