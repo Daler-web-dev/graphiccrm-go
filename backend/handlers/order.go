@@ -224,6 +224,16 @@ func GetAllOrders(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(respons)
 }
 
+// UpdateOrder Изменить заказ
+//
+//	@Summary	Изменить можно любой
+//	@Tags		Orders
+//	@Produce	json
+//	@Security	BearerAuth
+//	@Param		id	path		string		true	"UUID заказа"
+//	@Success	200	{object}	model.Order	"Измененный объект заказа"
+//	@Failure	500	{object}	APIError	"Ошибка сервера при обновлении данных"
+//	@Router		/orders [patch]
 func UpdateOrder(c *fiber.Ctx) error {
 	id, err := guuid.Parse(c.Params("id"))
 	if err != nil {
@@ -372,6 +382,16 @@ func UpdateOrder(c *fiber.Ctx) error {
 	})
 }
 
+// DeleteOrder Удаление заказа
+//
+//	@Summary	Удаления заказа
+//	@Tags		Orders
+//	@Produce	json
+//	@Security	BearerAuth
+//	@Param		id	path		string				true	"UUID заказа"
+//	@Success	200	{object}	map[string]string	"Успешно"
+//	@Failure	500	{object}	APIError			"Ошибка сервера при удалении"
+//	@Router		/orders [delete]
 func DeleteOrder(c *fiber.Ctx) error {
 	id, err := guuid.Parse(c.Params("id"))
 

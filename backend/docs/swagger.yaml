@@ -739,6 +739,31 @@ paths:
       tags:
       - Images
   /orders:
+    delete:
+      parameters:
+      - description: UUID заказа
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешно
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка сервера при удалении
+          schema:
+            $ref: '#/definitions/handlers.APIError'
+      security:
+      - BearerAuth: []
+      summary: Удаления заказа
+      tags:
+      - Orders
     get:
       description: Эта функция возвращает список всех заказов с поддержкой пагинации.
       parameters:
@@ -768,6 +793,29 @@ paths:
       security:
       - BearerAuth: []
       summary: Получить список всех заказов
+      tags:
+      - Orders
+    patch:
+      parameters:
+      - description: UUID заказа
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Измененный объект заказа
+          schema:
+            $ref: '#/definitions/model.Order'
+        "500":
+          description: Ошибка сервера при обновлении данных
+          schema:
+            $ref: '#/definitions/handlers.APIError'
+      security:
+      - BearerAuth: []
+      summary: Изменить можно любой
       tags:
       - Orders
     post:
