@@ -12,6 +12,7 @@ type Client struct {
 	Surname         string     `json:"surname" validate:"required" `
 	ContactInfo     string     `json:"contactInfo" validate:"omitempty"`
 	Address         string     `json:"address"`
+	Balance         int64      `json:"balance"`
 	Note            string     `json:"Note" validate:"omitempty"`
 	SalespersonID   guuid.UUID `json:"salespersonId"`
 	PurchaseHistory []Order    `gorm:"foreignKey:ClientID" json:"purchaseHistory"`
