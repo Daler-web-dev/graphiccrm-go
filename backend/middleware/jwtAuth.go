@@ -24,7 +24,7 @@ func ProtectRoute(allowedRoles ...model.Role) fiber.Handler {
 		authHeader := c.Get("Authorization")
 		if authHeader == "" {
 			return c.Status(http.StatusUnauthorized).JSON(fiber.Map{
-				"code":    401,
+				"status":  401,
 				"message": "Unauthorized",
 			})
 		}
@@ -33,7 +33,7 @@ func ProtectRoute(allowedRoles ...model.Role) fiber.Handler {
 		headerParts := strings.Split(authHeader, " ")
 		if len(headerParts) != 2 || headerParts[0] != "Bearer" {
 			return c.Status(http.StatusUnauthorized).JSON(fiber.Map{
-				"code":    401,
+				"status":  401,
 				"message": "Invalid Authorization header format",
 			})
 		}
@@ -42,7 +42,7 @@ func ProtectRoute(allowedRoles ...model.Role) fiber.Handler {
 		tokenString := headerParts[1]
 		if len(tokenString) > 1024 {
 			return c.Status(http.StatusUnauthorized).JSON(fiber.Map{
-				"code":    401,
+				"status":  401,
 				"message": "Token too large",
 			})
 		}
@@ -59,7 +59,7 @@ func ProtectRoute(allowedRoles ...model.Role) fiber.Handler {
 		// Token validity and expiration check
 		if err != nil || !token.Valid || claims.ExpiresAt < time.Now().Unix() {
 			return c.Status(http.StatusUnauthorized).JSON(fiber.Map{
-				"code":    401,
+				"status":  401,
 				"message": "Unauthorized",
 			})
 		}
@@ -75,7 +75,7 @@ func ProtectRoute(allowedRoles ...model.Role) fiber.Handler {
 
 		if !roleAllowed {
 			return c.Status(http.StatusForbidden).JSON(fiber.Map{
-				"code":    403,
+				"status":  403,
 				"message": "Insufficient role",
 			})
 		}

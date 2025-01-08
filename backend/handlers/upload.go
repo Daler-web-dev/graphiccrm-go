@@ -91,7 +91,7 @@ func UploadImage(c *fiber.Ctx) error {
 
 	// Возвращаем ответ
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"code":    201,
+		"status":  201,
 		"message": "Image uploaded successfully",
 		"data": map[string]interface{}{
 			"imageName": image,

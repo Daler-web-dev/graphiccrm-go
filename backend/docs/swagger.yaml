@@ -46,6 +46,25 @@ definitions:
     - role
     - username
     type: object
+  handlers.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  handlers.LoginResponse:
+    properties:
+      message:
+        example: success
+        type: string
+      status:
+        example: 200
+        type: integer
+      token:
+        example: JWTOKEN
+        type: string
+    type: object
   handlers.UpdateClientRequest:
     properties:
       address:
@@ -98,6 +117,8 @@ definitions:
         type: string
       address:
         type: string
+      balance:
+        type: integer
       contactInfo:
         type: string
       createdAt:
@@ -260,50 +281,6 @@ info:
   title: Fiber CRM-API
   version: "1.0"
 paths:
-  /auth/login:
-    post:
-      consumes:
-      - application/json
-      description: Эта функция позволяет пользователю войти в систему с помощью имени
-        пользователя и пароля, и получить JWT-токен для дальнейшей аутентификации.
-      parameters:
-      - description: Данные для авторизации
-        in: body
-        name: request
-        required: true
-        schema:
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Успешная авторизация, возвращается JWT-токен
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: Некорректный формат JSON
-          schema:
-            additionalProperties: true
-            type: object
-        "401":
-          description: Неверный пароль
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Имя пользователя не найдено
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Ошибка при генерации токена
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Авторизация пользователя
-      tags:
-      - Auth
   /categories:
     get:
       description: Эта функция позволяет получить список всех категорий с поддержкой
@@ -738,6 +715,45 @@ paths:
       summary: Загрузить несколько изображений
       tags:
       - Images
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Эта функция позволяет пользователю войти в систему с помощью имени
+        пользователя и пароля, и получить JWT-токен для дальнейшей аутентификации.
+      parameters:
+      - description: Данные для авторизации
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешная авторизация, возвращается JWT-токен
+          schema:
+            $ref: '#/definitions/handlers.LoginResponse'
+        "400":
+          description: Некорректный формат JSON
+          schema:
+            $ref: '#/definitions/handlers.APIError'
+        "401":
+          description: Неверный пароль
+          schema:
+            $ref: '#/definitions/handlers.APIError'
+        "404":
+          description: Имя пользователя не найдено
+          schema:
+            $ref: '#/definitions/handlers.APIError'
+        "500":
+          description: Ошибка при генерации токена
+          schema:
+            $ref: '#/definitions/handlers.APIError'
+      summary: Авторизация пользователя
+      tags:
+      - Auth
   /orders:
     delete:
       parameters:
