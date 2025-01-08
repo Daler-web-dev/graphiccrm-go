@@ -1,155 +1,44 @@
+import { LoaderTable } from '@/components/custom/LoaderTable';
+import Pagination from '@/components/custom/Pagination';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import React from 'react';
+import { toast } from '@/hooks/use-toast';
+import { getRequest } from '@/lib/apiHandlers';
+import { formatPrice } from '@/lib/utils';
+import { IClient } from '@/types/clients';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export const Clients: React.FC = () => {
     const navigate = useNavigate();
+    const [data, setData] = useState<Array<IClient>>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [loading, setLoading] = useState(true);
 
-    const clients = [
-        {
-            id: 1,
-            name: 'Иван Кузьма',
-            contact: '+998979303666',
-            address: 'Улугбек, сзади магазина',
-            image: "https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        },
-        {
-            id: 2,
-            name: 'Алексей',
-            contact: '+998907803666',
-            address: 'Яшнабад, 1-й проезд, 8-й дом',
-            image: "https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        },
-        {
-            id: 3,
-            name: 'Максим',
-            contact: '+998977703666',
-            address: 'Хамид Олимов, 31',
-            image: "https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        },
-        {
-            id: 4,
-            name: 'Андрей',
-            contact: '+998987703666',
-            address: 'Юнусабад, 18-й квартал, 3-й дом',
-            image: "https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        },
-        {
-            id: 5,
-            name: 'Артур',
-            contact: '+998937703666',
-            address: 'М.Улугбек, 32',
-            image: "https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        },
-        {
-            id: 6,
-            name: 'Николай',
-            contact: '+998917703666',
-            address: 'Яшнабад, 2-й проезд, 12-й дом',
-            image: "https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        },
-        {
-            id: 7,
-            name: 'Вадим',
-            contact: '+998887703666',
-            address: 'Хамза, 1-й проезд, 9-й дом',
-            image: "https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        },
-        {
-            id: 8,
-            name: 'Константин',
-            contact: '+998857703666',
-            address: 'М.Улугбек, 56',
-            image: "https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        },
-        {
-            id: 9,
-            name: 'Дмитрий',
-            contact: '+998827703666',
-            address: 'Юнусабад, 15-й квартал, 1-й дом',
-            image: "https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        },
-        {
-            id: 10,
-            name: 'Александр',
-            contact: '+998807703666',
-            address: 'Яшнабад, 3-й проезд, 5-й дом',
-            image: "https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        },
-        {
-            id: 11,
-            name: 'Сергей',
-            contact: '+998787703666',
-            address: 'Хамза, 2-й проезд, 11-й дом',
-            image: "https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        },
-        {
-            id: 12,
-            name: 'Анна',
-            contact: '+998767703666',
-            address: 'М.Улугбек, 78',
-            image: "https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        },
-        {
-            id: 13,
-            name: 'Владимир',
-            contact: '+998747703666',
-            address: 'Юнусабад, 12-й квартал, 7-й дом',
-            image: "https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        },
-        {
-            id: 14,
-            name: 'Наталья',
-            contact: '+998727703666',
-            address: 'Яшнабад, 4-й проезд, 10-й дом',
-            image: "https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        },
-        {
-            id: 15,
-            name: 'Елена',
-            contact: '+998707703666',
-            address: 'Хамза, 3-й проезд, 14-й дом',
-            image: "https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        },
-        {
-            id: 16,
-            name: 'Олег',
-            contact: '+998687703666',
-            address: 'М.Улугбек, 92',
-            image: "https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        },
-        {
-            id: 17,
-            name: 'Татьяна',
-            contact: '+998667703666',
-            address: 'Юнусабад, 16-й квартал, 3-й дом',
-            image: "https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        },
-        {
-            id: 18,
-            name: 'Светлана',
-            contact: '+998647703666',
-            address: 'Яшнабад, 5-й проезд, 12-й дом',
-            image: "https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        },
-        {
-            id: 19,
-            name: 'Виктор',
-            contact: '+998627703666',
-            address: 'Хамза, 4-й проезд, 15-й дом',
-            image: "https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        },
-        {
-            id: 20,
-            name: 'Мария',
-            contact: '+998607703666',
-            address: 'М.Улугбек, 106',
-            image: "https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        },
-    ]
+    const loadPageData = async (page: number) => {
+        setLoading(true);
+        const res = await getRequest({ url: `/clients?page=${page}&limit=10` });
+        console.log(res);
+
+        if (res.status === 200 || res.status === 201) {
+            setData(res.data.data);
+            setTotalPages(res.data.pagination.totalPages);
+            setLoading(false);
+        } else {
+            toast({
+                title: 'Ошибка',
+                description: 'Произошла ошибка при загрузке клиентов',
+                variant: 'destructive',
+            });
+        }
+    };
+
+    useEffect(() => {
+        loadPageData(currentPage);
+    }, [currentPage]);
 
     return (
         <Card>
@@ -161,31 +50,52 @@ export const Clients: React.FC = () => {
                 <Input placeholder='Поиск...' className='max-w-[300px] px-10' />
             </CardHeader>
             <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Имя</TableHead>
-                            <TableHead>Контакт</TableHead>
-                            <TableHead>Адрес</TableHead>
-                            <TableHead>Действия</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {clients.map((client) => (
-                            <TableRow className='text-left'>
-                                <TableCell className='flex gap-1 justify-start items-center'>
-                                    <img src={client.image} alt="client image" loading='lazy' className='w-10 h-10 object-cover rounded-lg' />
-                                    {client.name}
-                                </TableCell>
-                                <TableCell>{client.contact}</TableCell>
-                                <TableCell>{client.address}</TableCell>
-                                <TableCell className='flex gap-2'>
-                                    <Button onClick={() => navigate(`/users/${client.id}`)}>Просмотр</Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                {loading ? (
+                    <LoaderTable />
+                ) : (
+                    <>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>#</TableHead>
+                                    <TableHead>Имя</TableHead>
+                                    <TableHead>Контакт</TableHead>
+                                    <TableHead>Адрес</TableHead>
+                                    <TableHead>Общий долг</TableHead>
+                                    <TableHead>Действия</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {data.length > 0 ? data.map((client, idx) => (
+                                    <TableRow className='text-left'>
+                                        <TableCell>{idx + 1}</TableCell>
+                                        <TableCell className='flex gap-1 justify-start items-center'>
+                                            {/* <img src={client.image} alt="client image" loading='lazy' className='w-10 h-10 object-cover rounded-lg' /> */}
+                                            {client.name}
+                                        </TableCell>
+                                        <TableCell>{client.contactInfo}</TableCell>
+                                        <TableCell>{client.address}</TableCell>
+                                        <TableCell>{formatPrice(client.balance)}</TableCell>
+                                        <TableCell className='flex gap-2'>
+                                            <Button onClick={() => navigate(`/users/${client.id}`)}>Просмотр</Button>
+                                        </TableCell>
+                                    </TableRow>
+                                )) : (
+                                    <TableRow>
+                                        <TableCell className="text-base text-center rounded-xl" colSpan={4}>
+                                            Нет данных по вашему запросу
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                        <Pagination
+                            totalPages={totalPages}
+                            currentPage={currentPage}
+                            onPageChange={setCurrentPage}
+                        />
+                    </>
+                )}
             </CardContent>
         </Card>
     );

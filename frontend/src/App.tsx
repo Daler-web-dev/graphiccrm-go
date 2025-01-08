@@ -6,7 +6,6 @@ import { History } from "./pages/history/page";
 import { HistoryView } from "./pages/history/[id]/page";
 import { Warehouse } from "./pages/warehouse/page";
 import { Product } from "./pages/warehouse/[id]/page";
-import { Prices } from "./pages/prices/page";
 import { Categories } from "./pages/caterogies/page";
 import { Agents } from "./pages/agents/page";
 import { Clients } from "./pages/clients/page";
@@ -41,10 +40,6 @@ function App() {
 					<Route
 						path="/warehouse/:id"
 						element={<Product />}
-					/>
-					<Route
-						path="/prices"
-						element={<Prices />}
 					/>
 					<Route
 						path="/categories"
