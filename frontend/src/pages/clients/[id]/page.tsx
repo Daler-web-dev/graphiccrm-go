@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Edit, Trash2 } from 'lucide-react';
 import React from 'react';
 
-export const User: React.FC = () => {
+export const Client: React.FC = () => {
     // const { id } = useParams();
     const client = {
         id: 1,

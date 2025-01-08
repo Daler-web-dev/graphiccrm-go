@@ -1,5 +1,8 @@
 import { useNavigate } from 'react-router-dom'
-import { LayoutGrid, Users, History, Building2, DollarSign, List, LogOut, SquareUser } from 'lucide-react'
+import { LayoutGrid, Users, History, Building2, List, LogOut, SquareUser } from 'lucide-react'
+import Cookies from 'js-cookie';
+import ConfirmModal from './ConfirmModal';
+import { toast } from '@/hooks/use-toast';
 
 const SidebarItem = ({ href, icon: Icon, label, isActive }: { href: string; icon: React.ComponentType; label: string; isActive: boolean }) => {
     const navigate = useNavigate()
@@ -27,22 +30,28 @@ export default function Sidebar() {
                 <SidebarItem href="/users" icon={Users} label="Клиенты" isActive={currentPath === '/users'} />
                 <SidebarItem href="/history" icon={History} label="История" isActive={currentPath === '/history'} />
                 <SidebarItem href="/warehouse" icon={Building2} label="Склад" isActive={currentPath === '/warehouse'} />
-                <SidebarItem href="/prices" icon={DollarSign} label="Цены" isActive={currentPath === '/prices'} />
                 <SidebarItem href="/categories" icon={List} label="Категории" isActive={currentPath === '/categories'} />
                 <SidebarItem href="/agents" icon={SquareUser} label="Агенты" isActive={currentPath === '/agents'} />
             </nav>
 
             <div className="px-4 border-t py-4">
-                <button
-                    onClick={() => {
+                <ConfirmModal title='Вы действительно хотите выйти?' setState={(state: boolean) => {
+                    if (state) {
+                        Cookies.remove('accessToken')
                         navigate('/auth/signin')
-                        alert('Вы успешно вышли из системы')
-                    }}
-                    className="flex items-center text-red-500 hover:text-red-600"
-                >
-                    <LogOut />
-                    <span className="ml-2">Выход</span>
-                </button>
+                        toast({
+                            title: 'Выход',
+                            description: 'Вы успешно вышли из системы',
+                        })
+                    }
+                }}>
+                    <button
+                        className="flex items-center text-red-500 hover:text-red-600"
+                    >
+                        <LogOut />
+                        <span className="ml-2">Выход</span>
+                    </button>
+                </ConfirmModal>
             </div>
         </div>
     )
