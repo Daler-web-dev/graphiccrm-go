@@ -1,10 +1,12 @@
 package model
 
-import guuid "github.com/google/uuid"
+import (
+	guuid "github.com/google/uuid"
+)
 
 type OrderItem struct {
 	ID        guuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
-	OrderID   guuid.UUID `json:"orderId"`
+	OrderID   guuid.UUID `gorm:"type:uuid" json:"orderId"`
 	ProductID guuid.UUID `gorm:"type:uuid;not null" validate:"required,uuid" json:"productId"`
 	Product   *Product   `gorm:"foreignKey:ProductID" json:"product"`
 	Quantity  float64    `json:"quantity"`

@@ -1,4 +1,29 @@
 definitions:
+  handlers.APIError:
+    properties:
+      message:
+        type: string
+      status:
+        type: integer
+      success:
+        type: boolean
+    type: object
+  handlers.CreateClientRequest:
+    properties:
+      Note:
+        type: string
+      address:
+        type: string
+      contactInfo:
+        type: string
+      name:
+        type: string
+      surname:
+        type: string
+    required:
+    - name
+    - surname
+    type: object
   handlers.CreateUserRequest:
     properties:
       password:
@@ -69,6 +94,8 @@ definitions:
     type: object
   model.Client:
     properties:
+      Note:
+        type: string
       address:
         type: string
       contactInfo:
@@ -85,10 +112,13 @@ definitions:
         type: array
       salespersonId:
         type: string
+      surname:
+        type: string
       updatedAt:
         type: string
     required:
     - name
+    - surname
     type: object
   model.Order:
     properties:
@@ -143,13 +173,12 @@ definitions:
       quantity:
         type: number
       totalPrice:
-        description: PricePerUnit float64    `json:"pricePerUnit"`
+        description: |-
+          Unit      string     `json:"unit" validate:"required, oneof=piece meter"`
+          PricePerUnit float64    `json:"pricePerUnit"`
         type: number
-      unit:
-        type: string
     required:
     - productId
-    - unit
     type: object
   model.Product:
     properties:
@@ -161,6 +190,8 @@ definitions:
       categoryId:
         type: string
       createdAt:
+        type: string
+      height:
         type: string
       id:
         type: string
@@ -175,13 +206,21 @@ definitions:
       price:
         minimum: 0
         type: number
+      unit:
+        enum:
+        - piece
+        - meter
+        type: string
       updatedAt:
+        type: string
+      width:
         type: string
     required:
     - amount
     - categoryId
     - images
     - name
+    - unit
     type: object
   model.Role:
     enum:
@@ -466,13 +505,13 @@ paths:
         "200":
           description: Список клиентов с информацией о пагинации
           schema:
-            additionalProperties: true
-            type: object
+            items:
+              $ref: '#/definitions/model.Client'
+            type: array
         "500":
           description: Ошибка сервера при получении списка клиентов
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       security:
       - BearerAuth: []
       summary: Получить список клиентов
@@ -489,40 +528,34 @@ paths:
         name: client
         required: true
         schema:
-          $ref: '#/definitions/model.Client'
+          $ref: '#/definitions/handlers.CreateClientRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Информация о созданном клиенте
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/model.Client'
         "400":
           description: Некорректные данные запроса
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "403":
           description: Недостаточно прав для создания клиента
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "409":
           description: Контактные данные уже используются другим клиентом
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "422":
           description: Ошибка валидации данных
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка сервера при создании клиента
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       security:
       - BearerAuth: []
       summary: Создать клиента
@@ -544,18 +577,15 @@ paths:
         "200":
           description: Клиент успешно удалён
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/model.Client'
         "400":
           description: Некорректный формат UUID
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка сервера при удалении клиента
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       security:
       - BearerAuth: []
       summary: Удалить клиента
@@ -576,23 +606,19 @@ paths:
         "200":
           description: Информация о клиенте
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/model.Client'
         "400":
           description: Некорректный формат UUID
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "404":
           description: Клиент не найден
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка сервера при получении данных клиента
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       security:
       - BearerAuth: []
       summary: Получить клиента
@@ -621,33 +647,27 @@ paths:
         "200":
           description: Информация об обновлённом клиенте
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/model.Client'
         "400":
           description: Некорректный формат UUID или запроса
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "404":
           description: Клиент не найден
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "409":
           description: Контактные данные уже используются другим клиентом
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "422":
           description: Ошибка валидации данных
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка сервера при обновлении клиента
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       security:
       - BearerAuth: []
       summary: Обновить клиента
@@ -719,6 +739,31 @@ paths:
       tags:
       - Images
   /orders:
+    delete:
+      parameters:
+      - description: UUID заказа
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешно
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Ошибка сервера при удалении
+          schema:
+            $ref: '#/definitions/handlers.APIError'
+      security:
+      - BearerAuth: []
+      summary: Удаления заказа
+      tags:
+      - Orders
     get:
       description: Эта функция возвращает список всех заказов с поддержкой пагинации.
       parameters:
@@ -738,16 +783,39 @@ paths:
         "200":
           description: Список заказов с информацией о пагинации
           schema:
-            additionalProperties: true
-            type: object
+            items:
+              $ref: '#/definitions/model.Order'
+            type: array
         "500":
           description: Ошибка сервера при получении списка заказов
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       security:
       - BearerAuth: []
       summary: Получить список всех заказов
+      tags:
+      - Orders
+    patch:
+      parameters:
+      - description: UUID заказа
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Измененный объект заказа
+          schema:
+            $ref: '#/definitions/model.Order'
+        "500":
+          description: Ошибка сервера при обновлении данных
+          schema:
+            $ref: '#/definitions/handlers.APIError'
+      security:
+      - BearerAuth: []
+      summary: Изменить можно любой
       tags:
       - Orders
     post:
@@ -768,33 +836,27 @@ paths:
         "201":
           description: Информация о созданном заказе
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/model.Order'
         "400":
           description: Неверный запрос или некорректные данные заказа
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "403":
           description: Недостаточно прав для создания заказа
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "404":
           description: Один из указанных продуктов не найден
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "422":
           description: Ошибка валидации данных
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка сервера при создании заказа
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       security:
       - BearerAuth: []
       summary: Создать заказ
@@ -816,23 +878,19 @@ paths:
         "200":
           description: Информация о заказе
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/model.Order'
         "400":
           description: Некорректный формат UUID
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "404":
           description: Заказ не найден
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка сервера при получении данных заказа
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       security:
       - BearerAuth: []
       summary: Получить заказ
@@ -859,13 +917,13 @@ paths:
         "200":
           description: Список продуктов с информацией о пагинации
           schema:
-            additionalProperties: true
-            type: object
+            items:
+              $ref: '#/definitions/model.Product'
+            type: array
         "500":
           description: Ошибка сервера при получении списка продуктов
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       summary: Получить список продуктов
       tags:
       - Products
@@ -886,23 +944,19 @@ paths:
         "201":
           description: Информация о созданном продукте
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/model.Product'
         "400":
           description: Неверный формат запроса
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "422":
           description: Ошибка валидации данных
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка сервера при создании продукта
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       summary: Создать продукт
       tags:
       - Products
@@ -921,23 +975,11 @@ paths:
         "200":
           description: Сообщение об успешном удалении
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/model.Product'
         "400":
           description: Неверный формат запроса или отсутствующий ID
           schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Продукт не найден
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Ошибка сервера при удалении продукта
-          schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       summary: Удалить продукт
       tags:
       - Products
@@ -956,23 +998,19 @@ paths:
         "200":
           description: Информация о продукте
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/model.Product'
         "400":
           description: Неверный запрос или отсутствующий ID
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "404":
           description: Продукт не найден
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка сервера при получении продукта
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       summary: Получить продукт
       tags:
       - Products
@@ -999,23 +1037,19 @@ paths:
         "200":
           description: Информация об обновлённом продукте
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/model.Product'
         "400":
           description: Неверный формат запроса или отсутствующий ID
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "404":
           description: Продукт не найден
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка сервера при обновлении продукта
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       summary: Обновить продукт
       tags:
       - Products
@@ -1039,14 +1073,13 @@ paths:
         "200":
           description: Список пользователей
           schema:
-            additionalProperties: true
-            type: object
+            items:
+              $ref: '#/definitions/model.User'
+            type: array
         "500":
           description: Ошибка на сервере
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       summary: Получить список пользователей
       tags:
       - Users
@@ -1067,27 +1100,19 @@ paths:
         "201":
           description: Пользователь успешно создан
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/model.User'
         "400":
           description: Некорректный JSON
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "422":
           description: Ошибка валидации данных
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка на сервере
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       summary: Создать пользователя
       tags:
       - Users
@@ -1108,26 +1133,19 @@ paths:
         "200":
           description: Пользователь успешно удалён
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/model.User'
         "400":
           description: Неверный формат ID
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "404":
           description: Пользователь не найден
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка на сервере
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       summary: Удалить пользователя
       tags:
       - Users
@@ -1151,21 +1169,15 @@ paths:
         "400":
           description: Неверный формат ID
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "404":
           description: Пользователь не найден
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка на сервере
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       summary: Получить пользователя
       tags:
       - Users
@@ -1191,32 +1203,23 @@ paths:
         "200":
           description: Пользователь успешно обновлён
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/model.User'
         "400":
           description: Неверный формат ID или JSON
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "404":
           description: Пользователь не найден
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "422":
           description: Ошибка валидации данных
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка на сервере
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/handlers.APIError'
       summary: Обновить данные пользователя
       tags:
       - Users

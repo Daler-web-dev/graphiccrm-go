@@ -13,7 +13,8 @@ func Initalize(router *fiber.App) {
 		return c.Status(200).SendString("Hello to the crm world!")
 	})
 
-	users := router.Group("/api/users", middleware.ProtectRoute("admin"))
+	// users := router.Group("/api/users", middleware.ProtectRoute("admin"))
+	users := router.Group("/api/users")
 	users.Get("/", handlers.GetUsers)
 	users.Post("/", handlers.CreateUser)
 	users.Get("/:id", handlers.GetUserById)
@@ -40,6 +41,8 @@ func Initalize(router *fiber.App) {
 	products.Get("/", handlers.GetAllProducts)
 	products.Post("/", handlers.CreateProduct)
 	products.Patch("/:id", handlers.UpdateProduct)
+	products.Get("/:id", handlers.GetProductById)
+	products.Delete("/:id", handlers.DeleteProduct)
 
 	upload := router.Group("/api/upload", middleware.ProtectRoute("admin", "seller", "manager"))
 	upload.Post("/", handlers.UploadImage)
@@ -51,6 +54,8 @@ func Initalize(router *fiber.App) {
 	orders.Post("/", handlers.CreateOrder)
 	orders.Get("/", handlers.GetAllOrders)
 	orders.Get("/:id", handlers.GetOrderByID)
+	orders.Patch("/:id", handlers.UpdateOrder)
+	orders.Delete("/:id", handlers.DeleteOrder)
 
 	router.Post("/api/login", handlers.Login)
 }
