@@ -15,10 +15,22 @@ import (
 	"github.com/joho/godotenv"
 )
 
-//	@title			Fiber CRM-API
-//	@version		1.0
-//	@description	This is a sample swagger for Fiber
-//	@termsOfService	http://swagger.io/terms/
+//	@title						Fiber CRM-API
+//	@version					1.0
+//	@description				This is a sample swagger for Fiber
+//	@termsOfService				http://swagger.io/terms/
+//	@securityDefinitions.apikey	BearerAuth
+//	@in							header
+//	@name						Authorization
+
+//	@host		ec2-43-207-54-55.ap-northeast-1.compute.amazonaws.com
+//	@BasePath	/api
+
+//	@securityDefinitions.apikey	BearerAuth
+//	@in							header
+//	@name						Authorization
+
+//	@Security	BearerAuth
 
 func main() {
 	godotenv.Load()
@@ -26,7 +38,7 @@ func main() {
 	app.Get("/api/swagger/*", swagger.HandlerDefault)
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:5173/",
+		AllowOrigins: "*",
 		AllowMethods: "GET,POST,HEAD,PUT,DELETE,PATCH,OPTIONS",
 		AllowHeaders: "Authorization, Content-Type",
 	}))
