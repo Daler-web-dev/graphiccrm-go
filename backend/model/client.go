@@ -10,6 +10,7 @@ type Client struct {
 	ID              guuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
 	Name            string     `json:"name" validate:"required" `
 	Surname         string     `json:"surname" validate:"required" `
+	Image           string     `json:"image" validate:"omitempty,min=5"`
 	ContactInfo     string     `json:"contactInfo" validate:"omitempty"`
 	Address         string     `json:"address"`
 	Balance         int64      `json:"balance"`
