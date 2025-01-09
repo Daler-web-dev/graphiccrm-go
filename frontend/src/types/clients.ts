@@ -1,4 +1,4 @@
-export interface IClient extends IClientCreate {
+export interface IClient extends IClientCreateUpdate {
     id: string
     balance: number
     salespersonId: string
@@ -7,7 +7,8 @@ export interface IClient extends IClientCreate {
     updatedAt: string
 }
 
-export interface IClientCreate {
+export interface IClientCreateUpdate {
+    image: string
     name: string
     surname: string
     contactInfo: string

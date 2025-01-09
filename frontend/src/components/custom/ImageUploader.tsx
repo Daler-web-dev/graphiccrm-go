@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { toast } from '@/hooks/use-toast';
 import axios from 'axios';
 import { cn } from '@/lib/utils';
+import Cookies from 'js-cookie';
 
 interface ImageUploaderProps {
     previewPlaceholder?: string;
@@ -29,14 +30,18 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
             setIsUploading(true);
 
             const formData = new FormData();
-            formData.append('file', file);
+            formData.append('image', file);
 
-            axios.post(import.meta.env.VITE_API_URL + '/file-storage', formData)
+            axios.post(import.meta.env.VITE_API_URL + '/upload', formData, {
+                headers: {
+                    "Authorization": `Bearer ${Cookies.get('accessToken')}`,
+                },
+            })
                 .then((res) => {
                     if (res.status === 200 || res.status === 201) {
                         console.log(res.data);
 
-                        onUploadSuccess(res.data);
+                        onUploadSuccess(res.data.data.imageUrl);
                         toast({
                             title: 'Успех',
                             description: 'Файл успешно загружен',

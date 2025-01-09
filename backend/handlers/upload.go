@@ -49,6 +49,7 @@ func UploadImage(c *fiber.Ctx) error {
 		".png":  true,
 		".gif":  true,
 		".webp": true,
+		".heic": true,
 	}
 	fileExt := strings.ToLower(filepath.Ext(file.Filename))
 	if !allowedExtensions[fileExt] {

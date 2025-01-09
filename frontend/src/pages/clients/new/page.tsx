@@ -7,13 +7,13 @@ import { postRequest } from "@/lib/apiHandlers";
 import ConfirmModal from "@/components/custom/ConfirmModal";
 import { Card } from "@/components/ui/card";
 import ImageUploader from "@/components/custom/ImageUploader";
-import { IClientCreate } from "@/types/clients";
+import { IClientCreateUpdate } from "@/types/clients";
 
 
 export const AddClient: React.FC = () => {
     const navigate = useNavigate();
-    const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<IClientCreate>();
-    // setValue('imagePath', "")
+    const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<IClientCreateUpdate>();
+    setValue('image', "")
 
     const onSubmit = async (data: any) => {
         if (data.imagePath === "") return toast({
@@ -22,9 +22,7 @@ export const AddClient: React.FC = () => {
             variant: 'destructive',
         })
 
-        const resData = { ...data, balance: Number(data.balance), discount: Number(data.discount) }
-
-        const response = await postRequest({ url: '/client', data: resData });
+        const response = await postRequest({ url: '/clients', data });
         if (response.status === 200 || response.status === 201) {
             toast({
                 title: 'Успех',
@@ -45,14 +43,14 @@ export const AddClient: React.FC = () => {
             <Card className="w-full overflow-x-auto p-5 mb-5">
                 <form onSubmit={handleSubmit(onSubmit)} className="flex gap-5">
                     <div className="w-1/2 aspect-square">
-                        {/* <ImageUploader
+                        <ImageUploader
                             onUploadSuccess={(url: string) => {
-                                setValue('imagePath', url);
+                                setValue('image', url);
                             }}
                             className='border border-cGray'
-                        /> */}
+                        />
                     </div>
-                    <div className="w-full space-y-3">
+                    <div className="w-full">
                         <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
                             <label htmlFor='name' className="text-base font-semibold text-cDarkBlue cursor-pointer">Имя</label>
                             <input
