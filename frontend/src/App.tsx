@@ -11,6 +11,7 @@ import { Agents } from "./pages/agents/page";
 import { Clients } from "./pages/clients/page";
 import { Client } from "./pages/clients/[id]/page";
 import { AddClient } from "./pages/clients/new/page";
+import { EditClient } from "./pages/clients/edit/page";
 
 function App() {
 	return (
@@ -29,6 +30,10 @@ function App() {
 					<Route
 						path="/clients/new"
 						element={<AddClient />}
+					/>
+					<Route
+						path="/clients/edit/:id"
+						element={<EditClient />}
 					/>
 					<Route
 						path="/history"

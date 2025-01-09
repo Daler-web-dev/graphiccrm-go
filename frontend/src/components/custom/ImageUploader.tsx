@@ -15,7 +15,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     onUploadSuccess,
     className
 }) => {
-    const [imagePreview, setImagePreview] = useState<string | null>(previewPlaceholder);
+    const [imagePreview, setImagePreview] = useState<string | null>(import.meta.env.VITE_API_URL + "/" + previewPlaceholder);
     const [isUploading, setIsUploading] = useState(false);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {

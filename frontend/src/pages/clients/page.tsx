@@ -76,7 +76,7 @@ export const Clients: React.FC = () => {
                                     <TableRow className='text-left' key={idx}>
                                         <TableCell>{idx + 1}</TableCell>
                                         <TableCell className='flex gap-1 justify-start items-center'>
-                                            {/* <img src={client.image} alt="client image" loading='lazy' className='w-10 h-10 object-cover rounded-lg' /> */}
+                                            <img src={import.meta.env.VITE_API_URL + '/' + client.image} alt="client image" loading='lazy' className='w-10 h-10 object-cover rounded-lg' />
                                             {client.name}
                                         </TableCell>
                                         <TableCell>{client.contactInfo}</TableCell>
@@ -88,7 +88,7 @@ export const Clients: React.FC = () => {
                                     </TableRow>
                                 )) : (
                                     <TableRow>
-                                        <TableCell className="text-base text-center rounded-xl" colSpan={4}>
+                                        <TableCell className="text-base text-center rounded-xl" colSpan={6}>
                                             Нет данных по вашему запросу
                                         </TableCell>
                                     </TableRow>

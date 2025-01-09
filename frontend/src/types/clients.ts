@@ -1,3 +1,5 @@
+import { IOrder } from "./order"
+
 export interface IClient extends IClientCreateUpdate {
     id: string
     balance: number
@@ -14,8 +16,4 @@ export interface IClientCreateUpdate {
     contactInfo: string
     address: string
     Note: string
-}
-
-export interface IOrder {
-    id: string
 }

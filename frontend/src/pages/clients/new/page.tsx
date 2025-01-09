@@ -110,7 +110,7 @@ export const AddClient: React.FC = () => {
                         <ConfirmModal title='Вы действительно хотите отменить добавление агента?' setState={(state: boolean) => {
                             state && navigate(-1) && reset();
                         }}>
-                            <Button type="button" className="px-10">Отменить</Button>
+                            <Button type="button" variant={"customOutline"} className="px-10">Отменить</Button>
                         </ConfirmModal>
                         <Button variant={'custom'} type="submit" className="px-10" disabled={isSubmitting}>
                             {isSubmitting ? 'Загрузка...' : 'Добавить агента'}

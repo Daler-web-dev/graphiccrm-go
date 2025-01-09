@@ -47,7 +47,7 @@ func main() {
 
 	database.ConnectDB()
 
-	app.Static("/uploads", "./uploads")
+	app.Static("/api/uploads", "./uploads")
 
 	router.Initalize(app)
 	log.Fatal(app.Listen(":" + utils.Getenv("PORT", "8080")))
