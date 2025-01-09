@@ -1,15 +1,18 @@
-export interface IClient {
+export interface IClient extends IClientCreate {
     id: string
+    balance: number
+    salespersonId: string
+    purchaseHistory: IOrder[]
+    createdAt: string
+    updatedAt: string
+}
+
+export interface IClientCreate {
     name: string
     surname: string
     contactInfo: string
     address: string
-    balance: number
     Note: string
-    salespersonId: string
-    purchangeHistory: IOrder[]
-    createdAt: string
-    updatedAt: string
 }
 
 export interface IOrder {
