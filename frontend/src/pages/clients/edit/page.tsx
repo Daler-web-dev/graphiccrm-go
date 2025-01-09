@@ -29,8 +29,8 @@ export const EditClient: React.FC = () => {
             const res = await getRequest({ url: `/clients/${id}` });
 
             if (res.status === 200 || res.status === 201) {
-                const { name, surname, contactInfo, image, address } = res.data.data;
-                reset({ name, surname, contactInfo, image, address });
+                const { name, surname, contactInfo, image, address, Note } = res.data.data;
+                reset({ name, surname, contactInfo, image, address, Note });
                 setData(res.data.data);
                 setValue('image', image);
                 setLoading(false);
@@ -145,6 +145,17 @@ export const EditClient: React.FC = () => {
                                     placeholder='Адрес'
                                 />
                                 {errors.address && <p className="text-red-500 text-sm">{errors.address.message}</p>}
+                            </div>
+
+                            <div className='w-full flex justify-start items-start flex-col bg-cLightGray px-3 py-2 rounded-lg'>
+                                <label htmlFor='note' className="text-base font-semibold text-cDarkBlue cursor-pointer">Дополнительная информация</label>
+                                <textarea
+                                    id='note'
+                                    {...register('Note', { required: 'Дополнительная информация обязателена' })}
+                                    className="mt-2 p-2 w-full border rounded-lg outline-none bg-transparent"
+                                    placeholder='Дополнительная информация'
+                                />
+                                {errors.Note && <p className="text-red-500 text-sm">{errors.Note.message}</p>}
                             </div>
                         </div>
 
