@@ -15,8 +15,10 @@ import (
 
 type UpdateClientRequest struct {
 	Name        *string `json:"name" validate:"omitempty,min=2"`
+	Surname     *string `json:"surname" validate:"required" `
 	ContactInfo *string `json:"contactInfo" validate:"omitempty"`
 	Address     *string `json:"address" validate:"omitempty,min=5"`
+	Note        *string `json:"Note" validate:"omitempty"`
 	Image       *string `json:"image" validate:"omitempty,min=5"`
 }
 type CreateClientRequest struct {
@@ -273,6 +275,9 @@ func UpdateClient(c *fiber.Ctx) error {
 	if json.Name != nil {
 		client.Name = *json.Name
 	}
+	if json.Surname != nil {
+		client.Surname = *json.Surname
+	}
 	if json.ContactInfo != nil {
 		client.ContactInfo = *json.ContactInfo
 	}
@@ -281,6 +286,9 @@ func UpdateClient(c *fiber.Ctx) error {
 	}
 	if json.Image != nil {
 		client.Image = *json.Image
+	}
+	if json.Note != nil {
+		client.Note = *json.Note
 	}
 	if err := db.Save(&client).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
