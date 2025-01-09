@@ -1,38 +1,36 @@
-// axios.ts
 import Axios, {
 	AxiosInstance,
 	InternalAxiosRequestConfig,
 	AxiosResponse,
 	AxiosHeaders,
 } from "axios";
+import Cookies from "js-cookie";
 
-const serverUrl = import.meta.env.VITE_PUBLIC_API as string | undefined;
+const serverUrl = import.meta.env.VITE_API_URL;
 
 if (!serverUrl) {
-	throw new Error("VITE_PUBLIC_API is not defined");
+	throw new Error("VITE_API_URL is not defined");
 }
 
 export const baseURL = `${serverUrl}`;
 
 const axios: AxiosInstance = Axios.create({
 	baseURL,
-	timeout: 120000, // Устанавливаем таймаут
+	timeout: 120000,
 });
 
 axios.interceptors.request.use(
 	async function (
 		config: InternalAxiosRequestConfig
 	): Promise<InternalAxiosRequestConfig> {
-		const token = "token";
+		const token = Cookies.get("accessToken");
 
-		// Убедимся, что headers существует и имеет тип AxiosHeaders
 		if (!config.headers) {
 			config.headers = new AxiosHeaders();
 		}
 
 		if (token) {
 			config.headers.set("Authorization", `Bearer ${token}`);
-			// config.headers.set("Access-Control-Allow-Credentials", "true");
 			config.headers.set("Content-Type", "application/json");
 		}
 
@@ -48,13 +46,12 @@ axios.interceptors.response.use(
 		return res;
 	},
 	(error) => {
-		if (error?.response?.status === 403) {
-			// Handle forbidden error
-		}
 		if (error?.response?.status === 401) {
-			// Handle unauthorized error (e.g., log out the user)
+			window.location.href = '/auth/signin';
+		} else if (error?.response?.status === 403) {
+			console.warn('Доступ запрещен.');
 		}
-		throw error; // Propagate the error
+		return Promise.reject(error);
 	}
 );
 
