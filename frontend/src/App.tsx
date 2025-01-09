@@ -10,6 +10,8 @@ import { Categories } from "./pages/caterogies/page";
 import { Agents } from "./pages/agents/page";
 import { Clients } from "./pages/clients/page";
 import { Client } from "./pages/clients/[id]/page";
+import { AddClient } from "./pages/clients/new/page";
+import { EditClient } from "./pages/clients/edit/page";
 
 function App() {
 	return (
@@ -18,12 +20,20 @@ function App() {
 				<Route path="/" element={<MainLayout />}>
 					<Route index element={<Dashboard />} />
 					<Route
-						path="/users"
+						path="/clients"
 						element={<Clients />}
 					/>
 					<Route
-						path="/users/:id"
+						path="/clients/:id"
 						element={<Client />}
+					/>
+					<Route
+						path="/clients/new"
+						element={<AddClient />}
+					/>
+					<Route
+						path="/clients/edit/:id"
+						element={<EditClient />}
 					/>
 					<Route
 						path="/history"
