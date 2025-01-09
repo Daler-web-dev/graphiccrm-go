@@ -21,7 +21,7 @@ import (
 // @Failure		400		{object}	map[string]interface{}	"Неверный запрос или ошибка валидации"
 // @Failure		500		{object}	map[string]interface{}	"Ошибка сервера при сохранении файла"
 //
-// @Router			/images/upload-many [post]
+// @Router			/uploadMany [post]
 func UploadMany(c *fiber.Ctx) error {
 	form, err := c.MultipartForm()
 	if err != nil {

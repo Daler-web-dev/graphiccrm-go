@@ -22,7 +22,7 @@ import (
 // @Failure		400		{object}	map[string]interface{}	"Неверный запрос или ошибка валидации"
 // @Failure		500		{object}	map[string]interface{}	"Ошибка сервера при сохранении файла"
 //
-// @Router			/images/upload [post]
+// @Router			/upload [post]
 func UploadImage(c *fiber.Ctx) error {
 	file, err := c.FormFile("image")
 	if err != nil {
