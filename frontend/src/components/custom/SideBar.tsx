@@ -28,8 +28,8 @@ export default function Sidebar() {
             <nav className="flex-1 px-4 py-6 space-y-2">
                 <SidebarItem href="/" icon={LayoutGrid} label="Панель управления" isActive={currentPath === '/'} />
                 <SidebarItem href="/clients" icon={Users} label="Клиенты" isActive={currentPath === '/users'} />
-                <SidebarItem href="/history" icon={History} label="История" isActive={currentPath === '/history'} />
-                <SidebarItem href="/warehouse" icon={Building2} label="Склад" isActive={currentPath === '/warehouse'} />
+                <SidebarItem href="/orders" icon={History} label="История" isActive={currentPath === '/history'} />
+                <SidebarItem href="/products" icon={Building2} label="Склад" isActive={currentPath === '/warehouse'} />
                 <SidebarItem href="/categories" icon={List} label="Категории" isActive={currentPath === '/categories'} />
                 <SidebarItem href="/agents" icon={SquareUser} label="Агенты" isActive={currentPath === '/agents'} />
             </nav>

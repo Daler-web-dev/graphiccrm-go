@@ -62,7 +62,7 @@ export const Clients: React.FC = () => {
                     <>
                         <Table>
                             <TableHeader>
-                                <TableRow>
+                                <TableRow className="border-none hover:bg-white">
                                     <TableHead>#</TableHead>
                                     <TableHead>Имя</TableHead>
                                     <TableHead>Контакт</TableHead>

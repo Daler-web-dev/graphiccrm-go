@@ -88,6 +88,10 @@ export const Client: React.FC = () => {
                                     <h4 className='font-semibold text-base text-cDarkBlue'>Адрес</h4>
                                     <p className='text-cDarkBlue text-base'>{data?.address}</p>
                                 </div>
+                                <div className='w-full flex flex-col justify-center items-start text-left gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
+                                    <h4 className='font-semibold text-base text-cDarkBlue'>Дополнительная информация</h4>
+                                    <p className='text-cDarkBlue text-base'>{data?.Note}</p>
+                                </div>
                             </div>
                         </div>
                         <div className='w-full'>

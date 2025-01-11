@@ -104,6 +104,18 @@ export const AddClient: React.FC = () => {
                             />
                             {errors.contactInfo && <p className="text-red-500 text-sm">{errors.contactInfo.message}</p>}
                         </div>
+                        <div className='w-full flex flex-col justify-start items-start bg-cLightGray px-3 py-2 rounded-lg'>
+                            <label htmlFor='note' className="text-base font-semibold text-cDarkBlue cursor-pointer">Дополнительная информация</label>
+                            <textarea
+                                id='note'
+                                placeholder="Дополнительная информация"
+                                {...register("Note", {
+                                    required: "Дополнительная информация обязательна",
+                                })}
+                                className="mt-2 p-2 w-full border rounded-lg outline-none bg-transparent"
+                            />
+                            {errors.Note && <p className="text-red-500 text-sm">{errors.Note.message}</p>}
+                        </div>
                     </div>
 
                     <div className='flex gap-3 absolute -top-16 right-0'>
