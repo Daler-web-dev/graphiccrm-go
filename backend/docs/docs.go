@@ -560,100 +560,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/images/upload": {
-            "post": {
-                "description": "Эта функция позволяет загружать одно изображение на сервер с проверкой размера и типа файла",
-                "consumes": [
-                    "multipart/form-data"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Images"
-                ],
-                "summary": "Загрузка одной картинки",
-                "parameters": [
-                    {
-                        "type": "file",
-                        "description": "Файл изображения",
-                        "name": "image",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Информация о загруженном файле: имя и URL",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "400": {
-                        "description": "Неверный запрос или ошибка валидации",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Ошибка сервера при сохранении файла",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/images/upload-many": {
-            "post": {
-                "description": "Эта функция позволяет загружать несколько изображений на сервер",
-                "consumes": [
-                    "multipart/form-data"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Images"
-                ],
-                "summary": "Загрузить несколько изображений",
-                "parameters": [
-                    {
-                        "type": "file",
-                        "description": "Файлы изображений",
-                        "name": "images",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Список загруженных файлов с их URL",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "400": {
-                        "description": "Неверный запрос или ошибка валидации",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "500": {
-                        "description": "Ошибка сервера при сохранении файла",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
         "/login": {
             "post": {
                 "description": "Эта функция позволяет пользователю войти в систему с помощью имени пользователя и пароля, и получить JWT-токен для дальнейшей аутентификации.",
@@ -1190,6 +1096,100 @@ const docTemplate = `{
                 }
             }
         },
+        "/upload": {
+            "post": {
+                "description": "Эта функция позволяет загружать одно изображение на сервер с проверкой размера и типа файла",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Images"
+                ],
+                "summary": "Загрузка одной картинки",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Файл изображения",
+                        "name": "image",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Информация о загруженном файле: имя и URL",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос или ошибка валидации",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера при сохранении файла",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/uploadMany": {
+            "post": {
+                "description": "Эта функция позволяет загружать несколько изображений на сервер",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Images"
+                ],
+                "summary": "Загрузить несколько изображений",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Файлы изображений",
+                        "name": "images",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Список загруженных файлов с их URL",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос или ошибка валидации",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера при сохранении файла",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
                 "description": "Возвращает список всех пользователей с поддержкой пагинации",
@@ -1479,6 +1479,10 @@ const docTemplate = `{
                 "contactInfo": {
                     "type": "string"
                 },
+                "image": {
+                    "type": "string",
+                    "minLength": 5
+                },
                 "name": {
                     "type": "string"
                 },
@@ -1549,7 +1553,13 @@ const docTemplate = `{
         },
         "handlers.UpdateClientRequest": {
             "type": "object",
+            "required": [
+                "surname"
+            ],
             "properties": {
+                "Note": {
+                    "type": "string"
+                },
                 "address": {
                     "type": "string",
                     "minLength": 5
@@ -1557,9 +1567,16 @@ const docTemplate = `{
                 "contactInfo": {
                     "type": "string"
                 },
+                "image": {
+                    "type": "string",
+                    "minLength": 5
+                },
                 "name": {
                     "type": "string",
                     "minLength": 2
+                },
+                "surname": {
+                    "type": "string"
                 }
             }
         },
@@ -1639,6 +1656,10 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
+                },
+                "image": {
+                    "type": "string",
+                    "minLength": 5
                 },
                 "name": {
                     "type": "string"

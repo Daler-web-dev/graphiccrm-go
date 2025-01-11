@@ -9,7 +9,7 @@ import {
 import React from "react";
 // import { useParams } from 'react-router-dom';
 
-export const HistoryView: React.FC = () => {
+export const Order: React.FC = () => {
 	// const { id } = useParams();
 	const item = {
 		id: 3245,

@@ -17,6 +17,9 @@ definitions:
         type: string
       contactInfo:
         type: string
+      image:
+        minLength: 5
+        type: string
       name:
         type: string
       surname:
@@ -68,14 +71,23 @@ definitions:
     type: object
   handlers.UpdateClientRequest:
     properties:
+      Note:
+        type: string
       address:
         minLength: 5
         type: string
       contactInfo:
         type: string
+      image:
+        minLength: 5
+        type: string
       name:
         minLength: 2
         type: string
+      surname:
+        type: string
+    required:
+    - surname
     type: object
   handlers.UpdateUserRequest:
     properties:
@@ -125,6 +137,9 @@ definitions:
       createdAt:
         type: string
       id:
+        type: string
+      image:
+        minLength: 5
         type: string
       name:
         type: string
@@ -652,71 +667,6 @@ paths:
       summary: Обновить клиента
       tags:
       - Clients
-  /images/upload:
-    post:
-      consumes:
-      - multipart/form-data
-      description: Эта функция позволяет загружать одно изображение на сервер с проверкой
-        размера и типа файла
-      parameters:
-      - description: Файл изображения
-        in: formData
-        name: image
-        required: true
-        type: file
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: 'Информация о загруженном файле: имя и URL'
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: Неверный запрос или ошибка валидации
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Ошибка сервера при сохранении файла
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Загрузка одной картинки
-      tags:
-      - Images
-  /images/upload-many:
-    post:
-      consumes:
-      - multipart/form-data
-      description: Эта функция позволяет загружать несколько изображений на сервер
-      parameters:
-      - description: Файлы изображений
-        in: formData
-        name: images
-        required: true
-        type: file
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Список загруженных файлов с их URL
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: Неверный запрос или ошибка валидации
-          schema:
-            additionalProperties: true
-            type: object
-        "500":
-          description: Ошибка сервера при сохранении файла
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Загрузить несколько изображений
-      tags:
-      - Images
   /login:
     post:
       consumes:
@@ -1071,6 +1021,71 @@ paths:
       summary: Обновить продукт
       tags:
       - Products
+  /upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Эта функция позволяет загружать одно изображение на сервер с проверкой
+        размера и типа файла
+      parameters:
+      - description: Файл изображения
+        in: formData
+        name: image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: 'Информация о загруженном файле: имя и URL'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Неверный запрос или ошибка валидации
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Ошибка сервера при сохранении файла
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Загрузка одной картинки
+      tags:
+      - Images
+  /uploadMany:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Эта функция позволяет загружать несколько изображений на сервер
+      parameters:
+      - description: Файлы изображений
+        in: formData
+        name: images
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Список загруженных файлов с их URL
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Неверный запрос или ошибка валидации
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Ошибка сервера при сохранении файла
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Загрузить несколько изображений
+      tags:
+      - Images
   /users:
     get:
       consumes:

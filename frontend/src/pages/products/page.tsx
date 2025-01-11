@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export const Warehouse: React.FC = () => {
+export const Products: React.FC = () => {
     const navigate = useNavigate()
 
     const products = [
