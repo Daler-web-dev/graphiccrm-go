@@ -1,17 +1,19 @@
-export interface IClient {
+import { IOrder } from "./order"
+
+export interface IClient extends IClientCreateUpdate {
     id: string
-    name: string
-    surname: string
-    contactInfo: string
-    address: string
     balance: number
-    Note: string
     salespersonId: string
-    purchangeHistory: IOrder[]
+    purchaseHistory: IOrder[]
     createdAt: string
     updatedAt: string
 }
 
-export interface IOrder {
-    id: string
+export interface IClientCreateUpdate {
+    image: string
+    name: string
+    surname: string
+    contactInfo: string
+    address: string
+    Note: string
 }

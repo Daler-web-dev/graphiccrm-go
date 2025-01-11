@@ -1,76 +1,105 @@
-import { HistoryList } from '@/components/custom/HistoryList';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Edit, Trash2 } from 'lucide-react';
-import React from 'react';
+import { Card } from '@/components/ui/card';
+import { toast } from '@/hooks/use-toast';
+import { getRequest } from '@/lib/apiHandlers';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Skeleton } from '@/components/ui/skeleton';
+import DeleteModal from '@/components/custom/DeleteModal';
+import { ClientHistory } from '@/components/custom/ClientHistory';
+import { IClient } from '@/types/clients';
 
 export const Client: React.FC = () => {
-    // const { id } = useParams();
-    const client = {
-        id: 1,
-        name: 'Иван Кузьма',
-        contact: '+998979303666',
-        address: 'Улугбек, сзади магазина',
-        info: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nulla, fugit. Consequuntur culpa dignissimos qui repellendus recusandae sequi, cupiditate iusto consequatur voluptatum? Repellendus, necessitatibus doloremque! Nisi culpa repellat reiciendis ducimus fugiat!",
-        image: "https://plus.unsplash.com/premium_photo-1664203067979-47448934fd97?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        history: [
-            {
-                id: 3245,
-                orderNumber: 123456,
-                date: '2022-10-01',
-                total: 3000000,
-                paymentType: 'Наличные',
-                status: 'Выполнен'
-            },
-            {
-                id: 2345,
-                orderNumber: 1324567,
-                date: '2022-01-11',
-                total: 13220000,
-                paymentType: 'Перевод',
-                status: 'В процессе'
-            },
-            {
-                id: 3124536,
-                orderNumber: 756343,
-                date: '2022-07-19',
-                total: 6600000,
-                paymentType: 'Долг',
-                status: 'В ожидании'
-            },
-        ]
-    }
+    const navigate = useNavigate();
+    const { id } = useParams();
+    const [data, setData] = useState<IClient>();
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const ClientInfo = async () => {
+            setLoading(true);
+            const res = await getRequest({ url: `/clients/${id}` });
+
+            if (res.status === 200 || res.status === 201) {
+                setData(res.data.data);
+                setLoading(false);
+            } else {
+                toast({
+                    title: 'Ошибка',
+                    description: 'Произошла ошибка при загрузке информации о клиенте',
+                    variant: 'destructive',
+                })
+            }
+        }
+
+        ClientInfo();
+    }, [id]);
 
     return (
-        <div className='relative flex flex-col justify-center gap-5'>
-            <Button className='absolute -top-16 right-0 px-10'>Заказ</Button>
-            <div className='flex justify-center items-start gap-5'>
-                <img src={client.image} alt="client image" className='object-cover rounded-3xl w-[35%] aspect-square' />
-                <Card className='text-cBlack rounded-3xl w-[65%]'>
-                    <CardHeader className='flex justify-between items-center'>
-                        <CardTitle>{client.name}</CardTitle>
-                        <div className='flex gap-2'>
-                            <Edit width={24} height={24} className='text-cDarkBlue cursor-pointer' />
-                            <Trash2 width={24} height={24} className='text-red-600 cursor-pointer' />
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        <div className='flex justify-between items-center p-3 bg-cWhite rounded-2xl'>
-                            <p className='font-normal text-xl'>Адрес</p>
-                            <span className='font-semibold text-xl'>{client?.address}</span>
-                        </div>
-                        <div className='flex justify-between items-center p-3 rounded-2xl'>
-                            <p className='font-normal text-xl'>Контакт</p>
-                            <span className='font-semibold text-xl'>{client?.contact}</span>
-                        </div>
-                        <div className='flex justify-center flex-col items-start text-left p-3 rounded-2xl bg-cWhite'>
-                            <p className='font-normal text-xl'>Дополнительная информация</p>
-                            <span className='font-normal text-base'>{client?.info}</span>
-                        </div>
-                    </CardContent>
-                </Card>
+        <div className='relative'>
+            <div className='space-x-3 absolute -top-16 right-0'>
+                <Button
+                    variant={"customOutline"}
+                    className='px-10'
+                    onClick={() => navigate(`/clients/edit/${id}`)}
+                >
+                    Изменить
+                </Button>
+                <DeleteModal item={data} path="clients" isPage={true}>
+                    <Button
+                        className='px-10'
+                    >
+                        Удалить
+                    </Button>
+                </DeleteModal>
             </div>
-            <HistoryList title='История' data={client.history} />
+            <Card className='w-full overflow-x-auto p-5 mb-5'>
+                {loading ? (
+                    <div className='w-full flex gap-5 space-y-2'>
+                        <Skeleton className='w-full max-w-[40%] aspect-square ' />
+                        <div className='w-full space-y-3'>
+                            <Skeleton className='w-full h-11' />
+                            <Skeleton className='w-full h-11' />
+                            <Skeleton className='w-full h-11' />
+                            <Skeleton className='w-full h-11' />
+                            <Skeleton className='w-full h-11' />
+                            <Skeleton className='w-full h-11' />
+                            <Skeleton className='w-full h-11' />
+                        </div>
+                    </div>
+                ) : (
+                    <div className='flex flex-col gap-5'>
+                        <div className='w-full flex gap-5'>
+                            <img src={import.meta.env.VITE_API_URL + "/" + data?.image || "/images/humanPlaceholder.png"} alt="client image" className='aspect-square w-full max-w-[40%]  object-cover border border-cLightGray rounded-lg' loading='lazy' />
+                            <div className='w-full'>
+                                <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
+                                    <h4 className='font-semibold text-base text-cDarkBlue'>Имя</h4>
+                                    <p className='text-cDarkBlue text-base'>{data?.name}</p>
+                                </div>
+                                <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
+                                    <h4 className='font-semibold text-base text-cDarkBlue'>Фамилия</h4>
+                                    <p className='text-cDarkBlue text-base'>{data?.surname}</p>
+                                </div>
+                                <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
+                                    <h4 className='font-semibold text-base text-cDarkBlue'>Номер телефона</h4>
+                                    <p className='text-cDarkBlue text-base'>{data?.contactInfo}</p>
+                                </div>
+                                <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
+                                    <h4 className='font-semibold text-base text-cDarkBlue'>Адрес</h4>
+                                    <p className='text-cDarkBlue text-base'>{data?.address}</p>
+                                </div>
+                                <div className='w-full flex flex-col justify-center items-start text-left gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
+                                    <h4 className='font-semibold text-base text-cDarkBlue'>Дополнительная информация</h4>
+                                    <p className='text-cDarkBlue text-base'>{data?.Note}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className='w-full'>
+                            <ClientHistory data={data?.purchaseHistory} />
+                        </div>
+                    </div>
+                )}
+            </Card>
         </div>
     );
 };
