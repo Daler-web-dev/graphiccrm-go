@@ -1,6 +1,9 @@
 package utils
 
-import "os"
+import (
+	"fmt"
+	"os"
+)
 
 func Getenv(key, fallback string) string {
 	value := os.Getenv(key)
@@ -10,4 +13,8 @@ func Getenv(key, fallback string) string {
 	}
 
 	return value
+}
+
+func GenerateTSVector(name, category string) string {
+	return fmt.Sprintf("to_tsvector('russian', '%s %s')", name, category)
 }

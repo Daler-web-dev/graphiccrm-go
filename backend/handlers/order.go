@@ -33,13 +33,13 @@ type OrderUpdateRequest struct {
 //	@Accept			json
 //	@Produce		json
 //	@Security		BearerAuth
-//	@Param			order	body		model.Order	true	"Данные нового заказа"
-//	@Success		201		{object}	model.Order	"Информация о созданном заказе"
-//	@Failure		400		{object}	APIError	"Неверный запрос или некорректные данные заказа"
-//	@Failure		403		{object}	APIError	"Недостаточно прав для создания заказа"
-//	@Failure		422		{object}	APIError	"Ошибка валидации данных"
-//	@Failure		404		{object}	APIError	"Один из указанных продуктов не найден"
-//	@Failure		500		{object}	APIError	"Ошибка сервера при создании заказа"
+//	@Param			order	body		model.CreateOrderRequest	true	"Данные нового заказа"
+//	@Success		201		{object}	model.Order					"Информация о созданном заказе"
+//	@Failure		400		{object}	APIError					"Неверный запрос или некорректные данные заказа"
+//	@Failure		403		{object}	APIError					"Недостаточно прав для создания заказа"
+//	@Failure		422		{object}	APIError					"Ошибка валидации данных"
+//	@Failure		404		{object}	APIError					"Один из указанных продуктов не найден"
+//	@Failure		500		{object}	APIError					"Ошибка сервера при создании заказа"
 //	@Router			/orders [post]
 func CreateOrder(c *fiber.Ctx) error {
 	user := c.Locals("user").(*auth.Claims)
@@ -139,7 +139,7 @@ func CreateOrder(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"status":  201,
 		"message": "Order created successfully",
-		"order":   order,
+		"data":    order,
 	})
 }
 
@@ -203,10 +203,10 @@ func GetOrderByID(c *fiber.Ctx) error {
 //	@Tags			Orders
 //	@Produce		json
 //	@Security		BearerAuth
-//	@Param			page	query		int			false	"Номер страницы"					default(1)
-//	@Param			limit	query		int			false	"Количество элементов на странице"	default(10)
-//	@Success		200		{array}		model.Order	"Список заказов с информацией о пагинации"
-//	@Failure		500		{object}	APIError	"Ошибка сервера при получении списка заказов"
+//	@Param			page	query		int							false	"Номер страницы"					default(1)
+//	@Param			limit	query		int							false	"Количество элементов на странице"	default(10)
+//	@Success		200		{array}		model.CreateOrderRequest	"Список заказов с информацией о пагинации"
+//	@Failure		500		{object}	APIError					"Ошибка сервера при получении списка заказов"
 //	@Router			/orders [get]
 func GetAllOrders(c *fiber.Ctx) error {
 	Orders := []model.Order{}
@@ -230,9 +230,10 @@ func GetAllOrders(c *fiber.Ctx) error {
 //	@Tags		Orders
 //	@Produce	json
 //	@Security	BearerAuth
-//	@Param		id	path		string		true	"UUID заказа"
-//	@Success	200	{object}	model.Order	"Измененный объект заказа"
-//	@Failure	500	{object}	APIError	"Ошибка сервера при обновлении данных"
+//	@Param		id		path		string						true	"ID продукта"
+//	@Param		order	body		model.CreateOrderRequest	true	"Данные для обновления заказа"
+//	@Success	200		{object}	model.Order					"Измененный объект заказа"
+//	@Failure	500		{object}	APIError					"Ошибка сервера при обновлении данных"
 //	@Router		/orders [patch]
 func UpdateOrder(c *fiber.Ctx) error {
 	id, err := guuid.Parse(c.Params("id"))
@@ -388,9 +389,9 @@ func UpdateOrder(c *fiber.Ctx) error {
 //	@Tags		Orders
 //	@Produce	json
 //	@Security	BearerAuth
-//	@Param		id	path		string				true	"UUID заказа"
-//	@Success	200	{object}	map[string]string	"Успешно"
-//	@Failure	500	{object}	APIError			"Ошибка сервера при удалении"
+//	@Param		id	path		string		true	"UUID заказа"
+//	@Success	200	{object}	model.Order	"Успешно"
+//	@Failure	500	{object}	APIError	"Ошибка сервера при удалении"
 //	@Router		/orders [delete]
 func DeleteOrder(c *fiber.Ctx) error {
 	id, err := guuid.Parse(c.Params("id"))

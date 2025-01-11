@@ -14,14 +14,14 @@ import (
 )
 
 type UpdateProductRequest struct {
-	Name       *string   `json:"name" validate:"omitempty,min=3,max=100"`
-	CategoryID *string   `json:"categoryId" validate:"omitempty,uuid"`
-	Width      *string   `json:"width" validate:"omitempty"`
-	Height     *string   `json:"height" validate:"omitempty"`
-	Price      *float64  `json:"price" validate:"omitempty,gte=0"`
-	Unit       *string   `json:"unit" validate:"omitempty,oneof=piece meter"`
-	Amount     *float64  `json:"amount" validate:"omitempty,gte=0"`
-	Images     *[]string `json:"images" validate:"omitempty,dive,url,min=1,max=10"`
+	Name       *string  `json:"name" validate:"omitempty,min=3,max=100"`
+	CategoryID *string  `json:"categoryId" validate:"omitempty,uuid"`
+	Width      *string  `json:"width" validate:"omitempty"`
+	Height     *string  `json:"height" validate:"omitempty"`
+	Price      *float64 `json:"price" validate:"omitempty,gte=0"`
+	Unit       *string  `json:"unit" validate:"omitempty,oneof=piece meter"`
+	Amount     *float64 `json:"amount" validate:"omitempty,gte=0"`
+	Image      *string  `json:"image" validate:"omitempty,min=5"`
 }
 
 // GetAllProducts Получить список всех продуктов
@@ -111,11 +111,11 @@ func GetProductById(c *fiber.Ctx) error {
 //	@Tags			Products
 //	@Accept			json
 //	@Produce		json
-//	@Param			product	body		model.Product	true	"Данные нового продукта"
-//	@Success		201		{object}	model.Product	"Информация о созданном продукте"
-//	@Failure		400		{object}	APIError		"Неверный формат запроса"
-//	@Failure		422		{object}	APIError		"Ошибка валидации данных"
-//	@Failure		500		{object}	APIError		"Ошибка сервера при создании продукта"
+//	@Param			product	body		model.CreateProductRequest	true	"Данные нового продукта"
+//	@Success		201		{object}	model.Product				"Информация о созданном продукте"
+//	@Failure		400		{object}	APIError					"Неверный формат запроса"
+//	@Failure		422		{object}	APIError					"Ошибка валидации данных"
+//	@Failure		500		{object}	APIError					"Ошибка сервера при создании продукта"
 //
 //	@Router			/products [post]
 func CreateProduct(c *fiber.Ctx) error {
@@ -139,11 +139,29 @@ func CreateProduct(c *fiber.Ctx) error {
 		})
 	}
 
-	DB := database.DB
 	product.ID = guuid.New()
 
-	err := DB.Create(&product).Error
+	DB := database.DB
+	var category model.Category
+	err := DB.First(&category, "id = ?", product.CategoryID).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"status":  404,
+				"success": false,
+				"message": "Category not found",
+			})
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  500,
+			"success": false,
+			"message": "Could not retrieve category",
+		})
+	}
 
+	product.SearchVector = utils.GenerateTSVector(product.Name, category.Name)
+
+	err = DB.Create(&product).Error
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"status":  500,
@@ -167,14 +185,14 @@ func CreateProduct(c *fiber.Ctx) error {
 //	@Tags			Products
 //	@Accept			json
 //	@Produce		json
-//	@Param			id		path		string			true	"ID продукта"
-//	@Param			product	body		model.Product	true	"Данные для обновления продукта"
-//	@Success		200		{object}	model.Product	"Информация об обновлённом продукте"
-//	@Failure		400		{object}	APIError		"Неверный формат запроса или отсутствующий ID"
-//	@Failure		404		{object}	APIError		"Продукт не найден"
-//	@Failure		500		{object}	APIError		"Ошибка сервера при обновлении продукта"
+//	@Param			id		path		string					true	"ID продукта"
+//	@Param			product	body		UpdateProductRequest	true	"Данные для обновления продукта"
+//	@Success		200		{object}	model.Product			"Информация об обновлённом продукте"
+//	@Failure		400		{object}	APIError				"Неверный формат запроса или отсутствующий ID"
+//	@Failure		404		{object}	APIError				"Продукт не найден"
+//	@Failure		500		{object}	APIError				"Ошибка сервера при обновлении продукта"
 //
-//	@Router			/products/{id} [put]
+//	@Router			/products/{id} [patch]
 func UpdateProduct(c *fiber.Ctx) error {
 	id, err := guuid.Parse(c.Params("id"))
 	if err != nil {
@@ -241,9 +259,28 @@ func UpdateProduct(c *fiber.Ctx) error {
 	if body.Amount != nil {
 		product.Amount = *body.Amount
 	}
-	if body.Images != nil {
-		product.Images = *body.Images
+	if body.Image != nil {
+		product.Image = *body.Image
 	}
+
+	var category model.Category
+	err = db.First(&category, "id = ?", product.CategoryID).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"status":  404,
+				"success": false,
+				"message": "Category not found",
+			})
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  500,
+			"success": false,
+			"message": "Could not retrieve category",
+		})
+	}
+
+	product.SearchVector = utils.GenerateTSVector(product.Name, category.Name)
 
 	if err := db.Save(&product).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -298,5 +335,36 @@ func DeleteProduct(c *fiber.Ctx) error {
 		"status":  200,
 		"success": true,
 		"message": "Product was removed",
+	})
+}
+
+func SearchProducts(c *fiber.Ctx) error {
+	query := c.Query("q")
+	if query == "" {
+		return c.JSON(fiber.Map{
+			"status":  400,
+			"success": false,
+			"message": "Query parameter 'q' is required",
+		})
+	}
+
+	var products []model.Product
+	err := database.DB.Raw(`
+		SELECT * FROM products
+		WHERE search_vector @@ to_tsquery('english', ?)
+	`, query).Scan(&products).Error
+
+	if err != nil {
+		return c.JSON(fiber.Map{
+			"status":  500,
+			"success": false,
+			"message": "Error while searching products",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"status":  200,
+		"success": true,
+		"data":    products,
 	})
 }

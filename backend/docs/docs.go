@@ -655,7 +655,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.Order"
+                                "$ref": "#/definitions/model.CreateOrderRequest"
                             }
                         }
                     },
@@ -691,7 +691,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Order"
+                            "$ref": "#/definitions/model.CreateOrderRequest"
                         }
                     }
                 ],
@@ -760,10 +760,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Успешно",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/model.Order"
                         }
                     },
                     "500": {
@@ -790,10 +787,19 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "UUID заказа",
+                        "description": "ID продукта",
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Данные для обновления заказа",
+                        "name": "order",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CreateOrderRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -927,7 +933,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Product"
+                            "$ref": "#/definitions/model.CreateProductRequest"
                         }
                     }
                 ],
@@ -1005,63 +1011,6 @@ const docTemplate = `{
                     }
                 }
             },
-            "put": {
-                "description": "Эта функция обновляет информацию о продукте по его уникальному идентификатору",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Products"
-                ],
-                "summary": "Обновить продукт",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID продукта",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Данные для обновления продукта",
-                        "name": "product",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.Product"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Информация об обновлённом продукте",
-                        "schema": {
-                            "$ref": "#/definitions/model.Product"
-                        }
-                    },
-                    "400": {
-                        "description": "Неверный формат запроса или отсутствующий ID",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.APIError"
-                        }
-                    },
-                    "404": {
-                        "description": "Продукт не найден",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.APIError"
-                        }
-                    },
-                    "500": {
-                        "description": "Ошибка сервера при обновлении продукта",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.APIError"
-                        }
-                    }
-                }
-            },
             "delete": {
                 "description": "Эта функция удаляет продукт по его уникальному идентификатору",
                 "produces": [
@@ -1089,6 +1038,63 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Неверный формат запроса или отсутствующий ID",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIError"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Эта функция обновляет информацию о продукте по его уникальному идентификатору",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Обновить продукт",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID продукта",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Данные для обновления продукта",
+                        "name": "product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.UpdateProductRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Информация об обновлённом продукте",
+                        "schema": {
+                            "$ref": "#/definitions/model.Product"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный формат запроса или отсутствующий ID",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIError"
+                        }
+                    },
+                    "404": {
+                        "description": "Продукт не найден",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIError"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера при обновлении продукта",
                         "schema": {
                             "$ref": "#/definitions/handlers.APIError"
                         }
@@ -1580,6 +1586,44 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.UpdateProductRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "categoryId": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string",
+                    "minLength": 5
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 3
+                },
+                "price": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "unit": {
+                    "type": "string",
+                    "enum": [
+                        "piece",
+                        "meter"
+                    ]
+                },
+                "width": {
+                    "type": "string"
+                }
+            }
+        },
         "handlers.UpdateUserRequest": {
             "type": "object",
             "required": [
@@ -1681,6 +1725,120 @@ const docTemplate = `{
                 }
             }
         },
+        "model.CreateOrderItemRequest": {
+            "type": "object",
+            "required": [
+                "productId",
+                "quantity"
+            ],
+            "properties": {
+                "productId": {
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174003"
+                },
+                "quantity": {
+                    "type": "number",
+                    "example": 10
+                }
+            }
+        },
+        "model.CreateOrderRequest": {
+            "type": "object",
+            "required": [
+                "clientId",
+                "paymentMethod",
+                "products",
+                "salespersonId",
+                "status"
+            ],
+            "properties": {
+                "clientId": {
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174001"
+                },
+                "paymentMethod": {
+                    "type": "string",
+                    "enum": [
+                        "cash",
+                        "transfer",
+                        "credit"
+                    ],
+                    "example": "cash"
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.CreateOrderItemRequest"
+                    }
+                },
+                "salespersonId": {
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "pending",
+                        "in_production",
+                        "completed",
+                        "paid"
+                    ],
+                    "example": "pending"
+                }
+            }
+        },
+        "model.CreateProductRequest": {
+            "type": "object",
+            "required": [
+                "amount",
+                "categoryId",
+                "name",
+                "unit"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "number",
+                    "minimum": 0,
+                    "example": 10
+                },
+                "categoryId": {
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "height": {
+                    "type": "string",
+                    "example": "100"
+                },
+                "image": {
+                    "type": "string",
+                    "minLength": 5,
+                    "example": "uploads/image.jpg"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 3,
+                    "example": "Example Product"
+                },
+                "price": {
+                    "type": "number",
+                    "minimum": 0,
+                    "example": 19.99
+                },
+                "unit": {
+                    "type": "string",
+                    "enum": [
+                        "piece",
+                        "meter"
+                    ],
+                    "example": "piece"
+                },
+                "width": {
+                    "type": "string",
+                    "example": "50"
+                }
+            }
+        },
         "model.Order": {
             "type": "object",
             "required": [
@@ -1770,7 +1928,6 @@ const docTemplate = `{
             "required": [
                 "amount",
                 "categoryId",
-                "images",
                 "name",
                 "unit"
             ],
@@ -1794,11 +1951,9 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "images": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                "image": {
+                    "type": "string",
+                    "minLength": 5
                 },
                 "name": {
                     "type": "string",
@@ -1887,7 +2042,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "ec2-43-207-54-55.ap-northeast-1.compute.amazonaws.com",
+	Host:             "localhost:8080",
 	BasePath:         "/api",
 	Schemes:          []string{},
 	Title:            "Fiber CRM-API",

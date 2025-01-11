@@ -89,6 +89,33 @@ definitions:
     required:
     - surname
     type: object
+  handlers.UpdateProductRequest:
+    properties:
+      amount:
+        minimum: 0
+        type: number
+      categoryId:
+        type: string
+      height:
+        type: string
+      image:
+        minLength: 5
+        type: string
+      name:
+        maxLength: 100
+        minLength: 3
+        type: string
+      price:
+        minimum: 0
+        type: number
+      unit:
+        enum:
+        - piece
+        - meter
+        type: string
+      width:
+        type: string
+    type: object
   handlers.UpdateUserRequest:
     properties:
       password:
@@ -156,6 +183,92 @@ definitions:
     required:
     - name
     - surname
+    type: object
+  model.CreateOrderItemRequest:
+    properties:
+      productId:
+        example: 123e4567-e89b-12d3-a456-426614174003
+        type: string
+      quantity:
+        example: 10
+        type: number
+    required:
+    - productId
+    - quantity
+    type: object
+  model.CreateOrderRequest:
+    properties:
+      clientId:
+        example: 123e4567-e89b-12d3-a456-426614174001
+        type: string
+      paymentMethod:
+        enum:
+        - cash
+        - transfer
+        - credit
+        example: cash
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/model.CreateOrderItemRequest'
+        type: array
+      salespersonId:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      status:
+        enum:
+        - pending
+        - in_production
+        - completed
+        - paid
+        example: pending
+        type: string
+    required:
+    - clientId
+    - paymentMethod
+    - products
+    - salespersonId
+    - status
+    type: object
+  model.CreateProductRequest:
+    properties:
+      amount:
+        example: 10
+        minimum: 0
+        type: number
+      categoryId:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      height:
+        example: "100"
+        type: string
+      image:
+        example: uploads/image.jpg
+        minLength: 5
+        type: string
+      name:
+        example: Example Product
+        maxLength: 100
+        minLength: 3
+        type: string
+      price:
+        example: 19.99
+        minimum: 0
+        type: number
+      unit:
+        enum:
+        - piece
+        - meter
+        example: piece
+        type: string
+      width:
+        example: "50"
+        type: string
+    required:
+    - amount
+    - categoryId
+    - name
+    - unit
     type: object
   model.Order:
     properties:
@@ -232,10 +345,9 @@ definitions:
         type: string
       id:
         type: string
-      images:
-        items:
-          type: string
-        type: array
+      image:
+        minLength: 5
+        type: string
       name:
         maxLength: 100
         minLength: 3
@@ -255,7 +367,6 @@ definitions:
     required:
     - amount
     - categoryId
-    - images
     - name
     - unit
     type: object
@@ -290,7 +401,7 @@ definitions:
       username:
         type: string
     type: object
-host: ec2-43-207-54-55.ap-northeast-1.compute.amazonaws.com
+host: localhost:8080
 info:
   contact: {}
   description: This is a sample swagger for Fiber
@@ -720,9 +831,7 @@ paths:
         "200":
           description: Успешно
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/model.Order'
         "500":
           description: Ошибка сервера при удалении
           schema:
@@ -752,7 +861,7 @@ paths:
           description: Список заказов с информацией о пагинации
           schema:
             items:
-              $ref: '#/definitions/model.Order'
+              $ref: '#/definitions/model.CreateOrderRequest'
             type: array
         "500":
           description: Ошибка сервера при получении списка заказов
@@ -765,11 +874,17 @@ paths:
       - Orders
     patch:
       parameters:
-      - description: UUID заказа
+      - description: ID продукта
         in: path
         name: id
         required: true
         type: string
+      - description: Данные для обновления заказа
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateOrderRequest'
       produces:
       - application/json
       responses:
@@ -797,7 +912,7 @@ paths:
         name: order
         required: true
         schema:
-          $ref: '#/definitions/model.Order'
+          $ref: '#/definitions/model.CreateOrderRequest'
       produces:
       - application/json
       responses:
@@ -905,7 +1020,7 @@ paths:
         name: product
         required: true
         schema:
-          $ref: '#/definitions/model.Product'
+          $ref: '#/definitions/model.CreateProductRequest'
       produces:
       - application/json
       responses:
@@ -982,7 +1097,7 @@ paths:
       summary: Получить продукт
       tags:
       - Products
-    put:
+    patch:
       consumes:
       - application/json
       description: Эта функция обновляет информацию о продукте по его уникальному
@@ -998,7 +1113,7 @@ paths:
         name: product
         required: true
         schema:
-          $ref: '#/definitions/model.Product'
+          $ref: '#/definitions/handlers.UpdateProductRequest'
       produces:
       - application/json
       responses:

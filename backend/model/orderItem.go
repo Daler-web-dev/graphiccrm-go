@@ -14,3 +14,8 @@ type OrderItem struct {
 	// PricePerUnit float64    `json:"pricePerUnit"`
 	TotalPrice float64 `json:"totalPrice"`
 }
+
+type CreateOrderItemRequest struct {
+	ProductID guuid.UUID `json:"productId" validate:"required,uuid" example:"123e4567-e89b-12d3-a456-426614174003"`
+	Quantity  float64    `json:"quantity" validate:"required,gt=0" example:"10"`
+}
