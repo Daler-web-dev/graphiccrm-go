@@ -53,7 +53,8 @@ export const Employees: React.FC = () => {
 	}, [currentPage]);
 
 	return (
-		<>
+		<div className="relative">
+			<Button onClick={() => navigate("/employees/new")} className="px-10 absolute -top-20 right-5">Добавить сотрудника</Button>
 			<Card>
 				<CardHeader className="flex justify-between items-center">
 					<div className="w-full flex flex-col justify-start items-start gap-1">
@@ -107,6 +108,6 @@ export const Employees: React.FC = () => {
 				currentPage={currentPage}
 				onPageChange={setCurrentPage}
 			/>
-		</>
+		</div>
 	);
 };

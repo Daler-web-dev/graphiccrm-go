@@ -13,6 +13,7 @@ import { EditClient } from "./pages/clients/edit/page";
 import { Orders } from "./pages/orders/page";
 import { Order } from "./pages/orders/[id]/page";
 import { Employee } from "./pages/employees/[id]/page";
+import { AddEmployee } from "./pages/employees/new/page";
 
 function App() {
 	return (
@@ -63,6 +64,10 @@ function App() {
 					<Route
 						path="/employees/:id"
 						element={<Employee />}
+					/>
+					<Route
+						path="/employees/new"
+						element={<AddEmployee />}
 					/>
 				</Route>
 				<Route

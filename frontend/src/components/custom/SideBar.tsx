@@ -25,7 +25,7 @@ export default function Sidebar() {
         <div className="w-64 fixed top-5 bottom-5 bg-white border rounded-lg flex flex-col">
             <div className="text-4xl font-bold bg-cGradientBg bg-clip-text text-transparent py-5 text-start px-3.5">Графичекий редактор</div>
 
-            <nav className="flex-1 px-4 py-6 space-y-2">
+            <nav className="flex-1 px-4 py-6 space-y-2 select-none">
                 <SidebarItem href="/" icon={LayoutGrid} label="Панель управления" isActive={currentPath === '/'} />
                 <SidebarItem href="/clients" icon={Users} label="Клиенты" isActive={currentPath === '/clients'} />
                 <SidebarItem href="/orders" icon={History} label="История" isActive={currentPath === '/orders'} />
@@ -34,7 +34,7 @@ export default function Sidebar() {
                 <SidebarItem href="/employees" icon={SquareUser} label="Сотрудники" isActive={currentPath === '/employees'} />
             </nav>
 
-            <div className="px-4 border-t py-4">
+            <div className="px-4 border-t py-4 select-none">
                 <ConfirmModal title='Вы действительно хотите выйти?' setState={(state: boolean) => {
                     if (state) {
                         Cookies.remove('accessToken')

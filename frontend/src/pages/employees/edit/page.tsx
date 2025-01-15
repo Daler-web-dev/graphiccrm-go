@@ -1,16 +1,22 @@
-import ConfirmModal from '@/components/custom/ConfirmModal';
-import ImageUploader from '@/components/custom/ImageUploader';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { getRequest, patchRequest } from '@/lib/apiHandlers';
+import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
+import ImageUploader from '@/components/custom/ImageUploader';
+import ConfirmModal from '@/components/custom/ConfirmModal';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { toast } from '@/hooks/use-toast';
-import { getRequest, patchRequest } from '@/lib/apiHandlers';
-import { IClientCreateUpdate } from '@/models/clients';
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
 
-export const EditClient: React.FC = () => {
+interface EditAgentForm {
+    name: string;
+    surname: string;
+    phoneNumber: string;
+    imagePath: string;
+}
+
+export const EditAgent: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const {
@@ -19,25 +25,25 @@ export const EditClient: React.FC = () => {
         setValue,
         reset,
         formState: { errors, isSubmitting, isDirty }
-    } = useForm<IClientCreateUpdate>();
+    } = useForm<EditAgentForm>();
     const [loading, setLoading] = useState(false);
-    const [data, setData] = useState<IClientCreateUpdate>();
+    const [data, setData] = useState<EditAgentForm | null>(null);
 
     useEffect(() => {
         const fetchAgent = async () => {
             setLoading(true);
-            const res = await getRequest({ url: `/clients/${id}` });
+            const res = await getRequest({ url: `/agent/employees/${id}` });
 
             if (res.status === 200 || res.status === 201) {
-                const { name, surname, contactInfo, image, address, Note } = res.data.data;
-                reset({ name, surname, contactInfo, image, address, Note });
-                setData(res.data.data);
-                setValue('image', image);
+                const { name, surname, phoneNumber, imagePath } = res.data;
+                reset({ name, surname, phoneNumber, imagePath });
+                setData(res.data);
+                setValue('imagePath', imagePath);
                 setLoading(false);
             } else {
                 toast({
                     title: 'Ошибка',
-                    description: 'Не удалось загрузить данные клиента',
+                    description: 'Не удалось загрузить данные агента',
                     variant: 'destructive',
                 });
             }
@@ -48,21 +54,21 @@ export const EditClient: React.FC = () => {
 
     const onSubmit = async (data: any) => {
         const response = await patchRequest({
-            url: `/clients/${id}`,
+            url: `/agent/employees/${id}`,
             data,
         });
 
         if (response.status === 200 || response.status === 201) {
             toast({
                 title: 'Успех',
-                description: 'Данные клиента успешно обновлены',
+                description: 'Данные агента успешно обновлены',
             });
             reset(data);
             navigate(-1);
         } else {
             toast({
                 title: 'Ошибка',
-                description: 'Не удалось обновить данные клиента',
+                description: 'Не удалось обновить данные агента',
                 variant: 'destructive',
             });
         }
@@ -86,13 +92,13 @@ export const EditClient: React.FC = () => {
                     <form onSubmit={handleSubmit(onSubmit)} className="flex gap-5">
                         <div className='w-1/2 aspect-square'>
                             <ImageUploader
-                                previewPlaceholder={`${data?.image}`}
+                                previewPlaceholder={`${data?.imagePath}`}
                                 onUploadSuccess={(url: string) => {
-                                    setValue('image', url, { shouldDirty: true });
+                                    setValue('imagePath', url, { shouldDirty: true });
                                 }}
                             />
                         </div>
-                        <div className="w-full space-y-2">
+                        <div className="w-full space-y-3">
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
                                 <label htmlFor='name' className="text-base font-semibold text-cDarkBlue cursor-pointer">Имя</label>
                                 <input
@@ -123,7 +129,7 @@ export const EditClient: React.FC = () => {
                                     id='phoneNumber'
                                     type="text"
                                     placeholder="+998XXXXXXXXX"
-                                    {...register("contactInfo", {
+                                    {...register("phoneNumber", {
                                         required: "Номер телефона обязателен",
                                         pattern: {
                                             value: /^\+998\d{9}$/,
@@ -132,41 +138,18 @@ export const EditClient: React.FC = () => {
                                     })}
                                     className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                 />
-                                {errors.contactInfo && <p className="text-red-500 text-sm">{errors.contactInfo.message}</p>}
-                            </div>
-
-                            <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                                <label htmlFor='address' className="text-base font-semibold text-cDarkBlue cursor-pointer">Адрес</label>
-                                <input
-                                    id='address'
-                                    type="text"
-                                    {...register('address', { required: 'Адрес обязателен' })}
-                                    className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
-                                    placeholder='Адрес'
-                                />
-                                {errors.address && <p className="text-red-500 text-sm">{errors.address.message}</p>}
-                            </div>
-
-                            <div className='w-full flex justify-start items-start flex-col bg-cLightGray px-3 py-2 rounded-lg'>
-                                <label htmlFor='note' className="text-base font-semibold text-cDarkBlue cursor-pointer">Дополнительная информация</label>
-                                <textarea
-                                    id='note'
-                                    {...register('Note', { required: 'Дополнительная информация обязателена' })}
-                                    className="mt-2 p-2 w-full border rounded-lg outline-none bg-transparent"
-                                    placeholder='Дополнительная информация'
-                                />
-                                {errors.Note && <p className="text-red-500 text-sm">{errors.Note.message}</p>}
+                                {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber.message}</p>}
                             </div>
                         </div>
 
-                        <div className='flex gap-3 absolute -top-20 right-5'>
+                        <div className='flex gap-3 absolute top-5 right-5'>
                             <ConfirmModal title='Вы действительно хотите отменить изменения агента?' setState={(state: boolean) => {
                                 state && navigate(-1) && reset();
                             }}>
                                 <Button variant={'customOutline'} type="button" className="px-10">Отменить</Button>
                             </ConfirmModal>
                             <Button variant={'custom'} type="submit" className="px-10" disabled={isSubmitting || !isDirty}>
-                                {isSubmitting ? 'Загрузка...' : 'Сохранить клиента'}
+                                {isSubmitting ? 'Загрузка...' : 'Сохранить агента'}
                             </Button>
                         </div>
                     </form>

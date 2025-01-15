@@ -18,7 +18,6 @@ export const Employee: React.FC = () => {
     const AgentInfo = async () => {
         setLoading(true);
         const res = await getRequest({ url: `/users/${id}` });
-        console.log(res);
 
         if (res.status === 200 || res.status === 201) {
             setData(res.data.data);
@@ -46,7 +45,7 @@ export const Employee: React.FC = () => {
                 >
                     Изменить
                 </Button>
-                <DeleteModal item={data} path="agent/employees" isPage={true}>
+                <DeleteModal item={data} path="users" isPage={true}>
                     <Button
                         variant={"customOutline"}
                         className='px-10'
@@ -73,7 +72,7 @@ export const Employee: React.FC = () => {
                             </div>
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg bg-gray-100'>
                                 <h4 className='font-semibold text-base text-cDarkBlue'>Роль</h4>
-                                <p className='text-cDarkBlue text-base'>{data?.role}</p>
+                                <p className='text-cDarkBlue text-base'>{data?.role === "admin" ? "Администратор" : data?.role === "manager" ? "Менеджер" : "Продавец"}</p>
                             </div>
                         </div>
                         <div className='w-full max-w-[60%]'>
