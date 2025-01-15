@@ -18,6 +18,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
+import { useDebounce } from "@/hooks/useDebounce";
 import { getRequest } from "@/lib/apiHandlers";
 import { IEmployee } from "@/models/employees";
 import React, { useEffect, useState } from "react";
@@ -29,11 +30,13 @@ export const Employees: React.FC = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
 	const [loading, setLoading] = useState(true);
+	const [search, setSearch] = useState<string>('');
+	const searchDebounced = useDebounce(search, 500);
 
 
-	const loadPageData = async (page: number) => {
+	const loadPageData = async (page: number, search?: string) => {
 		setLoading(true);
-		const res = await getRequest({ url: `/users?page=${page}&limit=10` });
+		const res = await getRequest({ url: `/users?page=${page}&limit=10&q=${search}` });
 
 		if (res.status === 200 || res.status === 201) {
 			setData(res.data.data);
@@ -49,8 +52,8 @@ export const Employees: React.FC = () => {
 	};
 
 	useEffect(() => {
-		loadPageData(currentPage);
-	}, [currentPage]);
+		loadPageData(currentPage, searchDebounced);
+	}, [currentPage, searchDebounced]);
 
 	return (
 		<div className="relative">
@@ -66,6 +69,7 @@ export const Employees: React.FC = () => {
 					<Input
 						placeholder="Поиск..."
 						className="max-w-[300px] px-10"
+						onChange={(e) => setSearch(e.target.value)}
 					/>
 				</CardHeader>
 				<CardContent>
