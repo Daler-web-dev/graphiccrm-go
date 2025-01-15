@@ -41,7 +41,7 @@ export const Employee: React.FC = () => {
                 <Button
                     variant={"custom"}
                     className='px-10'
-                    onClick={() => navigate(`/agents/edit/${id}`)}
+                    onClick={() => navigate(`/employees/edit/${id}`)}
                 >
                     Изменить
                 </Button>

@@ -59,7 +59,7 @@ export const AddEmployee = () => {
                             <input
                                 id='username'
                                 type="text"
-                                {...register('username', { required: 'Логин обязателен' })}
+                                {...register('username', { required: '!' })}
                                 className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                 placeholder='Логин'
                             />
@@ -71,7 +71,7 @@ export const AddEmployee = () => {
                             <input
                                 id='password'
                                 type="password"
-                                {...register('password', { required: 'Пароль обязателен' })}
+                                {...register('password', { required: '!' })}
                                 className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                 placeholder='Пароль'
                             />
@@ -82,7 +82,7 @@ export const AddEmployee = () => {
                             <label htmlFor='role' className="text-base font-semibold text-cDarkBlue cursor-pointer">Роль</label>
                             <select
                                 id='role'
-                                {...register('role', { required: 'Роль обязательна' })}
+                                {...register('role', { required: '!' })}
                                 className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                             >
                                 <option value="" disabled selected>Выберите роль</option>

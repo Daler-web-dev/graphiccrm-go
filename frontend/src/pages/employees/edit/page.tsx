@@ -8,15 +8,9 @@ import ImageUploader from '@/components/custom/ImageUploader';
 import ConfirmModal from '@/components/custom/ConfirmModal';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { IEmployeeCreateUpdate } from '@/models/employees';
 
-interface EditAgentForm {
-    name: string;
-    surname: string;
-    phoneNumber: string;
-    imagePath: string;
-}
-
-export const EditAgent: React.FC = () => {
+export const EditEmployee: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const {
@@ -25,20 +19,20 @@ export const EditAgent: React.FC = () => {
         setValue,
         reset,
         formState: { errors, isSubmitting, isDirty }
-    } = useForm<EditAgentForm>();
+    } = useForm<IEmployeeCreateUpdate>();
     const [loading, setLoading] = useState(false);
-    const [data, setData] = useState<EditAgentForm | null>(null);
+    const [data, setData] = useState<IEmployeeCreateUpdate | null>(null);
 
     useEffect(() => {
         const fetchAgent = async () => {
             setLoading(true);
-            const res = await getRequest({ url: `/agent/employees/${id}` });
+            const res = await getRequest({ url: `/users/${id}` });
 
             if (res.status === 200 || res.status === 201) {
-                const { name, surname, phoneNumber, imagePath } = res.data;
-                reset({ name, surname, phoneNumber, imagePath });
-                setData(res.data);
-                setValue('imagePath', imagePath);
+                const { image, username, password, role } = res.data.data;
+                reset({ image, username, password, role });
+                setData(res.data.data);
+                setValue('image', image);
                 setLoading(false);
             } else {
                 toast({
@@ -54,7 +48,7 @@ export const EditAgent: React.FC = () => {
 
     const onSubmit = async (data: any) => {
         const response = await patchRequest({
-            url: `/agent/employees/${id}`,
+            url: `/users/${id}`,
             data,
         });
 
@@ -92,57 +86,54 @@ export const EditAgent: React.FC = () => {
                     <form onSubmit={handleSubmit(onSubmit)} className="flex gap-5">
                         <div className='w-1/2 aspect-square'>
                             <ImageUploader
-                                previewPlaceholder={`${data?.imagePath}`}
+                                className='border border-gray-200'
+                                previewPlaceholder={`${data?.image}`}
                                 onUploadSuccess={(url: string) => {
-                                    setValue('imagePath', url, { shouldDirty: true });
+                                    setValue('image', url, { shouldDirty: true });
                                 }}
                             />
                         </div>
                         <div className="w-full space-y-3">
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                                <label htmlFor='name' className="text-base font-semibold text-cDarkBlue cursor-pointer">Имя</label>
+                                <label htmlFor='username' className="text-base font-semibold text-cDarkBlue cursor-pointer">Логин</label>
                                 <input
-                                    id='name'
+                                    id='username'
                                     type="text"
-                                    {...register('name', { required: 'Имя обязательно' })}
+                                    {...register('username', { required: '!' })}
                                     className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
-                                    placeholder='Имя'
+                                    placeholder='Логин'
                                 />
-                                {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+                                {errors.username && <p className="text-red-500 text-sm">{errors.username.message}</p>}
                             </div>
 
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                                <label htmlFor='surname' className="text-base font-semibold text-cDarkBlue cursor-pointer">Фамилия</label>
+                                <label htmlFor='password' className="text-base font-semibold text-cDarkBlue cursor-pointer">Пароль</label>
                                 <input
-                                    id='surname'
+                                    id='password'
                                     type="text"
-                                    {...register('surname', { required: 'Фамилия обязательна' })}
+                                    {...register('password', { required: '!' })}
                                     className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
-                                    placeholder='Фамилия'
+                                    placeholder='Пароль'
                                 />
-                                {errors.surname && <p className="text-red-500 text-sm">{errors.surname.message}</p>}
+                                {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
                             </div>
 
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                                <label htmlFor='phoneNumber' className="text-base font-semibold text-cDarkBlue cursor-pointer">Номер телефона</label>
-                                <input
-                                    id='phoneNumber'
-                                    type="text"
-                                    placeholder="+998XXXXXXXXX"
-                                    {...register("phoneNumber", {
-                                        required: "Номер телефона обязателен",
-                                        pattern: {
-                                            value: /^\+998\d{9}$/,
-                                            message: "Введите в формате +998XXXXXXXXX",
-                                        },
-                                    })}
+                                <label htmlFor='role' className="text-base font-semibold text-cDarkBlue cursor-pointer">Роль</label>
+                                <select
+                                    id='role'
+                                    {...register('role', { required: '!' })}
                                     className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
-                                />
-                                {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber.message}</p>}
+                                >
+                                    <option value="manager">Менеджер</option>
+                                    <option value="seller">Продавец</option>
+                                    <option value="admin">Администратор</option>
+                                </select>
+                                {errors.role && <p className="text-red-500 text-sm">{errors.role.message}</p>}
                             </div>
                         </div>
 
-                        <div className='flex gap-3 absolute top-5 right-5'>
+                        <div className='flex gap-3 absolute -top-20 right-5'>
                             <ConfirmModal title='Вы действительно хотите отменить изменения агента?' setState={(state: boolean) => {
                                 state && navigate(-1) && reset();
                             }}>
