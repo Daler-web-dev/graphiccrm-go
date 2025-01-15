@@ -15,29 +15,29 @@ export const Client: React.FC = () => {
     const [data, setData] = useState<IClient>();
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        const ClientInfo = async () => {
-            setLoading(true);
-            const res = await getRequest({ url: `/clients/${id}` });
+    const ClientInfo = async () => {
+        setLoading(true);
+        const res = await getRequest({ url: `/clients/${id}` });
 
-            if (res.status === 200 || res.status === 201) {
-                setData(res.data.data);
-                setLoading(false);
-            } else {
-                toast({
-                    title: 'Ошибка',
-                    description: 'Произошла ошибка при загрузке информации о клиенте',
-                    variant: 'destructive',
-                })
-            }
+        if (res.status === 200 || res.status === 201) {
+            setData(res.data.data);
+            setLoading(false);
+        } else {
+            toast({
+                title: 'Ошибка',
+                description: 'Произошла ошибка при загрузке информации о клиенте',
+                variant: 'destructive',
+            })
         }
+    }
 
+    useEffect(() => {
         ClientInfo();
     }, [id]);
 
     return (
         <div className='relative'>
-            <div className='space-x-3 absolute -top-16 right-0'>
+            <div className='space-x-3 absolute -top-20 right-5'>
                 <Button
                     variant={"customOutline"}
                     className='px-10'

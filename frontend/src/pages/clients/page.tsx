@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from '@/hooks/use-toast';
+import { useDebounce } from '@/hooks/useDebounce';
 import { getRequest } from '@/lib/apiHandlers';
 import { formatPrice } from '@/lib/utils';
 import { IClient } from '@/types/clients';
@@ -17,11 +18,13 @@ export const Clients: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(true);
+    const [search, setSearch] = useState<string>('');
+    const searchDebounced = useDebounce(search, 500);
 
 
-    const loadPageData = async (page: number) => {
+    const loadPageData = async (page: number, search: string) => {
         setLoading(true);
-        const res = await getRequest({ url: `/clients?page=${page}&limit=10` });
+        const res = await getRequest({ url: `/clients?page=${page}&limit=10&q=${search}` });
 
         if (res.status === 200 || res.status === 201) {
             setData(res.data.data);
@@ -37,13 +40,13 @@ export const Clients: React.FC = () => {
     };
 
     useEffect(() => {
-        loadPageData(currentPage);
-    }, [currentPage]);
+        loadPageData(currentPage, searchDebounced);
+    }, [currentPage, searchDebounced]);
 
     return (
         <Card className='relative'>
             <Button
-                className='absolute right-0 -top-16'
+                className='absolute right-5 -top-20 px-10'
                 onClick={() => {
                     navigate('/clients/new');
                 }}
@@ -53,7 +56,11 @@ export const Clients: React.FC = () => {
                     <CardTitle>Список клиентов</CardTitle>
                     <CardDescription>Список активных клиентов</CardDescription>
                 </div>
-                <Input placeholder='Поиск...' className='max-w-[300px] px-10' />
+                <Input
+                    placeholder='Поиск...'
+                    className='max-w-[300px] px-10'
+                    onChange={(e) => setSearch(e.target.value)}
+                />
             </CardHeader>
             <CardContent>
                 {loading ? (
@@ -68,7 +75,7 @@ export const Clients: React.FC = () => {
                                     <TableHead>Контакт</TableHead>
                                     <TableHead>Адрес</TableHead>
                                     <TableHead>Общий долг</TableHead>
-                                    <TableHead>Действия</TableHead>
+                                    <TableHead className='text-right'>Действия</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -82,8 +89,8 @@ export const Clients: React.FC = () => {
                                         <TableCell>{client.contactInfo}</TableCell>
                                         <TableCell>{client.address}</TableCell>
                                         <TableCell>{formatPrice(client.balance)}</TableCell>
-                                        <TableCell className='flex gap-2'>
-                                            <Button onClick={() => navigate(`/clients/${client.id}`)}>Просмотр</Button>
+                                        <TableCell className='text-right'>
+                                            <Button className='px-10' onClick={() => navigate(`/clients/${client.id}`)}>Просмотр</Button>
                                         </TableCell>
                                     </TableRow>
                                 )) : (
