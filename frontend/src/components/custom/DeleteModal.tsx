@@ -18,18 +18,22 @@ export default function DeleteModal({
     item,
     children,
     path,
-    isPage
+    isPage,
+    onUpdate
 }: {
     item: any;
     children: React.ReactNode;
     path: string;
     isPage?: boolean
+    onUpdate?: () => void
 }) {
     const navigate = useNavigate();
     const deleteItem = async (item: any) => {
         const res = await deleteRequest({ url: `${path}/${item.id}` });
+        console.log(res);
+
         if (res.status === 200 || res.status === 201) {
-            navigate(0);
+            onUpdate && onUpdate();
             isPage && navigate(-1);
         } else {
             toast({

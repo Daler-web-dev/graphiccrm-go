@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
 import { getRequest } from "@/lib/apiHandlers";
-import { ICategory } from "@/types/categories";
+import { ICategory } from "@/models/categories";
 import { Edit, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
@@ -60,7 +60,7 @@ export const Categories: React.FC = () => {
 					<CardTitle>Категории</CardTitle>
 					<CardDescription>Список категорий</CardDescription>
 					<AddCategoryForm>
-						<Button type="submit" className="absolute right-0 -top-16">Добавить категорию</Button>
+						<Button type="submit" className="absolute right-5 -top-20">Добавить категорию</Button>
 					</AddCategoryForm>
 				</CardHeader>
 				<CardContent>

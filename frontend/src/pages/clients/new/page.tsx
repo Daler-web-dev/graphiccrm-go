@@ -7,7 +7,7 @@ import { postRequest } from "@/lib/apiHandlers";
 import ConfirmModal from "@/components/custom/ConfirmModal";
 import { Card } from "@/components/ui/card";
 import ImageUploader from "@/components/custom/ImageUploader";
-import { IClientCreateUpdate } from "@/types/clients";
+import { IClientCreateUpdate } from "@/models/clients";
 
 
 export const AddClient: React.FC = () => {

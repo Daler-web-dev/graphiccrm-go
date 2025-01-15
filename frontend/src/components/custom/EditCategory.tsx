@@ -6,7 +6,7 @@ import { patchRequest, getRequest } from "@/lib/apiHandlers";
 import { toast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router-dom";
-import { ICategoryCreateUpdate } from "@/types/categories";
+import { ICategoryCreateUpdate } from "@/models/categories";
 
 interface EditCategoryProps {
     categoryId: number;

@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
 import { getRequest } from "@/lib/apiHandlers";
-import { IOrder } from "@/types/order";
+import { formatPrice } from "@/lib/utils";
+import { IOrder } from "@/models/order";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -49,53 +50,55 @@ export const Orders: React.FC = () => {
 		<div className="w-full relative">
 			<Card>
 				<CardHeader className="flex flex-col items-start">
-					<CardTitle className="text-3xl font-bold text-cBlack">Заказы</CardTitle>
-					<CardDescription className="text-cLightBlue">История заказов</CardDescription>
+					<CardTitle>Заказы</CardTitle>
+					<CardDescription>История заказов</CardDescription>
 				</CardHeader>
 				<CardContent>
 					{loading ? (
 						<LoaderTable />
 					) : (
-						<Table>
-							<TableHeader>
-								<TableRow className="hover:bg-white border-none">
-									<TableHead>#</TableHead>
-									<TableHead>Номер</TableHead>
-									<TableHead>Дата</TableHead>
-									<TableHead>Сумма</TableHead>
-									<TableHead>Тип оплаты</TableHead>
-									<TableHead>Статус</TableHead>
-									<TableHead>Действия</TableHead>
-								</TableRow>
-							</TableHeader>
-							<TableBody>
-								{data.length > 0 ? data.map((item, index) => (
-									<TableRow className='text-left' onClick={() => navigate(`/orders/${item.id}`)}>
-										<TableCell>{index + 1}</TableCell>
-										<TableCell>{item.id}</TableCell>
-										<TableCell>{item.createdAt.split('T')[0]}</TableCell>
-										<TableCell>{item.totalPrice}</TableCell>
-										<TableCell>{item.paymentMethod}</TableCell>
-										{item.status === 'completed' ? <TableCell className='text-cDarkBlue'>{item.status}</TableCell> : item.status === 'in_production' ? <TableCell className='text-cLightBlue'>{item.status}</TableCell> : <TableCell className='text-gray-400'>{item.status}</TableCell>}
-										<TableCell><Button>Просмотр</Button></TableCell>
+						<>
+							<Table>
+								<TableHeader>
+									<TableRow className="hover:bg-white border-none">
+										<TableHead>#</TableHead>
+										<TableHead>Номер</TableHead>
+										<TableHead>Дата</TableHead>
+										<TableHead>Сумма</TableHead>
+										<TableHead>Тип оплаты</TableHead>
+										<TableHead>Статус</TableHead>
+										<TableHead className="text-right">Действия</TableHead>
 									</TableRow>
-								)) : (
-									<TableRow>
-										<TableCell className="text-base text-center rounded-xl" colSpan={7}>
-											Нет данных по вашему запросу
-										</TableCell>
-									</TableRow>
-								)}
-							</TableBody>
-						</Table>
+								</TableHeader>
+								<TableBody>
+									{data.length > 0 ? data.map((item, index) => (
+										<TableRow className='text-left'>
+											<TableCell>{index + 1}</TableCell>
+											<TableCell>{item.id}</TableCell>
+											<TableCell>{item.createdAt.split('T')[0]}</TableCell>
+											<TableCell>{formatPrice(item.totalPrice)}</TableCell>
+											<TableCell>{item.paymentMethod === 'cash' ? 'Наличными' : item.paymentMethod === "transfer" ? "Переводом" : "Картой"}</TableCell>
+											{item.status === "paid" ? <TableCell className='text-black'>Оплачен</TableCell> : item.status === 'completed' ? <TableCell className='text-cDarkBlue'>Готово</TableCell> : item.status === 'in_production' ? <TableCell className='text-cLightBlue'>В процессе</TableCell> : <TableCell className='text-gray-400'>В ожидании</TableCell>}
+											<TableCell className="text-right"><Button onClick={() => navigate(`/orders/${item.id}`)}>Просмотр</Button></TableCell>
+										</TableRow>
+									)) : (
+										<TableRow>
+											<TableCell className="text-base text-center rounded-xl" colSpan={7}>
+												Нет данных по вашему запросу
+											</TableCell>
+										</TableRow>
+									)}
+								</TableBody>
+							</Table>
+							<Pagination
+								totalPages={totalPages}
+								currentPage={currentPage}
+								onPageChange={setCurrentPage}
+							/>
+						</>
 					)}
 				</CardContent>
 			</Card>
-			<Pagination
-				totalPages={totalPages}
-				currentPage={currentPage}
-				onPageChange={setCurrentPage}
-			/>
 		</div>
 	);
 };

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
-import { ICategoryCreateUpdate } from '@/types/categories';
+import { ICategoryCreateUpdate } from '@/models/categories';
 import { postRequest } from '@/lib/apiHandlers';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';

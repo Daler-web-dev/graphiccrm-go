@@ -5,13 +5,14 @@ import { Dashboard } from "./pages/page";
 import { Products } from "./pages/products/page";
 import { Product } from "./pages/products/[id]/page";
 import { Categories } from "./pages/caterogies/page";
-import { Agents } from "./pages/agents/page";
+import { Employees } from "./pages/employees/page";
 import { Clients } from "./pages/clients/page";
 import { Client } from "./pages/clients/[id]/page";
 import { AddClient } from "./pages/clients/new/page";
 import { EditClient } from "./pages/clients/edit/page";
 import { Orders } from "./pages/orders/page";
 import { Order } from "./pages/orders/[id]/page";
+import { Employee } from "./pages/employees/[id]/page";
 
 function App() {
 	return (
@@ -56,8 +57,12 @@ function App() {
 						element={<Categories />}
 					/>
 					<Route
-						path="/agents"
-						element={<Agents />}
+						path="/employees"
+						element={<Employees />}
+					/>
+					<Route
+						path="/employees/:id"
+						element={<Employee />}
 					/>
 				</Route>
 				<Route
