@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { getRequest, patchRequest } from '@/lib/apiHandlers';
-import { IClientCreateUpdate } from '@/types/clients';
+import { IClientCreateUpdate } from '@/models/clients';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';

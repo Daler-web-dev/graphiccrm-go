@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
 import DeleteModal from '@/components/custom/DeleteModal';
-import { IEmployee } from '@/types/employees';
+import { IEmployee } from '@/models/employees';
 
 
 export const Employee: React.FC = () => {
@@ -15,29 +15,30 @@ export const Employee: React.FC = () => {
     const [data, setData] = useState<IEmployee>();
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        const AgentInfo = async () => {
-            setLoading(true);
-            const res = await getRequest({ url: `/users/${id}` });
+    const AgentInfo = async () => {
+        setLoading(true);
+        const res = await getRequest({ url: `/users/${id}` });
+        console.log(res);
 
-            if (res.status === 200 || res.status === 201) {
-                setData(res.data);
-                setLoading(false);
-            } else {
-                toast({
-                    title: 'Ошибка',
-                    description: 'Произошла ошибка при загрузке агента',
-                    variant: 'destructive',
-                })
-            }
+        if (res.status === 200 || res.status === 201) {
+            setData(res.data.data);
+            setLoading(false);
+        } else {
+            toast({
+                title: 'Ошибка',
+                description: 'Произошла ошибка при загрузке агента',
+                variant: 'destructive',
+            })
         }
+    }
 
+    useEffect(() => {
         AgentInfo();
     }, [id]);
 
     return (
         <div className='relative'>
-            <div className='absolute -top-16 right-0 space-x-3'>
+            <div className='absolute -top-20 right-5 space-x-3'>
                 <Button
                     variant={"custom"}
                     className='px-10'
@@ -61,26 +62,22 @@ export const Employee: React.FC = () => {
                         <Skeleton className='w-full h-11' />
                         <Skeleton className='w-full h-11' />
                         <Skeleton className='w-full h-11' />
-                        <Skeleton className='w-full h-11' />
-                        <Skeleton className='w-full h-11' />
-                        <Skeleton className='w-full h-11' />
-                        <Skeleton className='w-full h-11' />
                     </div>
                 ) : (
                     <div className='flex gap-5'>
                         <div className='w-full max-w-[40%] space-y-3'>
-                            {/* <img src={data?.imagePath || "/images/humanPlaceholder.png"} alt="agent image" className='aspect-square w-full object-cover border border-cLightGray rounded-lg' loading='lazy' /> */}
-                            <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
+                            <img src={data?.image || "/images/humanPlaceholder.png"} alt="agent image" className='aspect-square w-full object-cover border border-cLightGray rounded-lg' loading='lazy' />
+                            <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg bg-gray-100'>
                                 <h4 className='font-semibold text-base text-cDarkBlue'>Логин</h4>
-                                <p className='text-cDarkBlue text-base'>{data?.username || "0"}</p>
+                                <p className='text-cDarkBlue text-base'>{data?.username}</p>
                             </div>
-                            <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
+                            <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg bg-gray-100'>
                                 <h4 className='font-semibold text-base text-cDarkBlue'>Роль</h4>
                                 <p className='text-cDarkBlue text-base'>{data?.role}</p>
                             </div>
                         </div>
                         <div className='w-full max-w-[60%]'>
-                            {/* <AgentHistory id={data?.id} /> */}
+                            {/* <EmployeesHistory id={data?.id || ""} /> */}
                         </div>
                     </div>
                 )}

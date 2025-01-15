@@ -8,7 +8,7 @@ import { toast } from '@/hooks/use-toast';
 import { useDebounce } from '@/hooks/useDebounce';
 import { getRequest } from '@/lib/apiHandlers';
 import { formatPrice } from '@/lib/utils';
-import { IClient } from '@/types/clients';
+import { IClient } from '@/models/clients';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 

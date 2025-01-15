@@ -1,7 +1,6 @@
+import { Roles } from "@/types/role"
 import { IClient } from "./clients"
 import { IOrder } from "./order"
-
-export type Roles = "manager" | "seller" | "admin"
 
 export interface IEmployee extends Omit<IEmployeeCreateUpdate, "password"> {
     id: string
@@ -13,6 +12,7 @@ export interface IEmployee extends Omit<IEmployeeCreateUpdate, "password"> {
 
 
 export interface IEmployeeCreateUpdate {
+    image: string
     username: string
     password: string
     role: Roles

@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
 import { getRequest } from "@/lib/apiHandlers";
-import { IEmployee } from "@/types/employees";
+import { IEmployee } from "@/models/employees";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 

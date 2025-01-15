@@ -7,7 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Skeleton } from '@/components/ui/skeleton';
 import DeleteModal from '@/components/custom/DeleteModal';
 import { ClientHistory } from '@/components/custom/ClientHistory';
-import { IClient } from '@/types/clients';
+import { IClient } from '@/models/clients';
 
 export const Client: React.FC = () => {
     const navigate = useNavigate();
