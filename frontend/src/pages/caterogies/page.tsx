@@ -67,63 +67,69 @@ export const Categories: React.FC = () => {
 					{loading ? (
 						<LoaderTable />
 					) : (
-						<Table>
-							<TableHeader>
-								<TableRow className="border-none hover:bg-white">
-									<TableHead>Наименование</TableHead>
-									<TableHead className="text-right">
-										Действия
-									</TableHead>
-								</TableRow>
-							</TableHeader>
-							<TableBody>
-								{data.length > 0 ? data.map((category) => (
-									<TableRow key={category.id}>
-										<TableCell className="text-left">
-											{category.name}
-										</TableCell>
-										<TableCell className="flex justify-end gap-2">
-											<EditCategory categoryId={category.id}>
-												<Button
-													variant="secondary"
-													size="icon"
-													onClick={() => {
-														console.log(category);
-													}}
-												>
-													<Edit className="h-4 w-4 text-cLightBlue" />
-												</Button>
-											</EditCategory>
-											<DeleteModal item={category} path="categories">
-												<Button
-													variant="secondary"
-													size="icon"
-													onClick={() => {
-														console.log(category);
-													}}
-												>
-													<Trash2 className="h-4 w-4 text-red-600" />
-												</Button>
-											</DeleteModal>
-										</TableCell>
+						<>
+							<Table>
+								<TableHeader>
+									<TableRow className="border-none hover:bg-white">
+										<TableHead>№</TableHead>
+										<TableHead>Наименование</TableHead>
+										<TableHead className="text-right">
+											Действия
+										</TableHead>
 									</TableRow>
-								)) : (
-									<TableRow>
-										<TableCell className="text-base text-center rounded-xl" colSpan={2}>
-											Нет данных по вашему запросу
-										</TableCell>
-									</TableRow>
-								)}
-							</TableBody>
-						</Table>
+								</TableHeader>
+								<TableBody>
+									{data.length > 0 ? data.map((category, idx) => (
+										<TableRow key={category.id}>
+											<TableCell className="w-10 text-left">
+												{idx + 1}
+											</TableCell>
+											<TableCell className="text-left">
+												{category.name}
+											</TableCell>
+											<TableCell className="flex justify-end gap-2">
+												<EditCategory categoryId={category.id}>
+													<Button
+														variant="secondary"
+														size="icon"
+														onClick={() => {
+															console.log(category);
+														}}
+													>
+														<Edit className="h-4 w-4 text-cLightBlue" />
+													</Button>
+												</EditCategory>
+												<DeleteModal item={category} path="categories">
+													<Button
+														variant="secondary"
+														size="icon"
+														onClick={() => {
+															console.log(category);
+														}}
+													>
+														<Trash2 className="h-4 w-4 text-red-600" />
+													</Button>
+												</DeleteModal>
+											</TableCell>
+										</TableRow>
+									)) : (
+										<TableRow>
+											<TableCell className="text-base text-center rounded-xl" colSpan={2}>
+												Нет данных по вашему запросу
+											</TableCell>
+										</TableRow>
+									)}
+								</TableBody>
+							</Table>
+							<Pagination
+								totalPages={totalPages}
+								currentPage={currentPage}
+								onPageChange={setCurrentPage}
+							/>
+						</>
 					)}
 				</CardContent>
 			</Card>
-			<Pagination
-				totalPages={totalPages}
-				currentPage={currentPage}
-				onPageChange={setCurrentPage}
-			/>
 		</div>
 	);
 };

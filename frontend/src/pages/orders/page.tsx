@@ -72,7 +72,7 @@ export const Orders: React.FC = () => {
 								</TableHeader>
 								<TableBody>
 									{data.length > 0 ? data.map((item, index) => (
-										<TableRow className='text-left'>
+										<TableRow className='text-left' key={index}>
 											<TableCell>{index + 1}</TableCell>
 											<TableCell>{item.id}</TableCell>
 											<TableCell>{item.createdAt.split('T')[0]}</TableCell>

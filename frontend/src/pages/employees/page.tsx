@@ -76,42 +76,44 @@ export const Employees: React.FC = () => {
 					{loading ? (
 						<LoaderTable />
 					) : (
-						<Table>
-							<TableHeader>
-								<TableRow className="border-none hover:bg-white">
-									<TableHead>№</TableHead>
-									<TableHead>Логин</TableHead>
-									<TableHead>Роль</TableHead>
-									<TableHead className="text-right">Действия</TableHead>
-								</TableRow>
-							</TableHeader>
-							<TableBody>
-								{data.length > 0 ? data.map((agent, idx) => (
-									<TableRow className="text-left">
-										<TableCell>{idx + 1}</TableCell>
-										<TableCell>{agent.username}</TableCell>
-										<TableCell>{agent.role}</TableCell>
-										<TableCell className="text-right">
-											<Button onClick={() => navigate(`/employees/${agent.id}`)}>Просмотр</Button>
-										</TableCell>
+						<>
+							<Table>
+								<TableHeader>
+									<TableRow className="border-none hover:bg-white">
+										<TableHead>№</TableHead>
+										<TableHead>Логин</TableHead>
+										<TableHead>Роль</TableHead>
+										<TableHead className="text-right">Действия</TableHead>
 									</TableRow>
-								)) : (
-									<TableRow>
-										<TableCell className="text-base text-center rounded-xl" colSpan={7}>
-											Нет данных по вашему запросу
-										</TableCell>
-									</TableRow>
-								)}
-							</TableBody>
-						</Table>
+								</TableHeader>
+								<TableBody>
+									{data.length > 0 ? data.map((agent, idx) => (
+										<TableRow className="text-left" key={idx}>
+											<TableCell>{idx + 1}</TableCell>
+											<TableCell>{agent.username}</TableCell>
+											<TableCell>{agent?.role === "admin" ? "Администратор" : agent?.role === "manager" ? "Менеджер" : "Продавец"}</TableCell>
+											<TableCell className="text-right">
+												<Button onClick={() => navigate(`/employees/${agent.id}`)}>Просмотр</Button>
+											</TableCell>
+										</TableRow>
+									)) : (
+										<TableRow>
+											<TableCell className="text-base text-center rounded-xl" colSpan={7}>
+												Нет данных по вашему запросу
+											</TableCell>
+										</TableRow>
+									)}
+								</TableBody>
+							</Table>
+							<Pagination
+								totalPages={totalPages}
+								currentPage={currentPage}
+								onPageChange={setCurrentPage}
+							/>
+						</>
 					)}
 				</CardContent>
 			</Card>
-			<Pagination
-				totalPages={totalPages}
-				currentPage={currentPage}
-				onPageChange={setCurrentPage}
-			/>
 		</div>
 	);
 };

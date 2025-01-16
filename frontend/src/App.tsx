@@ -15,6 +15,8 @@ import { Order } from "./pages/orders/[id]/page";
 import { Employee } from "./pages/employees/[id]/page";
 import { AddEmployee } from "./pages/employees/new/page";
 import { EditEmployee } from "./pages/employees/edit/page";
+import { EditProduct } from "./pages/products/edit/page";
+import { NewProduct } from "./pages/products/new/page";
 
 function App() {
 	return (
@@ -53,6 +55,14 @@ function App() {
 					<Route
 						path="/products/:id"
 						element={<Product />}
+					/>
+					<Route
+						path="/products/new"
+						element={<NewProduct />}
+					/>
+					<Route
+						path="/products/edit/:id"
+						element={<EditProduct />}
 					/>
 					<Route
 						path="/categories"
