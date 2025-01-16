@@ -31,10 +31,11 @@ export const Categories: React.FC = () => {
 	const [totalPages, setTotalPages] = useState(1);
 	const [loading, setLoading] = useState(true);
 
-
 	const loadPageData = async (page: number) => {
 		setLoading(true);
-		const res = await getRequest({ url: `/categories?page=${page}&limit=10` });
+		const res = await getRequest({
+			url: `/categories?page=${page}&limit=10`,
+		});
 
 		if (res.status === 200 || res.status === 201) {
 			setData(res.data.data);
@@ -42,9 +43,9 @@ export const Categories: React.FC = () => {
 			setLoading(false);
 		} else {
 			toast({
-				title: 'Ошибка',
-				description: 'Произошла ошибка при загрузке категорий',
-				variant: 'destructive',
+				title: "Ошибка",
+				description: "Произошла ошибка при загрузке категорий",
+				variant: "destructive",
 			});
 		}
 	};
@@ -58,9 +59,14 @@ export const Categories: React.FC = () => {
 			<Card>
 				<CardHeader className="flex flex-col justify-center items-start">
 					<CardTitle>Категории</CardTitle>
-					<CardDescription>Список категорий</CardDescription>
+					<CardDescription>Список категорий.</CardDescription>
 					<AddCategoryForm>
-						<Button type="submit" className="absolute right-5 -top-20">Добавить категорию</Button>
+						<Button
+							type="submit"
+							className="absolute right-5 -top-20"
+						>
+							Добавить категорию
+						</Button>
 					</AddCategoryForm>
 				</CardHeader>
 				<CardContent>
@@ -79,42 +85,56 @@ export const Categories: React.FC = () => {
 									</TableRow>
 								</TableHeader>
 								<TableBody>
-									{data.length > 0 ? data.map((category, idx) => (
-										<TableRow key={category.id}>
-											<TableCell className="w-10 text-left">
-												{idx + 1}
-											</TableCell>
-											<TableCell className="text-left">
-												{category.name}
-											</TableCell>
-											<TableCell className="flex justify-end gap-2">
-												<EditCategory categoryId={category.id}>
-													<Button
-														variant="secondary"
-														size="icon"
-														onClick={() => {
-															console.log(category);
-														}}
+									{data.length > 0 ? (
+										data.map((category, idx) => (
+											<TableRow key={category.id}>
+												<TableCell className="w-10 text-left">
+													{idx + 1}
+												</TableCell>
+												<TableCell className="text-left">
+													{category.name}
+												</TableCell>
+												<TableCell className="flex justify-end gap-2">
+													<EditCategory
+														categoryId={category.id}
 													>
-														<Edit className="h-4 w-4 text-cLightBlue" />
-													</Button>
-												</EditCategory>
-												<DeleteModal item={category} path="categories">
-													<Button
-														variant="secondary"
-														size="icon"
-														onClick={() => {
-															console.log(category);
-														}}
+														<Button
+															variant="secondary"
+															size="icon"
+															onClick={() => {
+																console.log(
+																	category
+																);
+															}}
+														>
+															<Edit className="h-4 w-4 text-cLightBlue" />
+														</Button>
+													</EditCategory>
+													<DeleteModal
+														item={category}
+														path="categories"
 													>
-														<Trash2 className="h-4 w-4 text-red-600" />
-													</Button>
-												</DeleteModal>
-											</TableCell>
-										</TableRow>
-									)) : (
+														<Button
+															variant="secondary"
+															size="icon"
+															onClick={() => {
+																console.log(
+																	category
+																);
+															}}
+														>
+															<Trash2 className="h-4 w-4 text-red-600" />
+														</Button>
+													</DeleteModal>
+												</TableCell>
+											</TableRow>
+										))
+									) : (
 										<TableRow>
-											<TableCell className="text-base text-center rounded-xl" colSpan={2}>
+											<TableCell
+												className="text-base text-center rounded-xl"
+												colSpan={2}
+											>
 												Нет данных по вашему запросу
 											</TableCell>
 										</TableRow>
