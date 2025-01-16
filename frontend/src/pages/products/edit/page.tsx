@@ -94,6 +94,7 @@ export const EditProduct: React.FC = () => {
         }
     };
 
+    
     return (
         <div className='relative'>
             <Card className='w-full overflow-x-auto p-5 mb-5'>
