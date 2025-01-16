@@ -12,7 +12,7 @@ import { formatPrice } from '@/lib/utils';
 import { ICategory } from '@/models/categories';
 import { IProduct } from '@/models/products';
 import { RotateCcw } from 'lucide-react';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export const Products: React.FC = () => {

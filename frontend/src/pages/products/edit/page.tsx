@@ -1,5 +1,4 @@
 import ConfirmModal from '@/components/custom/ConfirmModal';
-import { Header } from '@/components/custom/Header';
 import ImageUploader from '@/components/custom/ImageUploader';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';

@@ -6,7 +6,6 @@ import ImageUploader from "@/components/custom/ImageUploader";
 import { toast } from "@/hooks/use-toast";
 import { getRequest, postRequest } from "@/lib/apiHandlers";
 import ConfirmModal from "@/components/custom/ConfirmModal";
-import { Header } from "@/components/custom/Header";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -32,7 +31,7 @@ export const NewProduct: React.FC = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             setLoading(true);
-            const response = await getRequest({ url: '/category' });
+            const response = await getRequest({ url: '/categories' });
             if (response.status === 200) {
                 setCategories(response.data.data);
                 setLoading(false);
@@ -57,17 +56,17 @@ export const NewProduct: React.FC = () => {
         })
         const resData = { ...data, count: Number(data.count), amountInBox: Number(data.amountInBox), unitPrice: Number(data.unitPrice) }
 
-        const response = await postRequest({ url: '/product', data: resData });
+        const response = await postRequest({ url: '/products', data: resData });
         if (response.status === 200 || response.status === 201) {
             toast({
                 title: 'Успех',
-                description: 'Агент успешно добавлен',
+                description: 'Товар успешно добавлен',
             });
             navigate(-1);
         } else {
             toast({
                 title: 'Ошибка',
-                description: 'Произошла ошибка при добавлении агента',
+                description: 'Произошла ошибка при добавлении товара',
                 variant: 'destructive',
             });
         }
