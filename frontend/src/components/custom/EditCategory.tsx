@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { ICategoryCreateUpdate } from "@/models/categories";
 
 interface EditCategoryProps {
-    categoryId: number;
+    categoryId: string;
     children: React.ReactNode;
 }
 

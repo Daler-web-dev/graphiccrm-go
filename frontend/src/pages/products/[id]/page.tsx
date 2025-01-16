@@ -1,92 +1,121 @@
+import DeleteModal from '@/components/custom/DeleteModal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from '@/hooks/use-toast';
+import { getRequest } from '@/lib/apiHandlers';
+import { formatPrice } from '@/lib/utils';
+import { IProduct } from '@/models/products';
 import { Edit, Trash2 } from 'lucide-react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export const Product: React.FC = () => {
-    // const { id } = useParams();
-    const product = {
-        id: 1,
-        title: "Товар 1",
-        description: "Описание",
-        price: 100000,
-        image: "https://images.unsplash.com/photo-1503602642458-232111445657?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        overallLeft: 10,
-        soldLastMonth: 5,
-        producedLastMonth: 3,
-        category: "Категория 1",
-        material: "Материал 1",
-        weight: "25 кг",
-        height: "120 см",
-        width: "90 см",
-        info: "Дополнительная информация 1",
-    }
+    const navigate = useNavigate();
+    const { id } = useParams();
+    const [data, setData] = useState<IProduct>();
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const fetchProduct = async () => {
+            setLoading(true);
+            const res = await getRequest({ url: `/products/${id}` });
+
+            if (res.status === 200 || res.status === 201) {
+                setData(res.data.data);
+                setLoading(false);
+            } else {
+                toast({
+                    title: 'Ошибка',
+                    description: 'Произошла ошибка при загрузке информации о товаре',
+                    variant: 'destructive',
+                })
+                return
+            }
+        }
+
+        fetchProduct();
+    }, [id]);
+
 
     return (
-        <div className='flex flex-col justify-center gap-5'>
-            <Button className='absolute -top-16 right-0 px-10'></Button>
-            <div className='flex justify-center items-start gap-5'>
-                <div className='w-[35%]'>
-                    <img src={product.image} alt="product image" className='object-cover rounded-3xl w-full aspect-square' />
-                    <div className='flex gap-6'>
-                        <Button variant={"outline"} className='mt-5 w-full rounded-3xl'>
-                            <Edit className='mr-2' />
-                            Редактировать
-                        </Button>
-                        <Button variant={"outline"} className='mt-5 w-full rounded-3xl'>
-                            <Trash2 className='mr-2' />
-                            Удалить
-                        </Button>
+        <div className='flex flex-col justify-center gap-5 relative'>
+            {loading ? (
+                <div className='flex gap-5'>
+                    <Skeleton className='w-1/2 aspect-square' />
+                    <div className='w-full flex flex-col gap-3'>
+                        <Skeleton className='w-full h-14' />
+                        <Skeleton className='w-full h-14' />
+                        <Skeleton className='w-full h-14' />
+                        <Skeleton className='w-full h-14' />
+                        <Skeleton className='w-full h-14' />
                     </div>
                 </div>
-                <Card className='text-cBlack rounded-3xl w-[65%]'>
-                    <CardHeader>
-                        <CardTitle>{product.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className='flex justify-between items-center p-3 bg-cWhite rounded-2xl'>
-                            <p className='font-normal text-xl'>Категория</p>
-                            <span className='font-semibold text-xl'>{product?.category}</span>
+            ) : (
+                <div className='flex justify-center items-start gap-5'>
+                    <div className='w-[35%]'>
+                        <img src={data?.image} alt="product image" className='object-cover rounded-3xl w-full aspect-square border border-gray-200' />
+                        <div className='flex gap-3 absolute -top-24 right-5'>
+                            <Button
+                                variant={"customOutline"}
+                                className='px-10 mt-5 w-full rounded-3xl'
+                                onClick={() => navigate(`/products/edit/${id}`)}
+                            >
+                                <Edit className='mr-2' />
+                                Редактировать
+                            </Button>
+                            <DeleteModal item={data} path='products' isPage={true}>
+                                <Button
+                                    variant={"custom"}
+                                    className='px-10 mt-5 w-full rounded-3xl'
+                                >
+                                    <Trash2 className='mr-2' />
+                                    Удалить
+                                </Button>
+                            </DeleteModal>
                         </div>
-                        <div className='flex justify-between items-center p-3 rounded-2xl'>
-                            <p className='font-normal text-xl'>Стоимость</p>
-                            <span className='font-semibold text-xl'>{product?.price}</span>
-                        </div>
-                        <div className='flex justify-between items-center p-3 bg-cWhite rounded-2xl'>
-                            <p className='font-normal text-xl'>Материал</p>
-                            <span className='font-semibold text-xl'>{product?.material}</span>
-                        </div>
-                        <div className='flex justify-between items-center p-3 rounded-2xl'>
-                            <p className='font-normal text-xl'>На складе</p>
-                            <span className='font-semibold text-xl'>{product?.overallLeft} шт.</span>
-                        </div>
-                        <div className='flex justify-between items-center p-3 bg-cWhite rounded-2xl'>
-                            <p className='font-normal text-xl'>Произведено в месяц</p>
-                            <span className='font-semibold text-xl'>{product?.producedLastMonth} шт.</span>
-                        </div>
-                        <div className='flex justify-between items-center p-3 rounded-2xl'>
-                            <p className='font-normal text-xl'>Продано за месяц</p>
-                            <span className='font-semibold text-xl'>{product?.soldLastMonth} шт.</span>
-                        </div>
-                        <div className='flex justify-between items-center p-3 rounded-2xl'>
-                            <p className='font-normal text-xl'>Высота</p>
-                            <span className='font-semibold text-xl'>{product?.height}</span>
-                        </div>
-                        <div className='flex justify-between items-center p-3 bg-cWhite rounded-2xl'>
-                            <p className='font-normal text-xl'>Ширина</p>
-                            <span className='font-semibold text-xl'>{product?.width}</span>
-                        </div>
-                        <div className='flex justify-between items-center p-3 rounded-2xl'>
-                            <p className='font-normal text-xl'>Вес</p>
-                            <span className='font-semibold text-xl'>{product?.weight}</span>
-                        </div>
-                        <div className='flex justify-center flex-col items-start text-left p-3 rounded-2xl bg-cWhite'>
-                            <p className='font-normal text-xl'>Дополнительная информация</p>
-                            <span className='font-normal text-base'>{product?.info}</span>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
+                    </div>
+                    <Card className='text-cBlack rounded-3xl w-[65%]'>
+                        <CardHeader>
+                            <CardTitle>{data?.name || 'Название товара'}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className='flex justify-between items-center p-3 bg-cWhite rounded-2xl'>
+                                <p className='font-normal text-xl'>Категория</p>
+                                <span className='font-semibold text-xl'>{data?.category?.name || 'Без категории'}</span>
+                            </div>
+                            <div className='flex justify-between items-center p-3 rounded-2xl'>
+                                <p className='font-normal text-xl'>Стоимость</p>
+                                <span className='font-semibold text-xl'>{formatPrice(data?.price || 0)}</span>
+                            </div>
+                            <div className='flex justify-between items-center p-3 bg-cWhite rounded-2xl'>
+                                <p className='font-normal text-xl'>Ед. измерения</p>
+                                <span className='font-semibold text-xl'>{data?.unit === 'piece' ? 'В штуках' : 'В сантиметрах'}</span>
+                            </div>
+                            <div className='flex justify-between items-center p-3 rounded-2xl'>
+                                <p className='font-normal text-xl'>На складе</p>
+                                <span className='font-semibold text-xl'>{data?.amount || 0} шт.</span>
+                            </div>
+                            {/* <div className='flex justify-between items-center p-3 bg-cWhite rounded-2xl'>
+                                <p className='font-normal text-xl'>Произведено в месяц</p>
+                                <span className='font-semibold text-xl'>{product?.producedLastMonth} шт.</span>
+                            </div>
+                            <div className='flex justify-between items-center p-3 rounded-2xl'>
+                                <p className='font-normal text-xl'>Продано за месяц</p>
+                                <span className='font-semibold text-xl'>{product?.soldLastMonth} шт.</span>
+                            </div> */}
+                            <div className='flex justify-between items-center p-3 rounded-2xl bg-cWhite'>
+                                <p className='font-normal text-xl'>Высота</p>
+                                <span className='font-semibold text-xl'>{data?.height || 0} м.</span>
+                            </div>
+                            <div className='flex justify-between items-center p-3 rounded-2xl'>
+                                <p className='font-normal text-xl'>Ширина</p>
+                                <span className='font-semibold text-xl'>{data?.width || 0} м.</span>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
         </div>
     );
 };
