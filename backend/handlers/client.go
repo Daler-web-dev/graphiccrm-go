@@ -332,13 +332,32 @@ func DeleteClient(c *fiber.Ctx) error {
 
 	db := database.DB
 	client := model.Client{}
-	err = db.Delete(&client, "id = ?", id).Error
 
+	// Сначала пытаемся найти клиента по ID
+	err = db.First(&client, "id = ?", id).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return c.JSON(fiber.Map{
+				"status":  404,
+				"success": false,
+				"message": "Client not found",
+			})
+		}
+
+		return c.JSON(fiber.Map{
+			"status":  500,
+			"success": false,
+			"message": "Failed to find client",
+		})
+	}
+
+	// После успешного нахождения удаляем клиента
+	err = db.Delete(&client, "id = ?", id).Error
 	if err != nil {
 		return c.JSON(fiber.Map{
 			"status":  500,
 			"success": false,
-			"message": "Failed to delete Client",
+			"message": "Failed to delete client",
 		})
 	}
 
