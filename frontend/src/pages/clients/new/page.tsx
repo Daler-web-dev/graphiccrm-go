@@ -118,7 +118,7 @@ export const AddClient: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className='flex gap-3 absolute -top-16 right-0'>
+                    <div className='flex gap-3 absolute -top-20 right-5'>
                         <ConfirmModal title='Вы действительно хотите отменить добавление агента?' setState={(state: boolean) => {
                             state && navigate(-1) && reset();
                         }}>

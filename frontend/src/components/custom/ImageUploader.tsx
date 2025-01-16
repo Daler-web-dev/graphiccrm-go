@@ -11,11 +11,11 @@ interface ImageUploaderProps {
 }
 
 const ImageUploader: React.FC<ImageUploaderProps> = ({
-    previewPlaceholder = '/images/humanPlaceholder.png',
+    previewPlaceholder,
     onUploadSuccess,
     className
 }) => {
-    const [imagePreview, setImagePreview] = useState<string | null>(previewPlaceholder ? import.meta.env.VITE_API_URL + "/" + previewPlaceholder : previewPlaceholder);
+    const [imagePreview, setImagePreview] = useState<string | null>(previewPlaceholder ? import.meta.env.VITE_API_URL + "/" + previewPlaceholder : '/images/humanPlaceholder.png');
     const [isUploading, setIsUploading] = useState(false);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,7 +39,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
             })
                 .then((res) => {
                     if (res.status === 200 || res.status === 201) {
-                        console.log(res.data);
+                        console.log(res.data.data);
 
                         onUploadSuccess(res.data.data.imageUrl);
                         toast({
