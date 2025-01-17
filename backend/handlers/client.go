@@ -368,3 +368,33 @@ func DeleteClient(c *fiber.Ctx) error {
 		"message": "Client was removed",
 	})
 }
+
+func SearchClients(c *fiber.Ctx) error {
+	query := c.Query("q")
+	if query == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Query parameter 'q' is required",
+		})
+	}
+
+	var clients []model.Client
+
+	err := database.DB.Raw(`
+        SELECT *
+        FROM clients
+        WHERE search_vector @@ plainto_tsquery('pg_catalog.russian', ?)
+    `, query).Scan(&clients).Error
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Error while searching clients",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"success": true,
+		"data":    clients,
+	})
+}

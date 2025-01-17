@@ -15,8 +15,8 @@ func Initalize(router *fiber.App) {
 
 	// users := router.Group("/api/users", middleware.ProtectRoute("admin"))
 	users := router.Group("/api/users")
-	users.Get("/", handlers.GetUsers)
 	users.Post("/", handlers.CreateUser)
+	users.Get("/", handlers.GetUsers)
 	users.Get("/:id", handlers.GetUserById)
 	users.Patch("/:id", handlers.UpdateUser)
 	users.Delete("/:id", handlers.DeleteUser)
@@ -24,6 +24,7 @@ func Initalize(router *fiber.App) {
 	clients := router.Group("/api/clients", middleware.ProtectRoute("admin", "seller"))
 	clients.Post("/", handlers.CreateClient)
 	clients.Get("/", handlers.GetAllClients)
+	clients.Get("/search", handlers.SearchClients)
 	clients.Get("/:id", handlers.GetClientById)
 	clients.Patch("/:id", handlers.UpdateClient)
 	clients.Delete("/:id", handlers.DeleteClient)

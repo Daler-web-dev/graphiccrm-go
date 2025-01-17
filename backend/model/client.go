@@ -17,6 +17,7 @@ type Client struct {
 	Note            string     `json:"Note" validate:"omitempty"`
 	SalespersonID   guuid.UUID `json:"salespersonId"`
 	PurchaseHistory []Order    `gorm:"foreignKey:ClientID" json:"purchaseHistory"`
+	SearchVector    string     `gorm:"type:tsvector" json:"-"`
 	CreatedAt       time.Time  `json:"createdAt"`
 	UpdatedAt       time.Time  `json:"updatedAt"`
 }
