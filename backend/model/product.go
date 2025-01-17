@@ -18,7 +18,7 @@ type Product struct {
 	Unit         string         `json:"unit" validate:"required,oneof=piece meter"`
 	Amount       float64        `json:"amount" validate:"required,gte=0"`
 	Image        string         `json:"image" validate:"omitempty,min=5"`
-	SearchVector string         `gorm:"type:tsvector;index" json:"-"`
+	SearchVector string         `gorm:"type:tsvector" json:"-"`
 	DeletedAt    gorm.DeletedAt `gorm:"index" swaggerignore:"true" json:"deleted_at"`
 	CreatedAt    time.Time      `json:"createdAt"`
 	UpdatedAt    time.Time      `json:"updatedAt"`

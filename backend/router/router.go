@@ -39,8 +39,8 @@ func Initalize(router *fiber.App) {
 
 	products := router.Group("/api/products", middleware.ProtectRoute("admin"))
 	products.Get("/", handlers.GetAllProducts)
-	products.Get("/", handlers.SearchProducts)
 	products.Post("/", handlers.CreateProduct)
+	products.Get("/search", handlers.SearchProducts)
 	products.Patch("/:id", handlers.UpdateProduct)
 	products.Get("/:id", handlers.GetProductById)
 	products.Delete("/:id", handlers.DeleteProduct)

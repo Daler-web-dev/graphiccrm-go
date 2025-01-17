@@ -16,5 +16,5 @@ func Getenv(key, fallback string) string {
 }
 
 func GenerateTSVector(name, category string) string {
-	return fmt.Sprintf("to_tsvector('russian', '%s %s')", name, category)
+	return fmt.Sprintf("to_tsvector('english', '%s %s')", name, category)
 }

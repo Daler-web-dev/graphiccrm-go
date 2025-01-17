@@ -159,8 +159,6 @@ func CreateProduct(c *fiber.Ctx) error {
 		})
 	}
 
-	product.SearchVector = utils.GenerateTSVector(product.Name, category.Name)
-
 	err = DB.Create(&product).Error
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -280,8 +278,6 @@ func UpdateProduct(c *fiber.Ctx) error {
 		})
 	}
 
-	product.SearchVector = utils.GenerateTSVector(product.Name, category.Name)
-
 	if err := db.Save(&product).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"status":  500,
@@ -341,29 +337,29 @@ func DeleteProduct(c *fiber.Ctx) error {
 func SearchProducts(c *fiber.Ctx) error {
 	query := c.Query("q")
 	if query == "" {
-		return c.JSON(fiber.Map{
-			"status":  400,
+		return c.Status(400).JSON(fiber.Map{
 			"success": false,
 			"message": "Query parameter 'q' is required",
 		})
 	}
 
 	var products []model.Product
-	err := database.DB.Raw(`
-		SELECT * FROM products
-		WHERE search_vector @@ to_tsquery('english', ?)
-	`, query).Scan(&products).Error
+	db := database.DB
+
+	err := db.Raw(`
+        SELECT * 
+        FROM products
+        WHERE search_vector @@ plainto_tsquery('russian', ?)
+    `, query).Scan(&products).Error
 
 	if err != nil {
-		return c.JSON(fiber.Map{
-			"status":  500,
+		return c.Status(500).JSON(fiber.Map{
 			"success": false,
 			"message": "Error while searching products",
 		})
 	}
 
 	return c.JSON(fiber.Map{
-		"status":  200,
 		"success": true,
 		"data":    products,
 	})
