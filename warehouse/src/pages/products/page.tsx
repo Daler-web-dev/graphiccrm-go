@@ -125,11 +125,11 @@ export const Products: React.FC = () => {
                                     <TableRow className='hover:bg-white border-none'>
                                         <TableHead>№</TableHead>
                                         <TableHead>Наименование</TableHead>
+                                        <TableHead>Ед. измерения</TableHead>
+                                        <TableHead>Катерогия</TableHead>
                                         <TableHead>Цена</TableHead>
                                         <TableHead>Количество на складу</TableHead>
                                         <TableHead>Товара на сумму</TableHead>
-                                        <TableHead>Ед. измерения</TableHead>
-                                        <TableHead>Катерогия</TableHead>
                                         <TableHead>Действия</TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -142,11 +142,11 @@ export const Products: React.FC = () => {
                                                     <img src={item.image} alt="product image" loading='lazy' className='w-10 h-10 object-cover rounded-lg border border-gray-200' />
                                                     {item.name}
                                                 </TableCell>
+                                                <TableCell>{item.unit === 'piece' ? 'В штуках' : 'В сантиметрах'}</TableCell>
+                                                <TableCell>{item.category.name}</TableCell>
                                                 <TableCell>{formatPrice(item.price)}</TableCell>
                                                 <TableCell>{item.amount} шт.</TableCell>
                                                 <TableCell>{formatPrice(item.price * item.amount)}</TableCell>
-                                                <TableCell>{item.unit === 'piece' ? 'В штуках' : 'В сантиметрах'}</TableCell>
-                                                <TableCell>{item.category.name}</TableCell>
                                                 <TableCell className='flex gap-2'>
                                                     <Button onClick={() => navigate(`/products/${item.id}`)}>Просмотр</Button>
                                                 </TableCell>

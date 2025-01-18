@@ -1,12 +1,13 @@
 import { Outlet, Route, Routes } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import Signin from "./pages/signin/Signin";
-import { Product } from "./pages/warehouse/[id]/page";
-import { Warehouse } from "./pages/warehouse/page";
-import { HistoryView } from "./pages/history/[id]/page";
-import { History } from "./pages/history/page";
 import { Dashboard } from "./pages/page";
-import { AddProduct } from "./pages/warehouse/addProduct/page";
+import { Orders } from "./pages/orders/page";
+import { Order } from "./pages/orders/[id]/page";
+import { Products } from "./pages/products/page";
+import { Product } from "./pages/products/[id]/page";
+import { NewProduct } from "./pages/products/new/page";
+import { EditProduct } from "./pages/products/edit/page";
 
 function App() {
 	return (
@@ -15,24 +16,28 @@ function App() {
 				<Route path="/" element={<MainLayout />}>
 					<Route index element={<Dashboard />} />
 					<Route
-						path="/history"
-						element={<History />}
+						path="/orders"
+						element={<Orders />}
 					/>
 					<Route
-						path="/history/:id"
-						element={<HistoryView />}
+						path="/order/:id"
+						element={<Order />}
 					/>
 					<Route
-						path="/warehouse"
-						element={<Warehouse />}
+						path="/products"
+						element={<Products />}
 					/>
 					<Route
-						path="/warehouse/:id"
+						path="/products/:id"
 						element={<Product />}
 					/>
 					<Route
-						path="/warehouse/addProduct"
-						element={<AddProduct />}
+						path="/products/new"
+						element={<NewProduct />}
+					/>
+					<Route
+						path="/products/edit/:id"
+						element={<EditProduct />}
 					/>
 				</Route>
 				<Route

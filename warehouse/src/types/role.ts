@@ -1,0 +1,1 @@
+export type Roles = "manager" | "seller" | "admin"
