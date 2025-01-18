@@ -1,39 +1,43 @@
 import { Chart } from "@/components/custom/Chart";
-import { HistoryList } from "@/components/custom/HistoryList";
+import TopRatedList from "@/components/custom/TopRatedList";
 
 
 export const Dashboard = () => {
-    const history = [
-        {
-            id: 3245,
-            orderNumber: 123456,
-            date: '2022-10-01',
-            total: 3000000,
-            paymentType: 'Наличные',
-            status: 'Выполнен'
-        },
-        {
-            id: 2345,
-            orderNumber: 1324567,
-            date: '2022-01-11',
-            total: 13220000,
-            paymentType: 'Перевод',
-            status: 'В процессе'
-        },
-        {
-            id: 3124536,
-            orderNumber: 756343,
-            date: '2022-07-19',
-            total: 6600000,
-            paymentType: 'Долг',
-            status: 'В ожидании'
-        },
-    ]
+    // const [params, setParams] = useState();
+    // const [data, setData] = useState<Array<ISpending>>([]);
+    // const [currentPage, setCurrentPage] = useState(1);
+    // const [totalPages, setTotalPages] = useState(1);
+    // const [loading, setLoading] = useState(true);
+
+    // const loadPageData = async (page: number, queryParams?: any) => {
+    //     console.log(page, queryParams);
+
+    //     setLoading(true);
+    //     const res = await getRequest({ url: `/spending?page=${page}&limit=10`, params: queryParams });
+    //     console.log(res);
+
+    //     if (res.status === 200 || res.status === 201) {
+    //         setData(res.data.data);
+    //         setTotalPages(Math.ceil(res.data.total / 10));
+    //         setLoading(false);
+    //     } else {
+    //         toast({
+    //             title: 'Ошибка',
+    //             description: 'Произошла ошибка при загрузке расходов',
+    //             variant: 'destructive',
+    //         });
+    //     }
+    // };
+
+    // useEffect(() => {
+    //     loadPageData(currentPage, params);
+    // }, [currentPage, params]);
 
     return (
-        <div className="space-y-5">
+        <div className="">
             <Chart />
-            <HistoryList data={history} title="История сегодняшних заказов" />
+            <br />
+            <TopRatedList />
         </div>
     );
 };
