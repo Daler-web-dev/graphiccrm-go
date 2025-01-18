@@ -39,7 +39,7 @@ export const Products: React.FC = () => {
 
         if (res.status === 200 || res.status === 201) {
             setData(res.data.data);
-            setTotalPages(Math.ceil(res.data.total / 10));
+            setTotalPages(res.data.pagination.totalPages);
             setLoading(false);
         } else {
             toast({
