@@ -120,7 +120,7 @@ export const Order: React.FC = () => {
 								{order?.products && order.products.length > 0 ? order.products.map((item, idx) => (
 									<TableRow
 										key={item.id}
-										className="bg-[#F2F2F2] hover:bg-[#F2F2F2]/80 border-none cursor-pointer"
+										className="bg-[#F2F2F2] hover:bg-[#F2F2F2]/80 border-none"
 									>
 										<TableCell className="text-base rounded-s-xl">
 											{idx + 1}
