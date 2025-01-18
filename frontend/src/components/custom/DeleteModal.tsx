@@ -30,7 +30,6 @@ export default function DeleteModal({
     const navigate = useNavigate();
     const deleteItem = async (item: any) => {
         const res = await deleteRequest({ url: `${path}/${item.id}` });
-        console.log(res);
 
         if (res.status === 200 || res.status === 201) {
             onUpdate && onUpdate();
