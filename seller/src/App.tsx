@@ -2,8 +2,6 @@ import { Outlet, Route, Routes } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import Signin from "./pages/signin/Signin";
 import { Dashboard } from "./pages/page";
-import { NewOrder } from "./pages/newOrder/page";
-import { Checkout } from "./pages/newOrder/checkout/page";
 import { Orders } from "./pages/orders/page";
 import { Order } from "./pages/orders/[id]/page";
 import { EditClient } from "./pages/clients/edit/page";
@@ -11,6 +9,7 @@ import { AddClient } from "./pages/clients/new/page";
 import { Client } from "./pages/clients/[id]/page";
 import { Clients } from "./pages/clients/page";
 import Editor from "./pages/newOrder/editor/page";
+import { NewOrder } from "./pages/newOrder/page";
 
 function App() {
 	return (
@@ -26,7 +25,6 @@ function App() {
 					<Route path="/orders/:id" element={<Order />} />
 					<Route path="/newOrder" element={<NewOrder />} />
 					<Route path="/newOrder/editor" element={<Editor />} />
-					<Route path="/newOrder/checkout" element={<Checkout />} />
 				</Route>
 				<Route
 					path="/auth"
