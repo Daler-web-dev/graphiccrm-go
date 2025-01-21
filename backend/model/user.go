@@ -18,6 +18,7 @@ type User struct {
 	ID        guuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
 	Username  string     `json:"username"`
 	Password  string     `json:"-"`
+	Image     string     `json:"image" validate:"omitempty,min=5"`
 	Role      Role       `json:"role"`
 	CreatedAt time.Time  `json:"createdAt"`
 	UpdatedAt time.Time  `json:"updatedAt"`
