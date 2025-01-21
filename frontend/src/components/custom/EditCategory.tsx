@@ -5,16 +5,15 @@ import { Button } from "@/components/ui/button";
 import { patchRequest, getRequest } from "@/lib/apiHandlers";
 import { toast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useNavigate } from "react-router-dom";
 import { ICategoryCreateUpdate } from "@/models/categories";
 
 interface EditCategoryProps {
     categoryId: string;
     children: React.ReactNode;
+    onUpdate: () => void
 }
 
-export const EditCategory: React.FC<EditCategoryProps> = ({ categoryId, children }) => {
-    const navigate = useNavigate();
+export const EditCategory: React.FC<EditCategoryProps> = ({ categoryId, children, onUpdate }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [initialData, setInitialData] = useState<ICategoryCreateUpdate | null>(null);
@@ -65,7 +64,7 @@ export const EditCategory: React.FC<EditCategoryProps> = ({ categoryId, children
                 title: "Успех",
                 description: "Категория успешно обновлена",
             });
-            navigate(0);
+            onUpdate();
             setIsOpen(false);
         } else {
             toast({

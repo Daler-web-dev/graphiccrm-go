@@ -1,34 +1,43 @@
 import { Container } from "@/components/custom/Container";
 import { Header } from "@/components/custom/Header";
 import SideBar from "@/components/custom/SideBar";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import React from "react";
-import { Outlet } from "react-router-dom";
+import { parseJwt } from "@/lib/utils";
+import Cookies from "js-cookie";
+import React, { useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 
 
 const MainLayout: React.FC = () => {
-	// const fetchData = async () => {
-	// 	try {
-	// 		const data = await getRequest({ url: "/products" });
-	// 		console.log("Fetched data:", data);
-	// 	} catch (error) {
-	// 		console.error("Error fetching data:", error);
-	// 	}
-	// };
+	const navigate = useNavigate();
 
-	// useEffect(() => {
-	// 	fetchData().then((res) => console.log(res));
-	// }, []);
+	useEffect(() => {
+		const handleAuth = async () => {
+			const accessToken = Cookies.get("accessToken");
+
+			if (!accessToken) {
+				navigate("/auth/signin");
+				return;
+			}
+
+			const jwtAccessToken = parseJwt(accessToken);
+
+
+			if (jwtAccessToken.exp < Date.now() / 1000) {
+				navigate("/auth/signin");
+			}
+		}
+
+		handleAuth();
+	}, [navigate]);
+
 	return (
-		<SidebarProvider className="flex">
+		<Container className="flex">
 			<SideBar />
-			<main className="bg-cWhite w-full">
-				<Container className="py-8">
-					<Header sideBarTrigger={<SidebarTrigger className="text-cDarkBlue" />} />
-					<Outlet />
-				</Container>
-			</main>
-		</SidebarProvider>
+			<div className="pl-[276px] w-full">
+				<Header />
+				<Outlet />
+			</div>
+		</Container>
 	);
 };
 

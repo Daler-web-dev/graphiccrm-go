@@ -96,7 +96,9 @@ export const Categories: React.FC = () => {
 												</TableCell>
 												<TableCell className="flex justify-end gap-2">
 													<EditCategory
+														onUpdate={() => { loadPageData(currentPage) }}
 														categoryId={category.id}
+
 													>
 														<Button
 															variant="secondary"
@@ -113,15 +115,11 @@ export const Categories: React.FC = () => {
 													<DeleteModal
 														item={category}
 														path="categories"
+														onUpdate={() => { loadPageData(currentPage) }}
 													>
 														<Button
 															variant="secondary"
 															size="icon"
-															onClick={() => {
-																console.log(
-																	category
-																);
-															}}
 														>
 															<Trash2 className="h-4 w-4 text-red-600" />
 														</Button>

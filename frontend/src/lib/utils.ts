@@ -1,6 +1,5 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import Cookies from "js-cookie";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs))
@@ -30,33 +29,3 @@ export const formatPrice = (price: number) => {
 
 	return formattedPrice.format(price);
 }
-
-export const refreshTokenHandler = async (): Promise<string | null> => {
-	const refreshToken = Cookies.get("refreshToken");
-
-	if (!refreshToken) {
-		return null;
-	}
-
-	const response = await fetch(import.meta.env.VITE_API_URL + "/auth/refresh", {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify({
-			refreshToken,
-		}),
-	});
-
-	if (!response.ok) {
-		throw new Error("Failed to refresh token");
-	}
-
-	const data = await response.json();
-	const { access_token: accessToken, refresh_token: newRefreshToken } = data;
-
-	Cookies.set("accessToken", accessToken);
-	Cookies.set("refreshToken", newRefreshToken);
-
-	return accessToken;
-};
