@@ -24,8 +24,8 @@ function App() {
 					<Route path="/orders" element={<Orders />} />
 					<Route path="/orders/:id" element={<Order />} />
 					<Route path="/newOrder" element={<NewOrder />} />
-					<Route path="/newOrder/editor" element={<Editor />} />
 				</Route>
+				<Route path="/newOrder/editor" element={<Editor />} />
 				<Route
 					path="/auth"
 					element={
