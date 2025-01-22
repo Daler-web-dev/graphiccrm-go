@@ -15,6 +15,7 @@ import (
 type CreateUserRequest struct {
 	Username string     `json:"username" validate:"required,min=3,max=50"`
 	Password string     `json:"password" validate:"required,min=4,max=100"`
+	Image    string     `json:"image" validate:"omitempty,min=5"`
 	Role     model.Role `json:"role" validate:"required,oneof=admin manager seller"`
 }
 
@@ -22,8 +23,10 @@ type CreateUserRequest struct {
 type UpdateUserRequest struct {
 	Username *string     `json:"username" validate:"required,min=3,max=50"`
 	Password *string     `json:"password" validate:"required,min=4,max=100"`
+	Image    *string     `json:"image" validate:"omitempty,min=5"`
 	Role     *model.Role `json:"role" validate:"required,oneof=admin manager seller"`
 }
+
 type APIError struct {
 	Status  int    `json:"status"`
 	Message string `json:"message"`
@@ -214,6 +217,9 @@ func UpdateUser(c *fiber.Ctx) error {
 
 	if json.Username != nil {
 		found.Username = *json.Username
+	}
+	if json.Image != nil {
+		found.Image = *json.Image
 	}
 	if json.Password != nil {
 		hashedPassword := utils.HashAndSalt([]byte(*json.Password))
