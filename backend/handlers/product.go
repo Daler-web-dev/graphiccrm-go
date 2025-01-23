@@ -4,7 +4,9 @@ import (
 	"backend/database"
 	"backend/model"
 	"backend/utils"
+	"database/sql"
 	"errors"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -368,5 +370,65 @@ func SearchProducts(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"success": true,
 		"data":    products,
+	})
+}
+func GetSingleProductStatistics(c *fiber.Ctx) error {
+	productID := c.Params("id") // Получение ID продукта из URL
+	if productID == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status":  400,
+			"success": false,
+			"message": "Product ID is required",
+		})
+	}
+
+	type SingleProductStats struct {
+		ProductID        guuid.UUID `json:"productId"`
+		ProductName      string     `json:"productName"`
+		SoldQuantity     float64    `json:"soldQuantity"`
+		ProducedQuantity float64    `json:"producedQuantity"`
+	}
+
+	var stats SingleProductStats
+	currentMonth := time.Now().Month()
+
+	// Данные о продажах
+	err := database.DB.Table("order_items").
+		Select("products.id as product_id, products.name as product_name, SUM(order_items.quantity) as sold_quantity").
+		Joins("JOIN products ON products.id = order_items.product_id").
+		Joins("JOIN orders ON orders.id = order_items.order_id").
+		Where("products.id = ? AND EXTRACT(MONTH FROM orders.created_at) = ?", productID, currentMonth).
+		Group("products.id, products.name").
+		Scan(&stats).Error
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  500,
+			"success": false,
+			"message": "Failed to fetch sold product statistics",
+		})
+	}
+
+	var producedQuantity sql.NullFloat64
+	err = database.DB.Table("production_logs").
+		Select("COALESCE(SUM(quantity), 0) as produced_quantity").
+		Where("product_id = ? AND EXTRACT(MONTH FROM created_at) = ?", productID, currentMonth).
+		Scan(&producedQuantity).Error
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  500,
+			"success": false,
+			"message": "Failed to fetch produced product statistics",
+		})
+	}
+
+	stats.ProducedQuantity = 0
+	if producedQuantity.Valid {
+		stats.ProducedQuantity = producedQuantity.Float64
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"status":  200,
+		"success": true,
+		"data":    stats,
 	})
 }

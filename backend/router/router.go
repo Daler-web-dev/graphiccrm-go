@@ -43,6 +43,7 @@ func Initalize(router *fiber.App) {
 	products.Get("/", handlers.GetAllProducts)
 	products.Post("/", handlers.CreateProduct)
 	products.Get("/search", handlers.SearchProducts)
+	products.Get("/:id/statistics", handlers.GetSingleProductStatistics)
 	products.Patch("/:id", handlers.UpdateProduct)
 	products.Get("/:id", handlers.GetProductById)
 	products.Delete("/:id", handlers.DeleteProduct)
