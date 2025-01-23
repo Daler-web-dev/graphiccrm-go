@@ -25,6 +25,12 @@ type UpdateProductRequest struct {
 	Amount     *float64 `json:"amount" validate:"omitempty,gte=0"`
 	Image      *string  `json:"image" validate:"omitempty,min=5"`
 }
+type ProductStatistics struct {
+	ProductID        string  `json:"productId" example:"d6c9b3be-652f-45d4-8384-a5eab99f03a6"`
+	Name             string  `json:"name" example:"Wooden Table"`
+	ProducedQuantity float64 `json:"producedQuantity" example:"120.5"`
+	SoldQuantity     float64 `json:"soldQuantity" example:"95.3"`
+}
 
 // GetAllProducts Получить список всех продуктов
 //
@@ -342,6 +348,17 @@ func DeleteProduct(c *fiber.Ctx) error {
 	})
 }
 
+// SearchProducts Поиск продуктов
+//
+//	@Summary		Поиск продуктов
+//	@Description	Эта функция позволяет искать продукты на основе текстового запроса
+//	@Tags			Products
+//	@Produce		json
+//	@Param			q	query		string					true	"Текстовый запрос для поиска"
+//	@Success		200	{object}	map[string]interface{}	"Список найденных продуктов"
+//	@Failure		400	{object}	map[string]interface{}	"Параметр запроса 'q' отсутствует"
+//	@Failure		500	{object}	map[string]interface{}	"Ошибка при поиске продуктов"
+//	@Router			/products/search [get]
 func SearchProducts(c *fiber.Ctx) error {
 	query := c.Query("q")
 	if query == "" {
@@ -372,6 +389,19 @@ func SearchProducts(c *fiber.Ctx) error {
 		"data":    products,
 	})
 }
+
+// GetProductStatistics Получить статистику продукта
+//
+//	@Summary		Получить статистику продукта
+//	@Description	Возвращает информацию о том, сколько продукта было произведено и продано за текущий месяц
+//	@Tags			Products
+//	@Produce		json
+//	@Param			id	path		string				true	"ID продукта"
+//	@Success		200	{object}	ProductStatistics	"Статистика продукта"
+//	@Failure		400	{object}	APIError			"Неверный формат запроса или отсутствующий ID"
+//	@Failure		404	{object}	APIError			"Продукт не найден"
+//	@Failure		500	{object}	APIError			"Ошибка сервера"
+//	@Router			/products/{id}/statistics [get]
 func GetSingleProductStatistics(c *fiber.Ctx) error {
 	productID := c.Params("id") // Получение ID продукта из URL
 	if productID == "" {

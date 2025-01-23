@@ -18,6 +18,15 @@ func GetTopProducts(c *fiber.Ctx) error {
 	return nil
 }
 
+// GetAllProductsStatistics Получить статистику всех продуктов
+//
+//	@Summary		Получить статистику всех продуктов
+//	@Description	Возвращает статистику по всем продуктам, включая количество произведенного и проданного за текущий месяц
+//	@Tags			Products
+//	@Produce		json
+//	@Success		200	{array}		ProductStatistics	"Список со статистикой всех продуктов"
+//	@Failure		500	{object}	APIError			"Ошибка сервера"
+//	@Router			/products/statistics [get]
 func GetProductStatistics(c *fiber.Ctx) error {
 	type ProductStats struct {
 		ProductID        guuid.UUID `json:"productId"`

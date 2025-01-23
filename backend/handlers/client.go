@@ -369,6 +369,17 @@ func DeleteClient(c *fiber.Ctx) error {
 	})
 }
 
+// SearchClients Поиск клиентов
+//
+//	@Summary		Поиск клиентов
+//	@Description	Эта функция позволяет искать клиентов по их имени, фамилии или контактным данным.
+//	@Tags			Clients
+//	@Produce		json
+//	@Param			q	query		string					true	"Текстовый запрос для поиска"
+//	@Success		200	{object}	map[string]interface{}	"Список найденных клиентов"
+//	@Failure		400	{object}	map[string]interface{}	"Параметр запроса 'q' отсутствует"
+//	@Failure		500	{object}	map[string]interface{}	"Ошибка при поиске продуктов"
+//	@Router			/clients/search [get]
 func SearchClients(c *fiber.Ctx) error {
 	query := c.Query("q")
 	if query == "" {
