@@ -17,6 +17,7 @@ func Initalize(router *fiber.App) {
 	users := router.Group("/api/users")
 	users.Post("/", handlers.CreateUser)
 	users.Get("/", handlers.GetUsers)
+	users.Get("/search", handlers.SearchUsers)
 	users.Get("/:id", handlers.GetUserById)
 	users.Patch("/:id", handlers.UpdateUser)
 	users.Delete("/:id", handlers.DeleteUser)
