@@ -37,9 +37,15 @@ type UpdateProductRequest struct {
 //
 //	@Router			/products [get]
 func GetAllProducts(c *fiber.Ctx) error {
+	categoryId := c.Query("category")
 	Products := []model.Product{}
 
-	respons, err := utils.Paginate(database.DB.Preload("Category"), c, map[string]interface{}{}, &Products)
+	var filter interface{}
+	if categoryId != "" {
+		filter = map[string]interface{}{"category_id": categoryId}
+	}
+
+	respons, err := utils.Paginate(database.DB.Preload("Category"), c, filter, &Products)
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
