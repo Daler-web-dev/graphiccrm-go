@@ -5,25 +5,27 @@ import { Button } from "@/components/ui/button";
 import ConfirmModal from "@/components/custom/ConfirmModal";
 import { useNavigate } from "react-router-dom";
 import { RotateCcw } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { EditorTabs } from "../components/Tabs";
 
 interface EditorProps { }
 
+interface FormState {
+    width: number;
+    height: number;
+    arc: number;
+}
+
 const Editor: React.FC<EditorProps> = () => {
     const navigate = useNavigate();
-    const [formState, setFormState] = useState({
-        width: 200,
-        height: 250,
-        arc: 0,
-    });
+    const defaultValues = { width: 250, height: 400, arc: 0 };
 
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-    ) => {
-        const { id, value } = e.target;
-        setFormState((prevState) => ({
-            ...prevState,
-            [id]: value,
-        }));
+    const { register, reset, handleSubmit } = useForm<FormState>({ defaultValues });
+
+    const [formData, setFormData] = useState<FormState>(defaultValues);
+
+    const onSubmit = (data: FormState) => {
+        console.log(data);
     };
 
     return (
@@ -31,87 +33,114 @@ const Editor: React.FC<EditorProps> = () => {
             <Card className="w-[400px] h-[97vh]">
                 <CardHeader className="flex justify-between items-center">
                     <CardTitle className="text-2xl font-bold bg-cGradientBg bg-clip-text text-transparent text-start">Редактор</CardTitle>
-                    <RotateCcw className="cursor-pointer w-5 h-5 text-cDarkBlue"
+                    <RotateCcw
+                        className="cursor-pointer w-5 h-5 text-cDarkBlue"
                         onClick={() => {
-                            setFormState({
-                                width: 200,
-                                height: 250,
-                                arc: 0
-                            })
+                            reset();
+                            setFormData(defaultValues);
                         }}
                     />
                 </CardHeader>
-                <CardContent className="h-[90vh] flex flex-col justify-between">
-                    <div className="flex flex-col items-start gap-4">
-                        <form className="flex flex-col w-full">
-                            <div className="grid grid-cols-2 gap-4">
+                <CardContent className="h-[90vh]">
+                    <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        className="h-full flex flex-col justify-between"
+                    >
+                        {/* width - height - arc div */}
+                        <div className="flex flex-col items-start gap-4">
+                            <form className="flex flex-col w-full">
+                                <h2 className='font-semibold text-base mb-2'>Размер</h2>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <label
+                                        htmlFor="width"
+                                        className="flex flex-col items-start"
+                                    >
+                                        <span>Width</span>
+                                        <input
+                                            type="number"
+                                            id="width"
+                                            {...register("width")}
+                                            onChange={(e) => {
+                                                setFormData({
+                                                    ...formData,
+                                                    width: Number(e.target.value),
+                                                });
+                                            }}
+                                            className="border rounded-md p-1 w-full"
+                                        />
+                                    </label>
+                                    <label
+                                        htmlFor="height"
+                                        className="flex flex-col items-start"
+                                    >
+                                        <span>Height</span>
+                                        <input
+                                            type="number"
+                                            id="height"
+                                            {...register("height")}
+                                            onChange={(e) => {
+                                                setFormData({
+                                                    ...formData,
+                                                    height: Number(e.target.value),
+                                                });
+                                            }}
+                                            className="border rounded-md p-1 w-full"
+                                        />
+                                    </label>
+                                </div>
                                 <label
-                                    htmlFor="width"
+                                    htmlFor="arc"
                                     className="flex flex-col items-start"
                                 >
-                                    <span>Width</span>
+                                    <span>Arc</span>
                                     <input
                                         type="number"
-                                        id="width"
-                                        value={formState.width}
-                                        onChange={handleChange}
+                                        id="arc"
+                                        {...register("arc")}
+                                        onChange={(e) => {
+                                            setFormData({
+                                                ...formData,
+                                                arc: Number(e.target.value),
+                                            });
+                                        }}
                                         className="border rounded-md p-1 w-full"
                                     />
                                 </label>
-                                <label
-                                    htmlFor="height"
-                                    className="flex flex-col items-start"
-                                >
-                                    <span>Height</span>
-                                    <input
-                                        type="number"
-                                        id="height"
-                                        value={formState.height}
-                                        onChange={handleChange}
-                                        className="border rounded-md p-1 w-full"
-                                    />
-                                </label>
-                            </div>
-                            <hr className="my-5" />
-                            <label
-                                htmlFor="arc"
-                                className="flex flex-col items-start"
-                            >
-                                <span>Arc</span>
-                                <input
-                                    type="number"
-                                    id="arc"
-                                    value={formState.arc}
-                                    onChange={handleChange}
-                                    className="border rounded-md p-1 w-full"
-                                />
-                            </label>
-                        </form>
-                    </div>
-                    <div className="flex justify-between items-center">
-                        <Button className="px-5">
-                            Сохранить
-                        </Button>
-                        <ConfirmModal title="Отменить редактирование?" setState={(state) => {
-                            if (state) {
-                                setFormState({
-                                    width: 200,
-                                    height: 250,
-                                    arc: 0,
-                                });
-                                navigate(-1)
-                            }
-                        }}>
-                            <Button className="px-5 bg-gradient-to-r from-red-400 to-red-700">
-                                Отменить
+                                {/* Tabs component */}
+                                <EditorTabs />
+                            </form>
+                        </div>
+
+                        {/* save or reset div */}
+                        <div className="flex justify-start items-end gap-3">
+                            <Button className="px-5">
+                                Сохранить
                             </Button>
-                        </ConfirmModal>
-                    </div>
+                            <ConfirmModal
+                                title="Отменить редактирование?"
+                                setState={(state) => {
+                                    if (state) {
+                                        reset();
+                                        setFormData(defaultValues);
+                                        navigate(-1);
+                                    }
+                                }}
+                            >
+                                <Button className="px-5 bg-gradient-to-r from-red-400 to-red-700">
+                                    Отменить
+                                </Button>
+                            </ConfirmModal>
+                        </div>
+                    </form>
                 </CardContent>
             </Card>
             <Card className="w-full h-[97vh]">
                 <CardContent className="w-full h-full flex justify-center items-center">
-                    <DragAndDropView width={formState.width} height={formState.height} rounded={formState.arc} />
+                    <DragAndDropView
+                        width={formData.width}
+                        height={formData.height}
+                        rounded={formData.arc}
+                    />
                 </CardContent>
             </Card>
         </div>
