@@ -28,8 +28,8 @@ export const Products: React.FC = () => {
 
     const loadPageData = async (page: number, searchQuery: string, category?: string) => {
         setLoading(true);
-        if (searchQuery === '' && category === "") {
-            const res = await getRequest({ url: `/products?page=${page}&limit=10` });
+        if (searchQuery === '') {
+            const res = await getRequest({ url: `/products?page=${page}&limit=10&category=${category}` });
 
             if (res.status === 200 || res.status === 201) {
                 setData(res.data.data);
