@@ -54,7 +54,7 @@ export const Product: React.FC = () => {
             ) : (
                 <div className='flex justify-center items-start gap-5'>
                     <div className='w-[35%]'>
-                        <img src={data?.image} alt="product image" className='object-cover rounded-3xl w-full aspect-square border border-gray-200' />
+                        <img src={data?.image !== "" ? import.meta.env.VITE_API_URL + "/" + data?.image : "/images/humanPlaceholder.png"} alt="product image" className='object-cover rounded-3xl w-full aspect-square border border-gray-200' />
                         <div className='flex gap-3 absolute -top-24 right-5'>
                             <Button
                                 variant={"customOutline"}
@@ -106,11 +106,11 @@ export const Product: React.FC = () => {
                             </div> */}
                             <div className='flex justify-between items-center p-3 rounded-2xl bg-cWhite'>
                                 <p className='font-normal text-xl'>Высота</p>
-                                <span className='font-semibold text-xl'>{data?.height || 0} м.</span>
+                                <span className='font-semibold text-xl'>{data?.height || 0} см.</span>
                             </div>
                             <div className='flex justify-between items-center p-3 rounded-2xl'>
                                 <p className='font-normal text-xl'>Ширина</p>
-                                <span className='font-semibold text-xl'>{data?.width || 0} м.</span>
+                                <span className='font-semibold text-xl'>{data?.width || 0} см.</span>
                             </div>
                         </CardContent>
                     </Card>

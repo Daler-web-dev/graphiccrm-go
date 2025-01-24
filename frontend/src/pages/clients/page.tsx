@@ -24,18 +24,34 @@ export const Clients: React.FC = () => {
 
     const loadPageData = async (page: number, search: string) => {
         setLoading(true);
-        const res = await getRequest({ url: `/clients?page=${page}&limit=10&q=${search}` });
+        if (search === '') {
+            const res = await getRequest({ url: `/clients?page=${page}&limit=10` });
 
-        if (res.status === 200 || res.status === 201) {
-            setData(res.data.data);
-            setTotalPages(res.data.pagination.totalPages);
-            setLoading(false);
+            if (res.status === 200 || res.status === 201) {
+                setData(res.data.data);
+                setTotalPages(res.data.pagination.totalPages);
+                setLoading(false);
+            } else {
+                toast({
+                    title: 'Ошибка',
+                    description: 'Произошла ошибка при загрузке клиентов',
+                    variant: 'destructive',
+                });
+            }
         } else {
-            toast({
-                title: 'Ошибка',
-                description: 'Произошла ошибка при загрузке клиентов',
-                variant: 'destructive',
-            });
+            const res = await getRequest({ url: `/clients/search?q=${search}` });
+
+            if (res.status === 200 || res.status === 201) {
+                setData(res.data.data);
+                setTotalPages(1);
+                setLoading(false);
+            } else {
+                toast({
+                    title: 'Ошибка',
+                    description: 'Произошла ошибка при загрузке клиентов',
+                    variant: 'destructive',
+                });
+            }
         }
     };
 
