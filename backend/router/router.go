@@ -43,9 +43,13 @@ func Initalize(router *fiber.App) {
 	products.Get("/", handlers.GetAllProducts)
 	products.Post("/", handlers.CreateProduct)
 	products.Get("/search", handlers.SearchProducts)
+	products.Get("/:id/statistics", handlers.GetSingleProductStatistics)
 	products.Patch("/:id", handlers.UpdateProduct)
 	products.Get("/:id", handlers.GetProductById)
 	products.Delete("/:id", handlers.DeleteProduct)
+
+	stats := router.Group("/api/statistics", middleware.ProtectRoute("admin"))
+	stats.Get("/products", handlers.GetProductStatistics)
 
 	upload := router.Group("/api/upload", middleware.ProtectRoute("admin", "seller", "manager"))
 	upload.Post("/", handlers.UploadImage)

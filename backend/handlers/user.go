@@ -297,6 +297,16 @@ func DeleteUser(c *fiber.Ctx) error {
 	})
 }
 
+// @Summary		Поиск пользователей
+// @Description	Ищет пользователей по заданному запросу
+// @Tags			Users
+// @Accept			json
+// @Produce		json
+// @Param			q	query		string		true	"Поисковый запрос"
+// @Success		200	{array}		model.User	"Результаты поиска пользователей"
+// @Failure		400	{object}	APIError	"Отсутствует параметр запроса 'q'"
+// @Failure		500	{object}	APIError	"Ошибка при поиске пользователей"
+// @Router			/users/search [get]
 func SearchUsers(c *fiber.Ctx) error {
 	query := c.Query("q")
 	if query == "" {

@@ -4,7 +4,9 @@ import (
 	"backend/database"
 	"backend/model"
 	"backend/utils"
+	"database/sql"
 	"errors"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -23,6 +25,12 @@ type UpdateProductRequest struct {
 	Amount     *float64 `json:"amount" validate:"omitempty,gte=0"`
 	Image      *string  `json:"image" validate:"omitempty,min=5"`
 }
+type ProductStatistics struct {
+	ProductID        string  `json:"productId" example:"d6c9b3be-652f-45d4-8384-a5eab99f03a6"`
+	Name             string  `json:"name" example:"Wooden Table"`
+	ProducedQuantity float64 `json:"producedQuantity" example:"120.5"`
+	SoldQuantity     float64 `json:"soldQuantity" example:"95.3"`
+}
 
 // GetAllProducts Получить список всех продуктов
 //
@@ -37,9 +45,15 @@ type UpdateProductRequest struct {
 //
 //	@Router			/products [get]
 func GetAllProducts(c *fiber.Ctx) error {
+	categoryId := c.Query("category")
 	Products := []model.Product{}
 
-	respons, err := utils.Paginate(database.DB.Preload("Category"), c, map[string]interface{}{}, &Products)
+	var filter interface{}
+	if categoryId != "" {
+		filter = map[string]interface{}{"category_id": categoryId}
+	}
+
+	respons, err := utils.Paginate(database.DB.Preload("Category"), c, filter, &Products)
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -334,6 +348,17 @@ func DeleteProduct(c *fiber.Ctx) error {
 	})
 }
 
+// SearchProducts Поиск продуктов
+//
+//	@Summary		Поиск продуктов
+//	@Description	Эта функция позволяет искать продукты на основе текстового запроса
+//	@Tags			Products
+//	@Produce		json
+//	@Param			q	query		string					true	"Текстовый запрос для поиска"
+//	@Success		200	{object}	map[string]interface{}	"Список найденных продуктов"
+//	@Failure		400	{object}	map[string]interface{}	"Параметр запроса 'q' отсутствует"
+//	@Failure		500	{object}	map[string]interface{}	"Ошибка при поиске продуктов"
+//	@Router			/products/search [get]
 func SearchProducts(c *fiber.Ctx) error {
 	query := c.Query("q")
 	if query == "" {
@@ -362,5 +387,78 @@ func SearchProducts(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"success": true,
 		"data":    products,
+	})
+}
+
+// GetProductStatistics Получить статистику продукта
+//
+//	@Summary		Получить статистику продукта
+//	@Description	Возвращает информацию о том, сколько продукта было произведено и продано за текущий месяц
+//	@Tags			Products
+//	@Produce		json
+//	@Param			id	path		string				true	"ID продукта"
+//	@Success		200	{object}	ProductStatistics	"Статистика продукта"
+//	@Failure		400	{object}	APIError			"Неверный формат запроса или отсутствующий ID"
+//	@Failure		404	{object}	APIError			"Продукт не найден"
+//	@Failure		500	{object}	APIError			"Ошибка сервера"
+//	@Router			/products/{id}/statistics [get]
+func GetSingleProductStatistics(c *fiber.Ctx) error {
+	productID := c.Params("id") // Получение ID продукта из URL
+	if productID == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status":  400,
+			"success": false,
+			"message": "Product ID is required",
+		})
+	}
+
+	type SingleProductStats struct {
+		ProductID        guuid.UUID `json:"productId"`
+		ProductName      string     `json:"productName"`
+		SoldQuantity     float64    `json:"soldQuantity"`
+		ProducedQuantity float64    `json:"producedQuantity"`
+	}
+
+	var stats SingleProductStats
+	currentMonth := time.Now().Month()
+
+	// Данные о продажах
+	err := database.DB.Table("order_items").
+		Select("products.id as product_id, products.name as product_name, SUM(order_items.quantity) as sold_quantity").
+		Joins("JOIN products ON products.id = order_items.product_id").
+		Joins("JOIN orders ON orders.id = order_items.order_id").
+		Where("products.id = ? AND EXTRACT(MONTH FROM orders.created_at) = ?", productID, currentMonth).
+		Group("products.id, products.name").
+		Scan(&stats).Error
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  500,
+			"success": false,
+			"message": "Failed to fetch sold product statistics",
+		})
+	}
+
+	var producedQuantity sql.NullFloat64
+	err = database.DB.Table("production_logs").
+		Select("COALESCE(SUM(quantity), 0) as produced_quantity").
+		Where("product_id = ? AND EXTRACT(MONTH FROM created_at) = ?", productID, currentMonth).
+		Scan(&producedQuantity).Error
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  500,
+			"success": false,
+			"message": "Failed to fetch produced product statistics",
+		})
+	}
+
+	stats.ProducedQuantity = 0
+	if producedQuantity.Valid {
+		stats.ProducedQuantity = producedQuantity.Float64
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"status":  200,
+		"success": true,
+		"data":    stats,
 	})
 }

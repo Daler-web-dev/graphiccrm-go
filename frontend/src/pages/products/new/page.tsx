@@ -8,25 +8,14 @@ import { getRequest, postRequest } from "@/lib/apiHandlers";
 import ConfirmModal from "@/components/custom/ConfirmModal";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-
-interface IProduct {
-    id: string;
-    name: string;
-    articul: string;
-    unitPrice: number;
-    count: number;
-    amountInBox: number;
-    categoryId: string;
-    imagePath: string;
-    totalPrice: number;
-}
+import { IProduct } from "@/models/products";
 
 export const NewProduct: React.FC = () => {
     const navigate = useNavigate();
     const [categories, setCategories] = React.useState([{ id: '', name: '' }]);
     const [loading, setLoading] = React.useState<boolean>(false);
     const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<IProduct>();
-    setValue('imagePath', "")
+    setValue('image', "")
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -48,13 +37,15 @@ export const NewProduct: React.FC = () => {
         fetchCategories();
     }, [reset])
 
-    const onSubmit = async (data: any) => {
-        if (data.imagePath === "") return toast({
+    const onSubmit = async (data: IProduct) => {
+        if (data.image === "") return toast({
             title: 'Ошибка',
             description: 'Пожалуйста, загрузите изображение',
             variant: 'destructive',
         })
-        const resData = { ...data, count: Number(data.count), amountInBox: Number(data.amountInBox), unitPrice: Number(data.unitPrice) }
+
+        const resData = { ...data, amount: Number(data.amount), price: Number(data.price) }
+        console.log(resData);
 
         const response = await postRequest({ url: '/products', data: resData });
         if (response.status === 200 || response.status === 201) {
@@ -79,12 +70,12 @@ export const NewProduct: React.FC = () => {
                     <div className="w-1/2 aspect-square">
                         <ImageUploader
                             onUploadSuccess={(url: string) => {
-                                setValue('imagePath', url);
+                                setValue('image', url);
                             }}
                             className='border border-cGray'
                         />
                     </div>
-                    <div className="w-full space-y-3">
+                    <div className="w-full">
                         <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
                             <label htmlFor='name' className="text-base font-semibold text-cDarkBlue cursor-pointer">Наименование</label>
                             <input
@@ -97,48 +88,61 @@ export const NewProduct: React.FC = () => {
                             {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
                         </div>
                         <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                            <label htmlFor='articul' className="text-base font-semibold text-cDarkBlue cursor-pointer">Артикул</label>
+                            <label htmlFor='price' className="text-base font-semibold text-cDarkBlue cursor-pointer">Цена</label>
                             <input
-                                id='articul'
+                                id='price'
                                 type="text"
-                                {...register('articul', { required: 'Артикул обязателен' })}
-                                className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
-                                placeholder='Артикул'
-                            />
-                            {errors.articul && <p className="text-red-500 text-sm">{errors.articul.message}</p>}
-                        </div>
-                        <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                            <label htmlFor='amountInBox' className="text-base font-semibold text-cDarkBlue cursor-pointer">Кол-во в коробке</label>
-                            <input
-                                id='amountInBox'
-                                type="text"
-                                {...register('amountInBox', { required: 'Кол-во в коробке обязателен' })}
-                                className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
-                                placeholder='Кол-во в коробке'
-                            />
-                            {errors.amountInBox && <p className="text-red-500 text-sm">{errors.amountInBox.message}</p>}
-                        </div>
-                        <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                            <label htmlFor='unitPrice' className="text-base font-semibold text-cDarkBlue cursor-pointer">Цена</label>
-                            <input
-                                id='unitPrice'
-                                type="text"
-                                {...register('unitPrice', { required: 'Цена обязательна' })}
+                                {...register('price', { required: 'Цена обязательна' })}
                                 className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                 placeholder='Цена'
                             />
-                            {errors.unitPrice && <p className="text-red-500 text-sm">{errors.unitPrice.message}</p>}
+                            {errors.price && <p className="text-red-500 text-sm">{errors.price.message}</p>}
                         </div>
                         <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                            <label htmlFor='count' className="text-base font-semibold text-cDarkBlue cursor-pointer">Кол-во на складе</label>
+                            <label htmlFor='amount' className="text-base font-semibold text-cDarkBlue cursor-pointer">Кол-во на складе</label>
                             <input
-                                id='count'
+                                id='amount'
                                 type="text"
-                                {...register('count', { required: 'Кол-во на складе обязателен' })}
+                                {...register('amount', { required: 'Кол-во на складе обязателен' })}
                                 className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                 placeholder='Кол-во на складе'
                             />
-                            {errors.count && <p className="text-red-500 text-sm">{errors.count.message}</p>}
+                            {errors.amount && <p className="text-red-500 text-sm">{errors.amount.message}</p>}
+                        </div>
+                        <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
+                            <label htmlFor='height' className="text-base font-semibold text-cDarkBlue cursor-pointer">Высота</label>
+                            <input
+                                id='height'
+                                type="text"
+                                {...register('height', { required: 'Высота обязательна' })}
+                                className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                                placeholder='Высота'
+                            />
+                            {errors.height && <p className="text-red-500 text-sm">{errors.height.message}</p>}
+                        </div>
+                        <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
+                            <label htmlFor='width' className="text-base font-semibold text-cDarkBlue cursor-pointer">Ширина</label>
+                            <input
+                                id='width'
+                                type="text"
+                                {...register('width', { required: 'Ширина обязательна' })}
+                                className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                                placeholder='Ширина'
+                            />
+                            {errors.width && <p className="text-red-500 text-sm">{errors.width.message}</p>}
+                        </div>
+                        <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
+                            <label htmlFor='unit' className="text-base font-semibold text-cDarkBlue cursor-pointer">Единица измерения</label>
+                            <select
+                                id='unit'
+                                {...register('unit', { required: 'Единица измерения обязательна' })}
+                                className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                            >
+                                <option value="" disabled selected hidden className="text-base font-semibold text-cDarkBlue">Выберите eдиницу измерения</option>
+                                <option value={"piece"}>В штуках</option>
+                                <option value={"meter"}>В метрах</option>
+                            </select>
+                            {errors.unit && <p className="text-red-500 text-sm">{errors.unit.message}</p>}
                         </div>
                         {
                             loading ? (
@@ -162,7 +166,7 @@ export const NewProduct: React.FC = () => {
                         }
                     </div>
 
-                    <div className='flex gap-3 absolute top-5 right-5'>
+                    <div className='flex gap-3 absolute -top-20 right-5'>
                         <ConfirmModal title='Вы действительно хотите отменить добавление агента?' setState={(state: boolean) => {
                             state && navigate(-1) && reset();
                         }}>

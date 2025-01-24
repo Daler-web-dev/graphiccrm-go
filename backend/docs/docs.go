@@ -390,6 +390,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/clients/search": {
+            "get": {
+                "description": "Эта функция позволяет искать клиентов по их имени, фамилии или контактным данным.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Clients"
+                ],
+                "summary": "Поиск клиентов",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Текстовый запрос для поиска",
+                        "name": "q",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список найденных клиентов",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Параметр запроса 'q' отсутствует",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка при поиске продуктов",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/clients/{id}": {
             "get": {
                 "security": [
@@ -965,6 +1009,79 @@ const docTemplate = `{
                 }
             }
         },
+        "/products/search": {
+            "get": {
+                "description": "Эта функция позволяет искать продукты на основе текстового запроса",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Поиск продуктов",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Текстовый запрос для поиска",
+                        "name": "q",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список найденных продуктов",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Параметр запроса 'q' отсутствует",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка при поиске продуктов",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/products/statistics": {
+            "get": {
+                "description": "Возвращает статистику по всем продуктам, включая количество произведенного и проданного за текущий месяц",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Получить статистику всех продуктов",
+                "responses": {
+                    "200": {
+                        "description": "Список со статистикой всех продуктов",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/handlers.ProductStatistics"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIError"
+                        }
+                    }
+                }
+            }
+        },
         "/products/{id}": {
             "get": {
                 "description": "Эта функция возвращает информацию о продукте по его уникальному идентификатору",
@@ -1095,6 +1212,53 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Ошибка сервера при обновлении продукта",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/products/{id}/statistics": {
+            "get": {
+                "description": "Возвращает информацию о том, сколько продукта было произведено и продано за текущий месяц",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Получить статистику продукта",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID продукта",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Статистика продукта",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ProductStatistics"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный формат запроса или отсутствующий ID",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIError"
+                        }
+                    },
+                    "404": {
+                        "description": "Продукт не найден",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIError"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера",
                         "schema": {
                             "$ref": "#/definitions/handlers.APIError"
                         }
@@ -1285,6 +1449,53 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Ошибка на сервере",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/search": {
+            "get": {
+                "description": "Ищет пользователей по заданному запросу",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Поиск пользователей",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Поисковый запрос",
+                        "name": "q",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Результаты поиска пользователей",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.User"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Отсутствует параметр запроса 'q'",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIError"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка при поиске пользователей",
                         "schema": {
                             "$ref": "#/definitions/handlers.APIError"
                         }
@@ -1505,6 +1716,10 @@ const docTemplate = `{
                 "username"
             ],
             "properties": {
+                "image": {
+                    "type": "string",
+                    "minLength": 5
+                },
                 "password": {
                     "type": "string",
                     "maxLength": 100,
@@ -1554,6 +1769,27 @@ const docTemplate = `{
                 "token": {
                     "type": "string",
                     "example": "JWTOKEN"
+                }
+            }
+        },
+        "handlers.ProductStatistics": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "Wooden Table"
+                },
+                "producedQuantity": {
+                    "type": "number",
+                    "example": 120.5
+                },
+                "productId": {
+                    "type": "string",
+                    "example": "d6c9b3be-652f-45d4-8384-a5eab99f03a6"
+                },
+                "soldQuantity": {
+                    "type": "number",
+                    "example": 95.3
                 }
             }
         },
@@ -1632,6 +1868,10 @@ const docTemplate = `{
                 "username"
             ],
             "properties": {
+                "image": {
+                    "type": "string",
+                    "minLength": 5
+                },
                 "password": {
                     "type": "string",
                     "maxLength": 100,
@@ -1683,9 +1923,6 @@ const docTemplate = `{
                 "surname"
             ],
             "properties": {
-                "Note": {
-                    "type": "string"
-                },
                 "address": {
                     "type": "string"
                 },
@@ -1706,6 +1943,9 @@ const docTemplate = `{
                     "minLength": 5
                 },
                 "name": {
+                    "type": "string"
+                },
+                "note": {
                     "type": "string"
                 },
                 "purchaseHistory": {
@@ -2006,6 +2246,10 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "string"
+                },
+                "image": {
+                    "type": "string",
+                    "minLength": 5
                 },
                 "orders": {
                     "type": "array",

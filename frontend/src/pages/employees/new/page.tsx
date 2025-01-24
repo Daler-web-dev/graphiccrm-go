@@ -21,8 +21,6 @@ export const AddEmployee = () => {
                 variant: 'destructive',
             });
         }
-        console.log(data);
-
 
         const response = await postRequest({ url: '/users', data });
 

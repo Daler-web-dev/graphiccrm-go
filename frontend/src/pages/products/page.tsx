@@ -20,7 +20,7 @@ export const Products: React.FC = () => {
     const [data, setData] = useState<Array<IProduct>>([]);
     const [categories, setCategories] = useState<ICategory[]>([]);
     const [search, setSearch] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState<string | undefined>();
+    const [selectedCategory, setSelectedCategory] = useState<string>("");
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
@@ -28,25 +28,34 @@ export const Products: React.FC = () => {
 
     const loadPageData = async (page: number, searchQuery: string, category?: string) => {
         setLoading(true);
-        const params = new URLSearchParams({
-            page: String(page),
-            limit: '10',
-            search: searchQuery,
-            ...(category ? { category: category } : {}),
-        });
+        if (searchQuery === '' && category === "") {
+            const res = await getRequest({ url: `/products?page=${page}&limit=10` });
 
-        const res = await getRequest({ url: `/products?${params.toString()}` });
-
-        if (res.status === 200 || res.status === 201) {
-            setData(res.data.data);
-            setTotalPages(res.data.pagination.totalPages);
-            setLoading(false);
+            if (res.status === 200 || res.status === 201) {
+                setData(res.data.data);
+                setTotalPages(res.data.pagination.totalPages);
+                setLoading(false);
+            } else {
+                toast({
+                    title: 'Ошибка',
+                    description: 'Произошла ошибка при загрузке товаров',
+                    variant: 'destructive',
+                });
+            }
         } else {
-            toast({
-                title: 'Ошибка',
-                description: 'Произошла ошибка при загрузке товаров',
-                variant: 'destructive',
-            });
+            const res = await getRequest({ url: `/products/search?q=${searchQuery}` }); //&category=${category}
+
+            if (res.status === 200 || res.status === 201) {
+                setData(res.data.data);
+                setTotalPages(1);
+                setLoading(false);
+            } else {
+                toast({
+                    title: 'Ошибка',
+                    description: 'Произошла ошибка при загрузке товаров',
+                    variant: 'destructive',
+                });
+            }
         }
     };
 
@@ -70,7 +79,6 @@ export const Products: React.FC = () => {
     useEffect(() => {
         loadPageData(currentPage, debouncedSearch, selectedCategory);
     }, [currentPage, debouncedSearch, selectedCategory]);
-
 
     return (
         <div className='relative'>
@@ -139,7 +147,7 @@ export const Products: React.FC = () => {
                                             <TableRow className='text-left'>
                                                 <TableCell>{idx + 1}</TableCell>
                                                 <TableCell className='flex gap-1 items-center'>
-                                                    <img src={item.image} alt="product image" loading='lazy' className='w-10 h-10 object-cover rounded-lg border border-gray-200' />
+                                                    <img src={item.image !== "" ? import.meta.env.VITE_API_URL + "/" + item.image : "/images/humanPlaceholder.png"} alt="product image" loading='lazy' className='w-10 h-10 object-cover rounded-lg border border-gray-200' />
                                                     {item.name}
                                                 </TableCell>
                                                 <TableCell>{formatPrice(item.price)}</TableCell>
