@@ -1,18 +1,16 @@
 import { Card } from '@/components/ui/card';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { ClientSearch } from './components/ClientSearch';
 import { toast } from '@/hooks/use-toast';
 import { ProductSearch } from './components/ProductsSearch';
-import { getRequest, postRequest } from '@/lib/apiHandlers';
+import { postRequest } from '@/lib/apiHandlers';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
-// type OrderPaymentType = "PURCHASE" | "RETURN";
 
 interface FormData {
     clientId: any;
-    // paymentType: OrderPaymentType;
     discount: number;
     products: [
         {
@@ -30,26 +28,8 @@ export const NewOrder: React.FC = () => {
     setValue("clientId", client);
     setValue("products", products);
 
-    useEffect(() => {
-        const getClient = async () => {
-            const res = await getRequest({ url: `/client/${client}` });
-            if (res.status === 200 || res.status === 201) {
-                setValue("discount", res.data.discount);
-            } else {
-                toast({
-                    title: 'Ошибка',
-                    description: 'Скидка не найдена',
-                    variant: 'destructive',
-                })
-            }
-        }
-
-        getClient();
-    }, [client])
-
     const onSubmit = async (data: FormData) => {
         if (data.clientId === "") return toast({ title: 'Ошибка', description: 'Выберите клиента', variant: 'destructive', });
-        // if (!data.paymentType) return toast({ title: 'Ошибка', description: 'Выберите тип заказа', variant: 'destructive', });
         if (!data.products) return toast({ title: 'Ошибка', description: 'Выберите продукты', variant: 'destructive', });
 
         const resData = { ...data, discount: Number(data.discount) }

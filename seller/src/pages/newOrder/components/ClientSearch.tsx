@@ -17,16 +17,7 @@ import {
 } from "@/components/ui/popover";
 import { getRequest } from "@/lib/apiHandlers";
 import { useDebounce } from "@/hooks/useDebounce";
-
-interface Client {
-    id: string;
-    address: string;
-    company: string;
-    balance: number;
-    fullName: string;
-    lastPaymentAt: string;
-    phoneNumber: string;
-}
+import { IClient } from "@/models/clients";
 
 interface ClientSearchProps {
     setValue: (value: string) => void;
@@ -35,9 +26,9 @@ interface ClientSearchProps {
 export function ClientSearch({ setValue }: ClientSearchProps) {
     const [open, setOpen] = React.useState(false);
     const [query, setQuery] = React.useState("");
-    const [clients, setClients] = React.useState<Client[]>([]);
+    const [clients, setClients] = React.useState<IClient[]>([]);
     const [loading, setLoading] = React.useState(false);
-    const [selectedClient, setSelectedClient] = React.useState<Client | null>(null);
+    const [selectedClient, setSelectedClient] = React.useState<IClient | null>(null);
 
     const debouncedQuery = useDebounce(query, 500);
 
@@ -49,19 +40,17 @@ export function ClientSearch({ setValue }: ClientSearchProps) {
 
         const fetchClients = async () => {
             setLoading(true);
-            try {
-                const response = await getRequest({
-                    url: `/clients?q=${debouncedQuery}`,
-                });
-                if (response.status === 200 || response.status === 201) {
-                    setClients(response.data.data);
-                } else {
-                    setClients([]);
-                }
-            } catch (error) {
-                console.error("Ошибка при загрузке клиентов", error);
+            const response = await getRequest({
+                url: `/clients/search?q=${debouncedQuery}`,
+            });
+            console.log(response);
+
+
+            if (response.status === 200 || response.status === 201) {
+                setClients(response.data.data);
+                setLoading(false);
+            } else {
                 setClients([]);
-            } finally {
                 setLoading(false);
             }
         };
@@ -69,7 +58,7 @@ export function ClientSearch({ setValue }: ClientSearchProps) {
         fetchClients();
     }, [debouncedQuery]);
 
-    const handleSelect = (client: Client) => {
+    const handleSelect = (client: IClient) => {
         setSelectedClient(client);
         setValue(client.id);
         setOpen(false);
@@ -84,7 +73,7 @@ export function ClientSearch({ setValue }: ClientSearchProps) {
                     aria-expanded={open}
                     className="w-[300px] justify-between"
                 >
-                    {selectedClient ? selectedClient.fullName : "Выберите клиента..."}
+                    {selectedClient ? selectedClient.name : "Выберите клиента..."}
                     <ChevronsUpDown className="opacity-50" />
                 </Button>
             </PopoverTrigger>
@@ -104,13 +93,13 @@ export function ClientSearch({ setValue }: ClientSearchProps) {
                             <>
                                 <CommandEmpty>Клиенты не найдены.</CommandEmpty>
                                 <CommandGroup>
-                                    {clients.map((client) => (
+                                    {clients && clients.map((client) => (
                                         <CommandItem
                                             key={client.id}
-                                            value={client.fullName}
+                                            value={client.name}
                                             onSelect={() => handleSelect(client)}
                                         >
-                                            {client.fullName}
+                                            {client.name} {client.surname}
                                             <Check
                                                 className={cn(
                                                     "ml-auto",
