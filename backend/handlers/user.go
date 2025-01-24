@@ -296,3 +296,33 @@ func DeleteUser(c *fiber.Ctx) error {
 		"data":    found,
 	})
 }
+
+func SearchUsers(c *fiber.Ctx) error {
+	query := c.Query("q")
+	if query == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Query parameter 'q' is required",
+		})
+	}
+
+	var users []model.User
+
+	err := database.DB.Raw(`
+        SELECT *
+        FROM users
+        WHERE search_vector @@ plainto_tsquery('pg_catalog.russian', ?)
+    `, query).Scan(&users).Error
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Error while searching users",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"success": true,
+		"data":    users,
+	})
+}
