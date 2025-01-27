@@ -13,7 +13,7 @@ import (
 //
 //	@Summary		Экспорт продуктов в Excel
 //	@Description	Эта функция позволяет экспортировать список продуктов в формате Excel
-//	@Tags			Products
+//	@Tags			Exports
 //	@Produce		application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
 //	@Success		200	{file}		file					"Excel-файл с продуктами"
 //	@Failure		500	{object}	map[string]interface{}	"Ошибка при поиске продуктов"

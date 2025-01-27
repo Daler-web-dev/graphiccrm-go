@@ -611,7 +611,7 @@ const docTemplate = `{
                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 ],
                 "tags": [
-                    "Products"
+                    "Exports"
                 ],
                 "summary": "Экспорт продуктов в Excel",
                 "responses": {
@@ -1031,33 +1031,6 @@ const docTemplate = `{
                         "description": "Ошибка сервера при создании продукта",
                         "schema": {
                             "$ref": "#/definitions/handlers.APIError"
-                        }
-                    }
-                }
-            }
-        },
-        "/products/export": {
-            "get": {
-                "description": "Эта функция позволяет экспортировать список продуктов в формате CSV",
-                "produces": [
-                    "text/xlsx"
-                ],
-                "tags": [
-                    "Products"
-                ],
-                "summary": "Экспорт продуктов",
-                "responses": {
-                    "200": {
-                        "description": "excel-файл с продуктами",
-                        "schema": {
-                            "type": "file"
-                        }
-                    },
-                    "500": {
-                        "description": "Ошибка при поиске продуктов",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
                         }
                     }
                 }

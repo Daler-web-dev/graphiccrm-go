@@ -851,7 +851,7 @@ paths:
             type: object
       summary: Экспорт продуктов в Excel
       tags:
-      - Products
+      - Exports
   /login:
     post:
       consumes:
@@ -1240,25 +1240,6 @@ paths:
           schema:
             $ref: '#/definitions/handlers.APIError'
       summary: Получить статистику продукта
-      tags:
-      - Products
-  /products/export:
-    get:
-      description: Эта функция позволяет экспортировать список продуктов в формате
-        CSV
-      produces:
-      - text/xlsx
-      responses:
-        "200":
-          description: excel-файл с продуктами
-          schema:
-            type: file
-        "500":
-          description: Ошибка при поиске продуктов
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Экспорт продуктов
       tags:
       - Products
   /products/search:
