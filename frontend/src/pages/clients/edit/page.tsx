@@ -151,7 +151,7 @@ export const EditClient: React.FC = () => {
                                 <label htmlFor='note' className="text-base font-semibold text-cDarkBlue cursor-pointer">Дополнительная информация</label>
                                 <textarea
                                     id='note'
-                                    {...register('Note', { required: 'Дополнительная информация обязателена' })}
+                                    {...register('Note')}
                                     className="mt-2 p-2 w-full border rounded-lg outline-none bg-transparent"
                                     placeholder='Дополнительная информация'
                                 />

@@ -36,18 +36,34 @@ export const Employees: React.FC = () => {
 
 	const loadPageData = async (page: number, search?: string) => {
 		setLoading(true);
-		const res = await getRequest({ url: `/users?page=${page}&limit=10&q=${search}` });
+		if (search === '') {
+			const res = await getRequest({ url: `/users?page=${page}&limit=10&` });
 
-		if (res.status === 200 || res.status === 201) {
-			setData(res.data.data);
-			setTotalPages(res.data.pagination.totalPages);
-			setLoading(false);
+			if (res.status === 200 || res.status === 201) {
+				setData(res.data.data);
+				setTotalPages(res.data.pagination.totalPages);
+				setLoading(false);
+			} else {
+				toast({
+					title: 'Ошибка',
+					description: 'Произошла ошибка при загрузке заказов',
+					variant: 'destructive',
+				});
+			}
 		} else {
-			toast({
-				title: 'Ошибка',
-				description: 'Произошла ошибка при загрузке заказов',
-				variant: 'destructive',
-			});
+			const res = await getRequest({ url: `/users/search?q=${search}` });
+
+			if (res.status === 200 || res.status === 201) {
+				setData(res.data.data);
+				setTotalPages(1);
+				setLoading(false);
+			} else {
+				toast({
+					title: 'Ошибка',
+					description: 'Произошла ошибка при загрузке заказов',
+					variant: 'destructive',
+				});
+			}
 		}
 	};
 
@@ -90,7 +106,10 @@ export const Employees: React.FC = () => {
 									{data.length > 0 ? data.map((agent, idx) => (
 										<TableRow className="text-left" key={idx}>
 											<TableCell>{idx + 1}</TableCell>
-											<TableCell>{agent.username}</TableCell>
+											<TableCell className='flex gap-1 items-center'>
+												<img src={agent.image !== "" ? import.meta.env.VITE_API_URL + "/" + agent.image : "/images/humanPlaceholder.png"} alt="product image" loading='lazy' className='w-10 h-10 object-cover rounded-lg border border-gray-200' />
+												{agent.username}
+											</TableCell>
 											<TableCell>{agent?.role === "admin" ? "Администратор" : agent?.role === "manager" ? "Менеджер" : "Продавец"}</TableCell>
 											<TableCell className="text-right">
 												<Button onClick={() => navigate(`/employees/${agent.id}`)}>Просмотр</Button>

@@ -1,3 +1,4 @@
+import { ProdUnit } from "@/types/prodUnit"
 import { ICategory } from "./categories"
 
 export interface IProduct extends IProductCreateUpdate {
@@ -15,7 +16,7 @@ export interface IProductCreateUpdate {
     width: string
     height: string
     price: number
-    unit: string
+    unit: ProdUnit
     amount: number
     image: string
 }

@@ -24,18 +24,34 @@ export const Clients: React.FC = () => {
 
     const loadPageData = async (page: number, search: string) => {
         setLoading(true);
-        const res = await getRequest({ url: `/clients?page=${page}&limit=10&q=${search}` });
+        if (search === '') {
+            const res = await getRequest({ url: `/clients?page=${page}&limit=10` });
 
-        if (res.status === 200 || res.status === 201) {
-            setData(res.data.data);
-            setTotalPages(res.data.pagination.totalPages);
-            setLoading(false);
+            if (res.status === 200 || res.status === 201) {
+                setData(res.data.data);
+                setTotalPages(res.data.pagination.totalPages);
+                setLoading(false);
+            } else {
+                toast({
+                    title: 'Ошибка',
+                    description: 'Произошла ошибка при загрузке клиентов',
+                    variant: 'destructive',
+                });
+            }
         } else {
-            toast({
-                title: 'Ошибка',
-                description: 'Произошла ошибка при загрузке клиентов',
-                variant: 'destructive',
-            });
+            const res = await getRequest({ url: `/clients/search?q=${search}` });
+
+            if (res.status === 200 || res.status === 201) {
+                setData(res.data.data);
+                setTotalPages(1);
+                setLoading(false);
+            } else {
+                toast({
+                    title: 'Ошибка',
+                    description: 'Произошла ошибка при загрузке клиентов',
+                    variant: 'destructive',
+                });
+            }
         }
     };
 
@@ -79,7 +95,7 @@ export const Clients: React.FC = () => {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {data.length > 0 ? data.map((client, idx) => (
+                                {data && data.length > 0 ? data.map((client, idx) => (
                                     <TableRow className='text-left' key={idx}>
                                         <TableCell>{idx + 1}</TableCell>
                                         <TableCell className='flex gap-1 justify-start items-center'>
@@ -95,7 +111,7 @@ export const Clients: React.FC = () => {
                                     </TableRow>
                                 )) : (
                                     <TableRow>
-                                        <TableCell className="text-base text-center rounded-xl" colSpan={6}>
+                                        <TableCell className="text-base text-center rounded-xl bg-gray-100" colSpan={6}>
                                             Нет данных по вашему запросу
                                         </TableCell>
                                     </TableRow>
