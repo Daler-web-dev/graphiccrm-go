@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { RotateCcw } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { EditorTabs } from "../components/Tabs";
+import { useStateManager } from "@/contexts/useStateContext";
 
 interface EditorProps { }
 
@@ -23,6 +24,7 @@ const Editor: React.FC<EditorProps> = () => {
     const { register, reset, handleSubmit } = useForm<FormState>({ defaultValues });
 
     const [formData, setFormData] = useState<FormState>(defaultValues);
+    const { filteredProducts } = useStateManager();
 
     const onSubmit = (data: FormState) => {
         console.log(data);
@@ -108,6 +110,13 @@ const Editor: React.FC<EditorProps> = () => {
                                 </label>
                                 {/* Tabs component */}
                                 <EditorTabs />
+                                <div>
+                                    <ul>
+                                        {filteredProducts?.map((product) => (
+                                            <li key={product.id}>{product.name}</li>
+                                        ))}
+                                    </ul>
+                                </div>
                             </form>
                         </div>
 
