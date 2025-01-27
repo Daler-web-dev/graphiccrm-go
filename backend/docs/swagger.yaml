@@ -425,7 +425,7 @@ definitions:
       username:
         type: string
     type: object
-host: ec2-43-207-54-55.ap-northeast-1.compute.amazonaws.com
+host: localhost:8080
 info:
   contact: {}
   description: This is a sample swagger for Fiber
@@ -833,6 +833,25 @@ paths:
       summary: Поиск клиентов
       tags:
       - Clients
+  /exports/products:
+    get:
+      description: Эта функция позволяет экспортировать список продуктов в формате
+        Excel
+      produces:
+      - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+      responses:
+        "200":
+          description: Excel-файл с продуктами
+          schema:
+            type: file
+        "500":
+          description: Ошибка при поиске продуктов
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Экспорт продуктов в Excel
+      tags:
+      - Products
   /login:
     post:
       consumes:
@@ -1221,6 +1240,25 @@ paths:
           schema:
             $ref: '#/definitions/handlers.APIError'
       summary: Получить статистику продукта
+      tags:
+      - Products
+  /products/export:
+    get:
+      description: Эта функция позволяет экспортировать список продуктов в формате
+        CSV
+      produces:
+      - text/xlsx
+      responses:
+        "200":
+          description: excel-файл с продуктами
+          schema:
+            type: file
+        "500":
+          description: Ошибка при поиске продуктов
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Экспорт продуктов
       tags:
       - Products
   /products/search:

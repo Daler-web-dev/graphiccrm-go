@@ -604,6 +604,33 @@ const docTemplate = `{
                 }
             }
         },
+        "/exports/products": {
+            "get": {
+                "description": "Эта функция позволяет экспортировать список продуктов в формате Excel",
+                "produces": [
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Экспорт продуктов в Excel",
+                "responses": {
+                    "200": {
+                        "description": "Excel-файл с продуктами",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка при поиске продуктов",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "description": "Эта функция позволяет пользователю войти в систему с помощью имени пользователя и пароля, и получить JWT-токен для дальнейшей аутентификации.",
@@ -1004,6 +1031,33 @@ const docTemplate = `{
                         "description": "Ошибка сервера при создании продукта",
                         "schema": {
                             "$ref": "#/definitions/handlers.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/products/export": {
+            "get": {
+                "description": "Эта функция позволяет экспортировать список продуктов в формате CSV",
+                "produces": [
+                    "text/xlsx"
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Экспорт продуктов",
+                "responses": {
+                    "200": {
+                        "description": "excel-файл с продуктами",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка при поиске продуктов",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     }
                 }
@@ -2286,7 +2340,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "ec2-43-207-54-55.ap-northeast-1.compute.amazonaws.com",
+	Host:             "localhost:8080",
 	BasePath:         "/api",
 	Schemes:          []string{},
 	Title:            "Fiber CRM-API",
