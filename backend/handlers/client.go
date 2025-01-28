@@ -164,9 +164,9 @@ func GetClientById(c *fiber.Ctx) error {
 	Client := model.Client{}
 
 	if err != nil {
-		return c.JSON(fiber.Map{
-			"status":  400,
-			"message": "Invalid UUID Format",
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": "Invalid UUID format",
 			"success": false,
 		})
 	}
@@ -177,27 +177,26 @@ func GetClientById(c *fiber.Ctx) error {
 	}
 
 	err = query.Where("id = ?", id).First(&Client).Error
-
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"status":  404,
+				"status":  fiber.StatusNotFound,
 				"message": "Client not found",
 				"success": false,
 			})
 		}
 
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":  500,
-			"message": "Internal Server Error",
+			"status":  fiber.StatusInternalServerError,
+			"message": "Internal server error",
 			"success": false,
 		})
 	}
 
-	return c.JSON(fiber.Map{
-		"status":  200,
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"status":  fiber.StatusOK,
 		"success": true,
-		"message": "success",
+		"message": "Success",
 		"data":    Client,
 	})
 }
@@ -323,8 +322,8 @@ func DeleteClient(c *fiber.Ctx) error {
 	id, err := guuid.Parse(param)
 
 	if err != nil {
-		return c.JSON(fiber.Map{
-			"status":  400,
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
 			"success": false,
 			"message": "Invalid ID format",
 		})
@@ -333,36 +332,34 @@ func DeleteClient(c *fiber.Ctx) error {
 	db := database.DB
 	client := model.Client{}
 
-	// Сначала пытаемся найти клиента по ID
 	err = db.First(&client, "id = ?", id).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return c.JSON(fiber.Map{
-				"status":  404,
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"status":  fiber.StatusNotFound,
 				"success": false,
 				"message": "Client not found",
 			})
 		}
 
-		return c.JSON(fiber.Map{
-			"status":  500,
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  fiber.StatusInternalServerError,
 			"success": false,
 			"message": "Failed to find client",
 		})
 	}
 
-	// После успешного нахождения удаляем клиента
 	err = db.Delete(&client, "id = ?", id).Error
 	if err != nil {
-		return c.JSON(fiber.Map{
-			"status":  500,
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  fiber.StatusInternalServerError,
 			"success": false,
 			"message": "Failed to delete client",
 		})
 	}
 
-	return c.JSON(fiber.Map{
-		"status":  200,
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"status":  fiber.StatusOK,
 		"data":    client,
 		"success": true,
 		"message": "Client was removed",
