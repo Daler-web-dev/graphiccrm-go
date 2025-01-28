@@ -68,6 +68,7 @@ func CreateUser(c *fiber.Ctx) error {
 
 	user := model.User{
 		Username: json.Username,
+		Image:    json.Image,
 		Password: utils.HashAndSalt([]byte(json.Password)),
 		ID:       guuid.New(),
 		Role:     json.Role,

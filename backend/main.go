@@ -15,6 +15,8 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// ec2-43-207-54-55.ap-northeast-1.compute.amazonaws.com
+
 //	@title						Fiber CRM-API
 //	@version					1.0
 //	@description				This is a sample swagger for Fiber
@@ -23,7 +25,7 @@ import (
 //	@in							header
 //	@name						Authorization
 
-//	@host		ec2-43-207-54-55.ap-northeast-1.compute.amazonaws.com
+//	@host		localhost:8080
 //	@BasePath	/api
 
 //	@securityDefinitions.apikey	BearerAuth
