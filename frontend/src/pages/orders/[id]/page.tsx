@@ -86,18 +86,18 @@ export const Order: React.FC = () => {
 								</div>
 								<div className="flex justify-between items-center">
 									<p className="text-xl font-normal">Догл клиент:</p>
-									<span className="text-xl font-semibold">{order?.client?.balance}</span>
+									<span className="text-xl font-semibold">{order?.client?.balance} сум.</span>
 								</div>
 							</div>
 							<div className="w-px h-20 bg-black"></div>
 							<div className="w-full space-y-2">
 								<div className="flex justify-between items-center">
 									<p className="text-xl font-normal">Тип оплаты:</p>
-									<span className="text-xl font-semibold">{order?.paymentMethod}</span>
+									<span className="text-xl font-semibold">{order?.paymentMethod && order?.paymentMethod.charAt(0).toUpperCase() + order?.paymentMethod.slice(1)}</span>
 								</div>
 								<div className="flex justify-between items-center">
 									<p className="text-xl font-normal">Статус заказа:</p>
-									<span className="text-xl font-semibold">{order?.status}</span>
+									<span className="text-xl font-semibold">{order?.status && order?.status.charAt(0).toUpperCase() + order?.status.slice(1)}</span>
 								</div>
 								<div className="flex justify-between items-center">
 									<p className="text-xl font-normal">Сумма заказа:</p>
@@ -119,7 +119,7 @@ export const Order: React.FC = () => {
 							<TableBody>
 								{order?.products && order.products.length > 0 ? order.products.map((item, idx) => (
 									<TableRow
-										key={item.id}
+										key={item?.id}
 										className="bg-[#F2F2F2] hover:bg-[#F2F2F2]/80 border-none"
 									>
 										<TableCell className="text-base rounded-s-xl">
@@ -127,15 +127,15 @@ export const Order: React.FC = () => {
 										</TableCell>
 										<TableCell className="text-base">
 											<div className='flex justify-start items-center gap-1'>
-												<img src={item.product.image} alt="product image" className='w-14 h-14 p-1 bg-white rounded-md border object-cover border-cGray' />
-												{item.product.name}
+												<img src={item?.product?.image} alt="product image" className='w-14 h-14 p-1 bg-white rounded-md border object-cover border-cGray' />
+												{item?.product?.name}
 											</div>
 										</TableCell>
 										<TableCell className="text-base text-left">
-											{item.quantity} шт.
+											{item?.quantity} шт.
 										</TableCell>
 										<TableCell className="text-base text-left rounded-e-xl">
-											{formatPrice(item.totalPrice)}
+											{formatPrice(item?.totalPrice)}
 										</TableCell>
 									</TableRow>
 								)) : (

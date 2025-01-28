@@ -18,7 +18,7 @@ export const EditCategory: React.FC<EditCategoryProps> = ({ categoryId, children
     const [loading, setLoading] = useState(false);
     const [initialData, setInitialData] = useState<ICategoryCreateUpdate | null>(null);
 
-    const { register, handleSubmit, reset, formState: { isDirty } } = useForm<ICategoryCreateUpdate>();
+    const { register, handleSubmit, reset, formState: { isDirty, errors } } = useForm<ICategoryCreateUpdate>({ mode: "onChange" });
 
     useEffect(() => {
         if (isOpen) {
@@ -94,6 +94,7 @@ export const EditCategory: React.FC<EditCategoryProps> = ({ categoryId, children
                                 {...register("name", { required: true })}
                                 className="w-full text-base placeholder:text-sm text-[#1c1b1f] px-4 py-2 bg-[#f2f2f2] rounded-lg outline-none"
                             />
+                            {errors.name && <span className="text-red-500 text-sm text-left">Обязательное поле</span>}
                         </div>
                         <Button
                             type="submit"

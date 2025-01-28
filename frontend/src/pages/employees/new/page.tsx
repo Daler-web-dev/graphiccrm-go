@@ -10,7 +10,7 @@ import { IEmployeeCreateUpdate } from '@/models/employees'; // Import Roles
 
 export const AddEmployee = () => {
     const navigate = useNavigate();
-    const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<IEmployeeCreateUpdate>();
+    const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<IEmployeeCreateUpdate>({ mode: 'onChange' });
     setValue('image', "");
 
     const onSubmit = async (data: any) => {
@@ -27,13 +27,13 @@ export const AddEmployee = () => {
         if (response.status === 200 || response.status === 201) {
             toast({
                 title: 'Успех',
-                description: 'Агент успешно добавлен',
+                description: 'Сотрудник успешно добавлен',
             });
             navigate(-1);
         } else {
             toast({
                 title: 'Ошибка',
-                description: 'Произошла ошибка при добавлении агента',
+                description: 'Произошла ошибка при добавлении сотрудника',
                 variant: 'destructive',
             });
         }
@@ -57,11 +57,12 @@ export const AddEmployee = () => {
                             <input
                                 id='username'
                                 type="text"
-                                {...register('username', { required: '!' })}
+                                {...register('username', { required: 'Имя пользователя обязательно' })}
                                 className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                 placeholder='Логин'
+                                autoComplete='off'
                             />
-                            {errors.username && <p className="text-red-500 text-sm">{errors.username.message}</p>}
+                            {errors.username && <p className="text-red-500 text-sm text-right">{errors.username.message}</p>}
                         </div>
 
                         <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
@@ -69,18 +70,19 @@ export const AddEmployee = () => {
                             <input
                                 id='password'
                                 type="password"
-                                {...register('password', { required: '!' })}
+                                {...register('password', { required: 'Пароль обязателен' })}
                                 className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                 placeholder='Пароль'
+                                autoComplete='off'
                             />
-                            {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+                            {errors.password && <p className="text-red-500 text-sm text-right">{errors.password.message}</p>}
                         </div>
 
                         <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
                             <label htmlFor='role' className="text-base font-semibold text-cDarkBlue cursor-pointer">Роль</label>
                             <select
                                 id='role'
-                                {...register('role', { required: '!' })}
+                                {...register('role', { required: 'Роль обязательна' })}
                                 className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                             >
                                 <option value="" disabled selected>Выберите роль</option>
@@ -88,12 +90,12 @@ export const AddEmployee = () => {
                                 <option value="seller">Продавец</option>
                                 <option value="admin">Администратор</option>
                             </select>
-                            {errors.role && <p className="text-red-500 text-sm">{errors.role.message}</p>}
+                            {errors.role && <p className="text-red-500 text-sm text-right">{errors.role.message}</p>}
                         </div>
                     </div>
 
                     <div className='flex gap-3 absolute -top-20 right-5'>
-                        <ConfirmModal title='Вы действительно хотите отменить добавление агента?' setState={(state: boolean) => {
+                        <ConfirmModal title='Вы действительно хотите отменить добавление сотрудника?' setState={(state: boolean) => {
                             if (state) {
                                 reset();
                                 navigate(-1);
@@ -102,7 +104,7 @@ export const AddEmployee = () => {
                             <Button variant={'customOutline'} type="button" className="px-10">Отменить</Button>
                         </ConfirmModal>
                         <Button variant={'custom'} type="submit" className="px-10" disabled={isSubmitting}>
-                            {isSubmitting ? 'Загрузка...' : 'Добавить агента'}
+                            {isSubmitting ? 'Загрузка...' : 'Добавить сотрудника'}
                         </Button>
                     </div>
                 </form>

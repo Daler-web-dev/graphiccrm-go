@@ -19,7 +19,7 @@ export const EditClient: React.FC = () => {
         setValue,
         reset,
         formState: { errors, isSubmitting, isDirty }
-    } = useForm<IClientCreateUpdate>();
+    } = useForm<IClientCreateUpdate>({ mode: "onChange" });
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState<IClientCreateUpdate>();
 
@@ -29,10 +29,9 @@ export const EditClient: React.FC = () => {
             const res = await getRequest({ url: `/clients/${id}` });
 
             if (res.status === 200 || res.status === 201) {
-                const { name, surname, contactInfo, image, address, Note } = res.data.data;
-                reset({ name, surname, contactInfo, image, address, Note });
+                reset({ ...res.data.data });
                 setData(res.data.data);
-                setValue('image', image);
+                setValue('image', res.data.data.image);
                 setLoading(false);
             } else {
                 toast({
@@ -101,8 +100,9 @@ export const EditClient: React.FC = () => {
                                     {...register('name', { required: 'Имя обязательно' })}
                                     className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                     placeholder='Имя'
+                                    autoComplete='off'
                                 />
-                                {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+                                {errors.name && <p className="text-red-500 text-sm text-right">{errors.name.message}</p>}
                             </div>
 
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
@@ -113,8 +113,9 @@ export const EditClient: React.FC = () => {
                                     {...register('surname', { required: 'Фамилия обязательна' })}
                                     className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                     placeholder='Фамилия'
+                                    autoComplete='off'
                                 />
-                                {errors.surname && <p className="text-red-500 text-sm">{errors.surname.message}</p>}
+                                {errors.surname && <p className="text-red-500 text-sm text-right">{errors.surname.message}</p>}
                             </div>
 
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
@@ -131,8 +132,9 @@ export const EditClient: React.FC = () => {
                                         },
                                     })}
                                     className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                                    autoComplete='off'
                                 />
-                                {errors.contactInfo && <p className="text-red-500 text-sm">{errors.contactInfo.message}</p>}
+                                {errors.contactInfo && <p className="text-red-500 text-sm text-right">{errors.contactInfo.message}</p>}
                             </div>
 
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
@@ -143,8 +145,9 @@ export const EditClient: React.FC = () => {
                                     {...register('address', { required: 'Адрес обязателен' })}
                                     className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                     placeholder='Адрес'
+                                    autoComplete='off'
                                 />
-                                {errors.address && <p className="text-red-500 text-sm">{errors.address.message}</p>}
+                                {errors.address && <p className="text-red-500 text-sm text-right">{errors.address.message}</p>}
                             </div>
 
                             <div className='w-full flex justify-start items-start flex-col bg-cLightGray px-3 py-2 rounded-lg'>
@@ -154,8 +157,9 @@ export const EditClient: React.FC = () => {
                                     {...register('Note')}
                                     className="mt-2 p-2 w-full border rounded-lg outline-none bg-transparent"
                                     placeholder='Дополнительная информация'
+                                    autoComplete='off'
                                 />
-                                {errors.Note && <p className="text-red-500 text-sm">{errors.Note.message}</p>}
+                                {errors.Note && <p className="text-red-500 text-sm text-right">{errors.Note.message}</p>}
                             </div>
                         </div>
 
