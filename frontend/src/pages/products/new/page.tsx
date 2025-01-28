@@ -14,7 +14,7 @@ export const NewProduct: React.FC = () => {
     const navigate = useNavigate();
     const [categories, setCategories] = React.useState([{ id: '', name: '' }]);
     const [loading, setLoading] = React.useState<boolean>(false);
-    const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<IProduct>();
+    const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<IProduct>({ mode: "onChange" });
     setValue('image', "")
 
     useEffect(() => {
@@ -84,8 +84,9 @@ export const NewProduct: React.FC = () => {
                                 {...register('name', { required: 'Наименование обязательно' })}
                                 className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                 placeholder='Наименование'
+                                autoComplete="off"
                             />
-                            {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+                            {errors.name && <p className="text-red-500 text-sm text-right">{errors.name.message}</p>}
                         </div>
                         <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
                             <label htmlFor='price' className="text-base font-semibold text-cDarkBlue cursor-pointer">Цена</label>
@@ -95,8 +96,9 @@ export const NewProduct: React.FC = () => {
                                 {...register('price', { required: 'Цена обязательна' })}
                                 className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                 placeholder='Цена'
+                                autoComplete="off"
                             />
-                            {errors.price && <p className="text-red-500 text-sm">{errors.price.message}</p>}
+                            {errors.price && <p className="text-red-500 text-sm text-right">{errors.price.message}</p>}
                         </div>
                         <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
                             <label htmlFor='amount' className="text-base font-semibold text-cDarkBlue cursor-pointer">Кол-во на складе</label>
@@ -106,8 +108,9 @@ export const NewProduct: React.FC = () => {
                                 {...register('amount', { required: 'Кол-во на складе обязателен' })}
                                 className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                 placeholder='Кол-во на складе'
+                                autoComplete="off"
                             />
-                            {errors.amount && <p className="text-red-500 text-sm">{errors.amount.message}</p>}
+                            {errors.amount && <p className="text-red-500 text-sm text-right">{errors.amount.message}</p>}
                         </div>
                         <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
                             <label htmlFor='height' className="text-base font-semibold text-cDarkBlue cursor-pointer">Высота</label>
@@ -117,8 +120,9 @@ export const NewProduct: React.FC = () => {
                                 {...register('height', { required: 'Высота обязательна' })}
                                 className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                 placeholder='Высота'
+                                autoComplete="off"
                             />
-                            {errors.height && <p className="text-red-500 text-sm">{errors.height.message}</p>}
+                            {errors.height && <p className="text-red-500 text-sm text-right">{errors.height.message}</p>}
                         </div>
                         <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
                             <label htmlFor='width' className="text-base font-semibold text-cDarkBlue cursor-pointer">Ширина</label>
@@ -128,8 +132,9 @@ export const NewProduct: React.FC = () => {
                                 {...register('width', { required: 'Ширина обязательна' })}
                                 className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                 placeholder='Ширина'
+                                autoComplete="off"
                             />
-                            {errors.width && <p className="text-red-500 text-sm">{errors.width.message}</p>}
+                            {errors.width && <p className="text-red-500 text-sm text-right">{errors.width.message}</p>}
                         </div>
                         <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
                             <label htmlFor='unit' className="text-base font-semibold text-cDarkBlue cursor-pointer">Единица измерения</label>
@@ -142,7 +147,7 @@ export const NewProduct: React.FC = () => {
                                 <option value={"piece"}>В штуках</option>
                                 <option value={"meter"}>В метрах</option>
                             </select>
-                            {errors.unit && <p className="text-red-500 text-sm">{errors.unit.message}</p>}
+                            {errors.unit && <p className="text-red-500 text-sm text-right">{errors.unit.message}</p>}
                         </div>
                         {
                             loading ? (
@@ -160,20 +165,20 @@ export const NewProduct: React.FC = () => {
                                             <option key={category.id} value={category.id}>{category.name}</option>
                                         ))}
                                     </select>
-                                    {errors.categoryId && <p className="text-red-500 text-sm">{errors.categoryId.message}</p>}
+                                    {errors.categoryId && <p className="text-red-500 text-sm text-right">{errors.categoryId.message}</p>}
                                 </div>
                             )
                         }
                     </div>
 
                     <div className='flex gap-3 absolute -top-20 right-5'>
-                        <ConfirmModal title='Вы действительно хотите отменить добавление агента?' setState={(state: boolean) => {
+                        <ConfirmModal title='Вы действительно хотите отменить добавление товара?' setState={(state: boolean) => {
                             state && navigate(-1) && reset();
                         }}>
                             <Button variant={'customOutline'} type="button" className="px-10">Отменить</Button>
                         </ConfirmModal>
                         <Button variant={'custom'} type="submit" className="px-10" disabled={isSubmitting}>
-                            {isSubmitting ? 'Загрузка...' : 'Добавить агента'}
+                            {isSubmitting ? 'Загрузка...' : 'Добавить товар'}
                         </Button>
                     </div>
                 </form>

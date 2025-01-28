@@ -74,12 +74,12 @@ export const Orders: React.FC = () => {
 									{data.length > 0 ? data.map((item, index) => (
 										<TableRow className='text-left' key={index}>
 											<TableCell>{index + 1}</TableCell>
-											<TableCell>{item.id}</TableCell>
-											<TableCell>{item.createdAt.split('T')[0]}</TableCell>
-											<TableCell>{formatPrice(item.totalPrice)}</TableCell>
-											<TableCell>{item.paymentMethod === 'cash' ? 'Наличными' : item.paymentMethod === "transfer" ? "Переводом" : "Картой"}</TableCell>
-											{item.status === "paid" ? <TableCell className='text-black'>Оплачен</TableCell> : item.status === 'completed' ? <TableCell className='text-cDarkBlue'>Готово</TableCell> : item.status === 'in_production' ? <TableCell className='text-cLightBlue'>В процессе</TableCell> : <TableCell className='text-gray-400'>В ожидании</TableCell>}
-											<TableCell className="text-right"><Button onClick={() => navigate(`/orders/${item.id}`)}>Просмотр</Button></TableCell>
+											<TableCell>{item?.id}</TableCell>
+											<TableCell>{item?.createdAt.split('T')[0]}</TableCell>
+											<TableCell>{formatPrice(item?.totalPrice)}</TableCell>
+											<TableCell>{item?.paymentMethod === 'cash' ? 'Наличными' : item?.paymentMethod === "transfer" ? "Переводом" : "Картой"}</TableCell>
+											{item?.status === "paid" ? <TableCell className='text-black'>Оплачен</TableCell> : item?.status === 'completed' ? <TableCell className='text-cDarkBlue'>Готово</TableCell> : item?.status === 'in_production' ? <TableCell className='text-cLightBlue'>В процессе</TableCell> : <TableCell className='text-gray-400'>В ожидании</TableCell>}
+											<TableCell className="text-right"><Button onClick={() => navigate(`/orders/${item?.id}`)}>Просмотр</Button></TableCell>
 										</TableRow>
 									)) : (
 										<TableRow>

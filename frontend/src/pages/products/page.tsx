@@ -142,7 +142,7 @@ export const Products: React.FC = () => {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {data.length > 0 ? (
+                                    {data && data.length > 0 ? (
                                         data.map((item: IProduct, idx: number) => (
                                             <TableRow className='text-left'>
                                                 <TableCell>{idx + 1}</TableCell>
@@ -153,8 +153,8 @@ export const Products: React.FC = () => {
                                                 <TableCell>{formatPrice(item.price)}</TableCell>
                                                 <TableCell>{item.amount} шт.</TableCell>
                                                 <TableCell>{formatPrice(item.price * item.amount)}</TableCell>
-                                                <TableCell>{item.unit === 'piece' ? 'В штуках' : 'В сантиметрах'}</TableCell>
-                                                <TableCell>{item.category.name}</TableCell>
+                                                <TableCell>{item.unit === 'piece' ? 'В штуках' : 'В метрах'}</TableCell>
+                                                <TableCell>{item?.category?.name}</TableCell>
                                                 <TableCell className='flex gap-2'>
                                                     <Button onClick={() => navigate(`/products/${item.id}`)}>Просмотр</Button>
                                                 </TableCell>
@@ -162,7 +162,7 @@ export const Products: React.FC = () => {
                                         ))
                                     ) : (
                                         <TableRow>
-                                            <TableCell colSpan={7} className="text-center">
+                                            <TableCell colSpan={8} className="text-center">
                                                 Нет данных по вашему запросу
                                             </TableCell>
                                         </TableRow>
