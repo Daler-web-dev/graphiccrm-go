@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -211,17 +212,50 @@ func GetOrderByID(c *fiber.Ctx) error {
 func GetAllOrders(c *fiber.Ctx) error {
 	Orders := []model.Order{}
 
-	respons, err := utils.Paginate(database.DB, c, map[string]interface{}{}, &Orders)
+	// Инициализация запроса
+	db := database.DB
 
+	// Обрабатываем параметр dateGte
+	dateGte := c.Query("dateGte")
+	if dateGte != "" {
+		parsedDate, err := time.Parse("2006-01-02", dateGte)
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"status":  400,
+				"success": false,
+				"message": "Invalid dateGte format, expected YYYY-MM-DD",
+			})
+		}
+		// Добавляем фильтр по дате "с"
+		db = db.Where("created_at >= ?", parsedDate)
+	}
+
+	// Обрабатываем параметр dateLte
+	dateLte := c.Query("dateLte")
+	if dateLte != "" {
+		parsedDate, err := time.Parse("2006-01-02", dateLte)
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"status":  400,
+				"success": false,
+				"message": "Invalid dateLte format, expected YYYY-MM-DD",
+			})
+		}
+		// Добавляем фильтр по дате "до"
+		db = db.Where("created_at <= ?", parsedDate)
+	}
+
+	// Выполняем пагинацию
+	response, err := utils.Paginate(db, c, nil, &Orders)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":   500,
-			"succeess": false,
-			"message":  "Failed to retrieve orders",
+			"status":  500,
+			"success": false,
+			"message": "Failed to retrieve orders",
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(respons)
+	return c.Status(fiber.StatusOK).JSON(response)
 }
 
 // UpdateOrder Изменить заказ
