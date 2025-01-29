@@ -24,6 +24,7 @@ export const Clients: React.FC = () => {
 
     const loadPageData = async (page: number, search: string) => {
         setLoading(true);
+
         if (search === '') {
             const res = await getRequest({ url: `/clients?page=${page}&limit=10` });
 
@@ -42,6 +43,8 @@ export const Clients: React.FC = () => {
             const res = await getRequest({ url: `/clients/search?q=${search}` });
 
             if (res.status === 200 || res.status === 201) {
+                console.log(res);
+                
                 setData(res.data.data);
                 setTotalPages(1);
                 setLoading(false);
@@ -95,7 +98,7 @@ export const Clients: React.FC = () => {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {data.length > 0 ? data.map((client, idx) => (
+                                {data && data.length > 0 ? data.map((client, idx) => (
                                     <TableRow className='text-left' key={idx}>
                                         <TableCell>{idx + 1}</TableCell>
                                         <TableCell className='flex gap-1 justify-start items-center'>

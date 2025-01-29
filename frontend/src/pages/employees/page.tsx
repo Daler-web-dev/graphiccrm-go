@@ -46,7 +46,7 @@ export const Employees: React.FC = () => {
 			} else {
 				toast({
 					title: 'Ошибка',
-					description: 'Произошла ошибка при загрузке заказов',
+					description: 'Произошла ошибка при загрузке сотрудников',
 					variant: 'destructive',
 				});
 			}
@@ -77,9 +77,9 @@ export const Employees: React.FC = () => {
 			<Card>
 				<CardHeader className="flex justify-between items-center">
 					<div className="w-full flex flex-col justify-start items-start gap-1">
-						<CardTitle>Список агентов</CardTitle>
+						<CardTitle>Список сотрудников</CardTitle>
 						<CardDescription>
-							Список действующих агентов
+							Список действующих сотрудников
 						</CardDescription>
 					</div>
 					<Input

@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 
 
 export const AddCategoryForm = ({ children }: { children: React.ReactNode }) => {
-    const { register, handleSubmit, reset } = useForm<ICategoryCreateUpdate>();
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<ICategoryCreateUpdate>({ mode: 'onChange' });
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -21,6 +21,11 @@ export const AddCategoryForm = ({ children }: { children: React.ReactNode }) => 
             setLoading(false);
             reset();
             navigate(0);
+            toast({
+                title: 'Успех',
+                description: 'Категория успешно добавлена',
+                variant: 'default',
+            })
         } else {
             toast({
                 title: 'Ошибка',
@@ -42,9 +47,11 @@ export const AddCategoryForm = ({ children }: { children: React.ReactNode }) => 
                         {...register('name', { required: 'Название категории обязательно' })}
                         type="text"
                         placeholder="Добавить новую категорию"
-                        className="w-full border rounded-lg p-2 mb-5"
+                        className="w-full border rounded-lg p-2"
+                        autoComplete='off'
                     />
-                    <Button type="submit" disabled={loading}>
+                    {errors.name && <span className="text-red-500 text-sm text-left">{errors.name.message}</span>}
+                    <Button type="submit" disabled={loading} className='mt-5'>
                         Добавить
                     </Button>
                 </form>

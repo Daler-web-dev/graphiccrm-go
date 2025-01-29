@@ -19,7 +19,7 @@ export const EditEmployee: React.FC = () => {
         setValue,
         reset,
         formState: { errors, isSubmitting, isDirty }
-    } = useForm<IEmployeeCreateUpdate>();
+    } = useForm<IEmployeeCreateUpdate>({ mode: 'onChange' });
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState<IEmployeeCreateUpdate | null>(null);
 
@@ -29,15 +29,14 @@ export const EditEmployee: React.FC = () => {
             const res = await getRequest({ url: `/users/${id}` });
 
             if (res.status === 200 || res.status === 201) {
-                const { image, username, password, role } = res.data.data;
-                reset({ image, username, password, role });
+                reset({ ...res.data.data });
                 setData(res.data.data);
-                setValue('image', image);
+                setValue('image', res.data.data.image);
                 setLoading(false);
             } else {
                 toast({
                     title: 'Ошибка',
-                    description: 'Не удалось загрузить данные агента',
+                    description: 'Не удалось загрузить данные сотрудника',
                     variant: 'destructive',
                 });
             }
@@ -55,14 +54,14 @@ export const EditEmployee: React.FC = () => {
         if (response.status === 200 || response.status === 201) {
             toast({
                 title: 'Успех',
-                description: 'Данные агента успешно обновлены',
+                description: 'Данные сотрудника успешно обновлены',
             });
             reset(data);
             navigate(-1);
         } else {
             toast({
                 title: 'Ошибка',
-                description: 'Не удалось обновить данные агента',
+                description: 'Не удалось обновить данные сотрудника',
                 variant: 'destructive',
             });
         }
@@ -99,11 +98,12 @@ export const EditEmployee: React.FC = () => {
                                 <input
                                     id='username'
                                     type="text"
-                                    {...register('username', { required: '!' })}
+                                    {...register('username', { required: 'Логин обязателен' })}
                                     className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                     placeholder='Логин'
+                                    autoComplete='off'
                                 />
-                                {errors.username && <p className="text-red-500 text-sm">{errors.username.message}</p>}
+                                {errors.username && <p className="text-red-500 text-sm text-right">{errors.username.message}</p>}
                             </div>
 
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
@@ -111,36 +111,37 @@ export const EditEmployee: React.FC = () => {
                                 <input
                                     id='password'
                                     type="text"
-                                    {...register('password', { required: '!' })}
+                                    {...register('password', { required: 'Пароль обязателен' })}
                                     className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                     placeholder='Пароль'
+                                    autoComplete='off'
                                 />
-                                {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+                                {errors.password && <p className="text-red-500 text-sm text-right">{errors.password.message}</p>}
                             </div>
 
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
                                 <label htmlFor='role' className="text-base font-semibold text-cDarkBlue cursor-pointer">Роль</label>
                                 <select
                                     id='role'
-                                    {...register('role', { required: '!' })}
+                                    {...register('role', { required: 'Роль обязательна' })}
                                     className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                 >
                                     <option value="manager">Менеджер</option>
                                     <option value="seller">Продавец</option>
                                     <option value="admin">Администратор</option>
                                 </select>
-                                {errors.role && <p className="text-red-500 text-sm">{errors.role.message}</p>}
+                                {errors.role && <p className="text-red-500 text-sm text-right">{errors.role.message}</p>}
                             </div>
                         </div>
 
                         <div className='flex gap-3 absolute -top-20 right-5'>
-                            <ConfirmModal title='Вы действительно хотите отменить изменения агента?' setState={(state: boolean) => {
+                            <ConfirmModal title='Вы действительно хотите отменить изменения сотрудника?' setState={(state: boolean) => {
                                 state && navigate(-1) && reset();
                             }}>
                                 <Button variant={'customOutline'} type="button" className="px-10">Отменить</Button>
                             </ConfirmModal>
                             <Button variant={'custom'} type="submit" className="px-10" disabled={isSubmitting || !isDirty}>
-                                {isSubmitting ? 'Загрузка...' : 'Сохранить агента'}
+                                {isSubmitting ? 'Загрузка...' : 'Сохранить изменения'}
                             </Button>
                         </div>
                     </form>

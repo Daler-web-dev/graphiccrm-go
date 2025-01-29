@@ -106,11 +106,11 @@ export const Product: React.FC = () => {
                             </div> */}
                             <div className='flex justify-between items-center p-3 rounded-2xl bg-cWhite'>
                                 <p className='font-normal text-xl'>Высота</p>
-                                <span className='font-semibold text-xl'>{data?.height || 0} см.</span>
+                                <span className='font-semibold text-xl'>{data?.height || 0} м.</span>
                             </div>
                             <div className='flex justify-between items-center p-3 rounded-2xl'>
                                 <p className='font-normal text-xl'>Ширина</p>
-                                <span className='font-semibold text-xl'>{data?.width || 0} см.</span>
+                                <span className='font-semibold text-xl'>{data?.width || 0} м.</span>
                             </div>
                         </CardContent>
                     </Card>

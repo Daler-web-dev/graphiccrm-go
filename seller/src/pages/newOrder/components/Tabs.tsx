@@ -1,18 +1,16 @@
 import { Skeleton } from '@/components/ui/skeleton';
+import { useStateManager } from '@/contexts/useStateContext';
 import { toast } from '@/hooks/use-toast';
 import { getRequest } from '@/lib/apiHandlers';
 import { cn } from '@/lib/utils';
-import { ICategory } from '@/models/categories';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 interface Props {
     className?: string;
 }
 
 export const EditorTabs: React.FC<Props> = ({ className }) => {
-    const [tabs, setTabs] = useState<ICategory[]>([]);
-    const [activeTabId, setActiveTabId] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(false);
+    const { tabs, setTabs, activeTabId, setActiveTabId, filteredProducts, setFilteredProducts, loading, setLoading } = useStateManager()
 
     useEffect(() => {
         const getCategories = async () => {
@@ -20,8 +18,7 @@ export const EditorTabs: React.FC<Props> = ({ className }) => {
             const res = await getRequest({ url: `/categories` });
             if (res.status === 200 || res.status === 201) {
                 setTabs(res.data.data);
-                setActiveTabId(res.data.data[0]?.id);
-                setLoading(false)
+                setLoading(false);
             } else {
                 toast({
                     title: 'Ошибка',
@@ -34,26 +31,49 @@ export const EditorTabs: React.FC<Props> = ({ className }) => {
         getCategories();
     }, []);
 
+    useEffect(() => {
+        const getFilteredByTabsProducts = async () => {
+            const res = await getRequest({ url: `/products?category=${activeTabId}` });
+
+            if (res.status === 200 || res.status === 201) {
+                setFilteredProducts(res.data.data);
+                console.log(filteredProducts);
+
+            } else {
+                toast({
+                    title: 'Ошибка',
+                    description: 'Произошла ошибка при загрузке продуктов',
+                    variant: 'destructive',
+                });
+            }
+        }
+
+        getFilteredByTabsProducts();
+    }, [activeTabId])
+
     return (
-        <div className={cn("pt-2", className)}>
+        <div className={cn('pt-2', className)}>
             <h2 className="font-semibold text-base mb-2">Детали</h2>
             {loading ? (
-                <div className="max-w-[400px] flex gap-2 overflow-x-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+                <div className="max-w-[400px] flex gap-2 overflow-x-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 scrollbar-thumb-rounded-full scrollbar-w-1">
                     {Array.from({ length: 6 }).map((_, index) => (
                         <Skeleton key={index} className="h-10 w-20 whitespace-nowrap" />
                     ))}
                 </div>
             ) : (
                 <div>
-                    <div className="flex gap-2 overflow-x-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+                    <div className="flex gap-2 overflow-x-scroll">
                         {tabs.map((tab) => (
                             <button
                                 key={tab.id}
-                                onClick={() => setActiveTabId(tab.id)}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    setActiveTabId(tab.id)
+                                }}
                                 className={cn(
                                     'relative px-4 py-2 text-sm font-medium whitespace-nowrap transition-all',
                                     activeTabId === tab.id
-                                        ? 'text-cDarkBlue after:content-[""] after:w-full after:h-px pb-2 after:bg-cLightBlue after:absolute after:bottom-0 after:left-0'
+                                        ? 'text-cDarkBlue bg-gray-100 rounded-lg'
                                         : 'text-cLightBlue hover:text-cDarkBlue'
                                 )}
                             >
