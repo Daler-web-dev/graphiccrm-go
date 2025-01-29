@@ -54,6 +54,7 @@ func Initalize(router *fiber.App) {
 	stats := router.Group("/api/statistics", middleware.ProtectRoute("admin"))
 	stats.Get("/products", handlers.GetProductStatistics)
 	stats.Get("/dashboard", handlers.GetDashboard)
+	stats.Get("/chart", handlers.GetSalesChart)
 
 	upload := router.Group("/api/upload", middleware.ProtectRoute("admin", "seller", "manager"))
 	upload.Post("/", handlers.UploadImage)

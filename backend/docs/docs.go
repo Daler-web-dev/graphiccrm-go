@@ -1264,6 +1264,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/statistics/chart": {
+            "get": {
+                "description": "Возвращает статистику продаж за последний месяц или год",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Получить статистику продаж",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Период статистики (month, year)",
+                        "name": "period",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список со статистикой всех продуктов",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/handlers.SalesData"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIError"
+                        }
+                    }
+                }
+            }
+        },
         "/statistics/dashboard": {
             "get": {
                 "description": "Возвращает топ 10 клиентов и продуктов по сумме потраченных денег и проданных единиц за текущий месяц",
@@ -1908,6 +1948,17 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.SalesData": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "total_amount": {
+                    "type": "number"
+                }
+            }
+        },
         "handlers.UpdateClientRequest": {
             "type": "object",
             "required": [
@@ -2401,7 +2452,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "ec2-43-207-54-55.ap-northeast-1.compute.amazonaws.com",
+	Host:             "localhost:8080",
 	BasePath:         "/api",
 	Schemes:          []string{},
 	Title:            "Fiber CRM-API",

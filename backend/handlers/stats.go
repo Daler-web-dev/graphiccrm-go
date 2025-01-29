@@ -29,6 +29,11 @@ type ProductSummary struct {
 	UnitsSold   int        `json:"units_sold"`
 }
 
+type SalesData struct {
+	TotalAmount float64 `json:"total_amount"`
+	Date        string  `json:"date"`
+}
+
 // GetAllProductsStatistics Получить статистику всех продуктов
 //
 //	@Summary		Получить статистику всех продуктов
@@ -168,6 +173,68 @@ func GetDashboard(c *fiber.Ctx) error {
 		TopClients:  topClients,
 		TopProducts: topProducts,
 	})
+}
+
+// GetSalesChart Получить статистику продаж
+//
+//	@Summary		Получить статистику продаж
+//	@Description	Возвращает статистику продаж за последний месяц или год
+//	@Tags			Statistics
+//	@Param			period	query	string	false	"Период статистики (month, year)"
+//	@Produce		json
+//	@Success		200	{array}		[]SalesData	"Список со статистикой всех продуктов"
+//	@Failure		500	{object}	APIError	"Ошибка сервера"
+//	@Router			/statistics/chart [get]
+func GetSalesChart(c *fiber.Ctx) error {
+	period := c.Query("period", "month")
+	db := database.DB
+
+	now := time.Now()
+	startDate := now.AddDate(0, 0, -30) // по умолчанию 30 дней
+	endDate := now
+
+	switch period {
+	case "year":
+		startDate = now.AddDate(-1, 0, 0) // последние 12 месяцев
+	case "month":
+		startDate = now.AddDate(0, 0, -30) // последние 30 дней
+	default:
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "invalid period parameter. Use 'month' or 'year'",
+		})
+	}
+
+	var results []SalesData
+
+	query := db.Model(&model.Order{}).
+		Select(
+			"SUM(total_price) as total_amount",
+			fmt.Sprintf("to_char(created_at, '%s') as date", getDateFormat(period)),
+		).
+		Where("created_at BETWEEN ? AND ?", startDate, endDate).
+		Group("date").
+		Order("date ASC")
+
+	if err := query.Scan(&results).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to fetch sales data",
+		})
+	}
+
+	if results == nil {
+		results = make([]SalesData, 0)
+	}
+
+	return c.JSON(results)
+}
+
+func getDateFormat(period string) string {
+	switch period {
+	case "year":
+		return "YYYY-MM"
+	default:
+		return "YYYY-MM-DD"
+	}
 }
 
 func getDateRange(period string) (time.Time, time.Time, error) {

@@ -120,6 +120,13 @@ definitions:
       units_sold:
         type: integer
     type: object
+  handlers.SalesData:
+    properties:
+      date:
+        type: string
+      total_amount:
+        type: number
+    type: object
   handlers.UpdateClientRequest:
     properties:
       Note:
@@ -458,7 +465,7 @@ definitions:
       username:
         type: string
     type: object
-host: ec2-43-207-54-55.ap-northeast-1.compute.amazonaws.com
+host: localhost:8080
 info:
   contact: {}
   description: This is a sample swagger for Fiber
@@ -1305,6 +1312,32 @@ paths:
       summary: Поиск продуктов
       tags:
       - Products
+  /statistics/chart:
+    get:
+      description: Возвращает статистику продаж за последний месяц или год
+      parameters:
+      - description: Период статистики (month, year)
+        in: query
+        name: period
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список со статистикой всех продуктов
+          schema:
+            items:
+              items:
+                $ref: '#/definitions/handlers.SalesData'
+              type: array
+            type: array
+        "500":
+          description: Ошибка сервера
+          schema:
+            $ref: '#/definitions/handlers.APIError'
+      summary: Получить статистику продаж
+      tags:
+      - Statistics
   /statistics/dashboard:
     get:
       description: Возвращает топ 10 клиентов и продуктов по сумме потраченных денег
