@@ -1080,35 +1080,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/products/statistics": {
-            "get": {
-                "description": "Возвращает статистику по всем продуктам, включая количество произведенного и проданного за текущий месяц",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Products"
-                ],
-                "summary": "Получить статистику всех продуктов",
-                "responses": {
-                    "200": {
-                        "description": "Список со статистикой всех продуктов",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/handlers.ProductStatistics"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Ошибка сервера",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.APIError"
-                        }
-                    }
-                }
-            }
-        },
         "/products/{id}": {
             "get": {
                 "description": "Эта функция возвращает информацию о продукте по его уникальному идентификатору",
@@ -1282,6 +1253,72 @@ const docTemplate = `{
                         "description": "Продукт не найден",
                         "schema": {
                             "$ref": "#/definitions/handlers.APIError"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/statistics/dashboard": {
+            "get": {
+                "description": "Возвращает топ 10 клиентов и продуктов по сумме потраченных денег и проданных единиц за текущий месяц",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Получить топ клиентов и продуктов",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Период статистики (month, year)",
+                        "name": "period",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список со статистикой всех продуктов",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/handlers.DashboardResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/statistics/products": {
+            "get": {
+                "description": "Возвращает статистику по всем продуктам, включая количество произведенного и проданного за текущий месяц",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Получить статистику всех продуктов",
+                "responses": {
+                    "200": {
+                        "description": "Список со статистикой всех продуктов",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/handlers.ProductStatistics"
+                            }
                         }
                     },
                     "500": {
@@ -1707,6 +1744,23 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.ClientSummary": {
+            "type": "object",
+            "properties": {
+                "client_id": {
+                    "type": "string"
+                },
+                "client_name": {
+                    "type": "string"
+                },
+                "order_count": {
+                    "type": "integer"
+                },
+                "total_spent": {
+                    "type": "number"
+                }
+            }
+        },
         "handlers.CreateClientRequest": {
             "type": "object",
             "required": [
@@ -1771,6 +1825,23 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.DashboardResponse": {
+            "type": "object",
+            "properties": {
+                "top_clients": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.ClientSummary"
+                    }
+                },
+                "top_products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/handlers.ProductSummary"
+                    }
+                }
+            }
+        },
         "handlers.LoginRequest": {
             "type": "object",
             "properties": {
@@ -1817,6 +1888,23 @@ const docTemplate = `{
                 "soldQuantity": {
                     "type": "number",
                     "example": 95.3
+                }
+            }
+        },
+        "handlers.ProductSummary": {
+            "type": "object",
+            "properties": {
+                "product_id": {
+                    "type": "string"
+                },
+                "product_name": {
+                    "type": "string"
+                },
+                "total_sold": {
+                    "type": "number"
+                },
+                "units_sold": {
+                    "type": "integer"
                 }
             }
         },

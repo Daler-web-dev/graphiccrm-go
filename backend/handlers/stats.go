@@ -2,31 +2,42 @@ package handlers
 
 import (
 	"backend/database"
+	"backend/model"
+	"fmt"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 	guuid "github.com/google/uuid"
 )
 
-func GetTopCustomers(c *fiber.Ctx) error {
-	// month := c.Params("month", "1")
-	// year := c.Params("year", "1")
-
-	return nil
+type DashboardResponse struct {
+	TopClients  []ClientSummary  `json:"top_clients"`
+	TopProducts []ProductSummary `json:"top_products"`
 }
-func GetTopProducts(c *fiber.Ctx) error {
-	return nil
+
+type ClientSummary struct {
+	ClientID   guuid.UUID `json:"client_id"`
+	ClientName string     `json:"client_name"`
+	TotalSpent float64    `json:"total_spent"`
+	OrderCount int        `json:"order_count"`
+}
+
+type ProductSummary struct {
+	ProductID   guuid.UUID `json:"product_id"`
+	ProductName string     `json:"product_name"`
+	TotalSold   float64    `json:"total_sold"`
+	UnitsSold   int        `json:"units_sold"`
 }
 
 // GetAllProductsStatistics Получить статистику всех продуктов
 //
 //	@Summary		Получить статистику всех продуктов
 //	@Description	Возвращает статистику по всем продуктам, включая количество произведенного и проданного за текущий месяц
-//	@Tags			Products
+//	@Tags			Statistics
 //	@Produce		json
 //	@Success		200	{array}		ProductStatistics	"Список со статистикой всех продуктов"
 //	@Failure		500	{object}	APIError			"Ошибка сервера"
-//	@Router			/products/statistics [get]
+//	@Router			/statistics/products [get]
 func GetProductStatistics(c *fiber.Ctx) error {
 	type ProductStats struct {
 		ProductID        guuid.UUID `json:"productId"`
@@ -87,4 +98,92 @@ func GetProductStatistics(c *fiber.Ctx) error {
 		"success": true,
 		"data":    stats,
 	})
+}
+
+// GetDashboard Получить топ клиентов и продуктов
+//
+//	@Summary		Получить топ клиентов и продуктов
+//	@Description	Возвращает топ 10 клиентов и продуктов по сумме потраченных денег и проданных единиц за текущий месяц
+//	@Tags			Statistics
+//	@Param			period	query	string	false	"Период статистики (month, year)"
+//	@Produce		json
+//	@Success		200	{array}		DashboardResponse	"Список со статистикой всех продуктов"
+//	@Failure		500	{object}	APIError			"Ошибка сервера"
+//	@Router			/statistics/dashboard [get]
+func GetDashboard(c *fiber.Ctx) error {
+	period := c.Query("period", "month")
+
+	startDate, endDate, err := getDateRange(period)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	db := database.DB
+
+	var topClients []ClientSummary
+	err = db.Model(&model.Order{}).
+		Select(`
+				clients.id as client_id,
+				CONCAT(clients.name, ' ', clients.surname) as client_name,
+				SUM(orders.total_price) as total_spent,
+				COUNT(orders.id) as order_count
+			`).
+		Joins("JOIN clients ON clients.id = orders.client_id").
+		Where("orders.created_at BETWEEN ? AND ?", startDate, endDate).
+		Group("clients.id, clients.name, clients.surname").
+		Order("total_spent DESC").
+		Limit(10).
+		Scan(&topClients).Error
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to fetch top clients",
+		})
+	}
+
+	var topProducts []ProductSummary
+	err = db.Model(&model.Order{}).
+		Select(`
+				products.id as product_id,
+				products.name as product_name,
+				SUM(order_items.quantity * products.price) as total_sold,
+				SUM(order_items.quantity) as units_sold
+			`).
+		Joins("JOIN order_items ON order_items.order_id = orders.id").
+		Joins("JOIN products ON products.id = order_items.product_id").
+		Where("orders.created_at BETWEEN ? AND ?", startDate, endDate).
+		Group("products.id, products.name").
+		Order("total_sold DESC").
+		Limit(10).
+		Scan(&topProducts).Error
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to fetch top products",
+		})
+	}
+
+	return c.JSON(DashboardResponse{
+		TopClients:  topClients,
+		TopProducts: topProducts,
+	})
+}
+
+func getDateRange(period string) (time.Time, time.Time, error) {
+	now := time.Now()
+	location := now.Location()
+
+	switch period {
+	case "month":
+		start := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, location)
+		end := start.AddDate(0, 1, -1).Add(23*time.Hour + 59*time.Minute + 59*time.Second)
+		return start, end, nil
+	case "year":
+		start := time.Date(now.Year(), 1, 1, 0, 0, 0, 0, location)
+		end := start.AddDate(1, 0, -1).Add(23*time.Hour + 59*time.Minute + 59*time.Second)
+		return start, end, nil
+	default:
+		return time.Time{}, time.Time{}, fmt.Errorf("invalid period. Use 'month' or 'year'")
+	}
 }
