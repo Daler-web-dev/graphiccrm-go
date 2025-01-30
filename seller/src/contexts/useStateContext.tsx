@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useState } from 'react';
 import { ICategory } from '@/models/categories';
 import { IProduct } from '@/models/products';
+import { useForm, UseFormReturn } from 'react-hook-form';
 
-interface FormState {
+export interface FormState {
     width: number;
     height: number;
     arc: number;
@@ -17,13 +18,19 @@ interface StateManagerContextProps {
     setProducts: React.Dispatch<React.SetStateAction<IProduct[]>>;
     filteredProducts: IProduct[];
     setFilteredProducts: React.Dispatch<React.SetStateAction<IProduct[]>>;
+    selectedProducts: any[];
+    setSelectedProducts: React.Dispatch<React.SetStateAction<any[]>>;
+    selectedProduct: any;
+    setSelectedProduct: React.Dispatch<React.SetStateAction<any>>;
+    selectedProductPosition: any
+    setSelectedProductPosition: any
     loading: boolean;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-    formData: FormState;
-    setFormData: React.Dispatch<React.SetStateAction<FormState>>;
+    formMethods: UseFormReturn<FormState>;
+    onSubmit: (data: FormState) => void;
 }
 
-export const StateManagerContext = createContext<StateManagerContextProps>({} as StateManagerContextProps);
+export const StateManagerContext = createContext<StateManagerContextProps | undefined>(undefined);
 
 interface StateManagerProviderProps {
     children: React.ReactNode;
@@ -31,11 +38,22 @@ interface StateManagerProviderProps {
 
 export const StateManagerProvider: React.FC<StateManagerProviderProps> = ({ children }) => {
     const [tabs, setTabs] = useState<ICategory[]>([]);
-    const [activeTabId, setActiveTabId] = useState<string>('');
+    const [activeTabId, setActiveTabId] = useState<string>("");
     const [products, setProducts] = useState<IProduct[]>([]);
     const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
+    const [selectedProducts, setSelectedProducts] = useState<any>([]);
+    const [selectedProduct, setSelectedProduct] = useState<any>();
+    const [selectedProductPosition, setSelectedProductPosition] = useState<any>();
     const [loading, setLoading] = useState<boolean>(false);
-    const [formData, setFormData] = useState<FormState>({ width: 250, height: 400, arc: 0 });
+
+    const formMethods = useForm<FormState>({
+        defaultValues: { width: 250, height: 400, arc: 0 },
+        mode: 'onChange'
+    });
+
+    const onSubmit = (data: FormState) => {
+        console.log("Submitted data:", data);
+    };
 
     return (
         <StateManagerContext.Provider
@@ -48,15 +66,21 @@ export const StateManagerProvider: React.FC<StateManagerProviderProps> = ({ chil
                 setProducts,
                 filteredProducts,
                 setFilteredProducts,
+                selectedProducts,
+                setSelectedProducts,
+                selectedProduct,
+                setSelectedProduct,
+                selectedProductPosition,
+                setSelectedProductPosition,
                 loading,
                 setLoading,
-                formData,
-                setFormData
+                formMethods,
+                onSubmit
             }}
         >
             {children}
         </StateManagerContext.Provider>
-    )
+    );
 };
 
 export const useStateManager = () => {

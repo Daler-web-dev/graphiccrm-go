@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const EditorTabs: React.FC<Props> = ({ className }) => {
-    const { tabs, setTabs, activeTabId, setActiveTabId, filteredProducts, setFilteredProducts, loading, setLoading } = useStateManager()
+    const { tabs, setTabs, activeTabId, setActiveTabId, setFilteredProducts, loading, setLoading } = useStateManager()
 
     useEffect(() => {
         const getCategories = async () => {
@@ -19,6 +19,7 @@ export const EditorTabs: React.FC<Props> = ({ className }) => {
             if (res.status === 200 || res.status === 201) {
                 setTabs(res.data.data);
                 setLoading(false);
+                setActiveTabId(res.data.data[0].id);
             } else {
                 toast({
                     title: 'Ошибка',
@@ -33,12 +34,11 @@ export const EditorTabs: React.FC<Props> = ({ className }) => {
 
     useEffect(() => {
         const getFilteredByTabsProducts = async () => {
+            if (!activeTabId) return
             const res = await getRequest({ url: `/products?category=${activeTabId}` });
 
             if (res.status === 200 || res.status === 201) {
                 setFilteredProducts(res.data.data);
-                console.log(filteredProducts);
-
             } else {
                 toast({
                     title: 'Ошибка',
@@ -52,11 +52,11 @@ export const EditorTabs: React.FC<Props> = ({ className }) => {
     }, [activeTabId])
 
     return (
-        <div className={cn('pt-2', className)}>
+        <div className={cn('w-[350px] pt-2', className)}>
             <h2 className="font-semibold text-base mb-2">Детали</h2>
             {loading ? (
-                <div className="max-w-[400px] flex gap-2 overflow-x-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 scrollbar-thumb-rounded-full scrollbar-w-1">
-                    {Array.from({ length: 6 }).map((_, index) => (
+                <div className="flex gap-2">
+                    {Array.from({ length: 4 }).map((_, index) => (
                         <Skeleton key={index} className="h-10 w-20 whitespace-nowrap" />
                     ))}
                 </div>
