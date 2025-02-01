@@ -8,18 +8,7 @@ import { formatPrice } from "@/lib/utils";
 import Pagination from "@/components/custom/Pagination";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-
-interface IProduct {
-    id: string;
-    name: string;
-    articul: string;
-    unitPrice: number;
-    count: number;
-    amountInBox: number;
-    categoryId: string;
-    imagePath: string;
-    totalPrice: number;
-}
+import { IProduct } from "@/models/products";
 
 interface ProductSearchProps {
     setValue: (value: { productId: string; quantity: number }[]) => void;
@@ -36,6 +25,26 @@ export function ProductSearch({ setValue }: ProductSearchProps) {
     const debouncedQuery = useDebounce(query, 500);
 
     React.useEffect(() => {
+        const fetchProducts = async () => {
+            setLoading(true);
+            const response = await getRequest({ url: "/products" });
+            if (response.status === 200 || response.status === 201) {
+                setProducts(response.data.data);
+                setTotalPages(response.data.pagination.totalPages);
+                setLoading(false);
+            } else {
+                toast({
+                    title: "Ошибка",
+                    description: "Произошла ошибка при загрузке продуктов",
+                    variant: "destructive",
+                });
+            }
+        };
+
+        fetchProducts();
+    }, [])
+
+    React.useEffect(() => {
         if (!debouncedQuery) {
             return;
         }
@@ -47,7 +56,7 @@ export function ProductSearch({ setValue }: ProductSearchProps) {
             });
             if (response.status === 200 || response.status === 201) {
                 setProducts(response.data.data);
-                setTotalPages(Math.ceil(response.data.total / 10));
+                setTotalPages(response.data.pagination.totalPages);
                 setLoading(false);
             } else {
                 toast({
@@ -68,7 +77,7 @@ export function ProductSearch({ setValue }: ProductSearchProps) {
             if (existingProduct) {
                 return prevCart.map((item) =>
                     item.productId === id
-                        ? { ...item, quantity: Math.min(item.quantity + 1, product?.count || 0) }
+                        ? { ...item, quantity: Math.min(item.quantity + 1, product?.amount || 0) }
                         : item
                 );
             } else {
@@ -128,10 +137,10 @@ export function ProductSearch({ setValue }: ProductSearchProps) {
                                                 <TableCell className="text-base rounded-s-xl">
                                                     {idx + 1}
                                                 </TableCell>
-                                                <TableCell className="text-base">{item.name}</TableCell>
-                                                <TableCell className="text-base">{formatPrice(item.unitPrice)}</TableCell>
-                                                <TableCell className="text-base">{item.count} шт.</TableCell>
-                                                <TableCell className="text-base">
+                                                <TableCell className="text-base text-left">{item.name}</TableCell>
+                                                <TableCell className="text-base text-left">{formatPrice(item.price)}</TableCell>
+                                                <TableCell className="text-base text-left">{item.amount} шт.</TableCell>
+                                                <TableCell className="text-base text-left">
                                                     {cartItem ? (
                                                         <div className="space-x-3">
                                                             <input
