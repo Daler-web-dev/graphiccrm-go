@@ -21,11 +21,7 @@ export function parseJwt(token: string) {
 }
 
 export const formatPrice = (price: number) => {
-	const formattedPrice = new Intl.NumberFormat('uz-UZ', {
-		style: 'currency',
-		currency: 'UZS',
-		minimumFractionDigits: 0,
-	});
+	const formattedPrice = price + " сум"
 
-	return formattedPrice.format(price);
+	return formattedPrice
 }

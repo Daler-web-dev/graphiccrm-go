@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { RotateCcw } from "lucide-react";
 import { EditorTabs } from "../components/Tabs";
 import { ViewZone } from "../components/ViewZone";
-import { TabModels } from "../components/TabModels";
 import { useStateManager } from "@/contexts/useStateContext";
 
 interface EditorProps { }
@@ -67,7 +66,6 @@ const Editor: React.FC<EditorProps> = () => {
                             </label>
                             {/* Tabs component */}
                             <EditorTabs />
-                            <TabModels />
                         </div>
 
                         {/* save or reset div */}
