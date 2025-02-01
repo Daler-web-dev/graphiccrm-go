@@ -19,7 +19,7 @@ export const EditClient: React.FC = () => {
         setValue,
         reset,
         formState: { errors, isSubmitting, isDirty }
-    } = useForm<IClientCreateUpdate>();
+    } = useForm<IClientCreateUpdate>({ mode: "onChange" });
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState<IClientCreateUpdate>();
 
@@ -29,10 +29,9 @@ export const EditClient: React.FC = () => {
             const res = await getRequest({ url: `/clients/${id}` });
 
             if (res.status === 200 || res.status === 201) {
-                const { name, surname, contactInfo, image, address, Note } = res.data.data;
-                reset({ name, surname, contactInfo, image, address, Note });
+                reset({ ...res.data.data });
                 setData(res.data.data);
-                setValue('image', image);
+                setValue('image', res.data.data.image);
                 setLoading(false);
             } else {
                 toast({
@@ -73,7 +72,7 @@ export const EditClient: React.FC = () => {
             <Card className='w-full overflow-x-auto p-5 mb-5'>
                 {loading ? (
                     <div className='flex gap-5 relative'>
-                        <Skeleton className='w-1/2 aspect-square' />
+                        <Skeleton className='w-full max-w-[40%] aspect-square' />
                         <div className='w-full flex flex-col gap-3'>
                             <Skeleton className='w-full h-14' />
                             <Skeleton className='w-full h-14' />
@@ -84,12 +83,13 @@ export const EditClient: React.FC = () => {
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit(onSubmit)} className="flex gap-5">
-                        <div className='w-1/2 aspect-square'>
+                        <div className='w-full max-w-[40%] aspect-square'>
                             <ImageUploader
                                 previewPlaceholder={`${data?.image}`}
                                 onUploadSuccess={(url: string) => {
                                     setValue('image', url, { shouldDirty: true });
                                 }}
+                                className='border border-cLightGray rounded-lg'
                             />
                         </div>
                         <div className="w-full space-y-2">
@@ -101,8 +101,9 @@ export const EditClient: React.FC = () => {
                                     {...register('name', { required: 'Имя обязательно' })}
                                     className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                     placeholder='Имя'
+                                    autoComplete='off'
                                 />
-                                {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+                                {errors.name && <p className="text-red-500 text-sm text-right">{errors.name.message}</p>}
                             </div>
 
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
@@ -113,8 +114,9 @@ export const EditClient: React.FC = () => {
                                     {...register('surname', { required: 'Фамилия обязательна' })}
                                     className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                     placeholder='Фамилия'
+                                    autoComplete='off'
                                 />
-                                {errors.surname && <p className="text-red-500 text-sm">{errors.surname.message}</p>}
+                                {errors.surname && <p className="text-red-500 text-sm text-right">{errors.surname.message}</p>}
                             </div>
 
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
@@ -131,8 +133,9 @@ export const EditClient: React.FC = () => {
                                         },
                                     })}
                                     className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                                    autoComplete='off'
                                 />
-                                {errors.contactInfo && <p className="text-red-500 text-sm">{errors.contactInfo.message}</p>}
+                                {errors.contactInfo && <p className="text-red-500 text-sm text-right">{errors.contactInfo.message}</p>}
                             </div>
 
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
@@ -143,24 +146,26 @@ export const EditClient: React.FC = () => {
                                     {...register('address', { required: 'Адрес обязателен' })}
                                     className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                     placeholder='Адрес'
+                                    autoComplete='off'
                                 />
-                                {errors.address && <p className="text-red-500 text-sm">{errors.address.message}</p>}
+                                {errors.address && <p className="text-red-500 text-sm text-right">{errors.address.message}</p>}
                             </div>
 
                             <div className='w-full flex justify-start items-start flex-col bg-cLightGray px-3 py-2 rounded-lg'>
                                 <label htmlFor='note' className="text-base font-semibold text-cDarkBlue cursor-pointer">Дополнительная информация</label>
                                 <textarea
                                     id='note'
-                                    {...register('Note', { required: 'Дополнительная информация обязателена' })}
+                                    {...register('Note')}
                                     className="mt-2 p-2 w-full border rounded-lg outline-none bg-transparent"
                                     placeholder='Дополнительная информация'
+                                    autoComplete='off'
                                 />
-                                {errors.Note && <p className="text-red-500 text-sm">{errors.Note.message}</p>}
+                                {errors.Note && <p className="text-red-500 text-sm text-right">{errors.Note.message}</p>}
                             </div>
                         </div>
 
                         <div className='flex gap-3 absolute -top-20 right-5'>
-                            <ConfirmModal title='Вы действительно хотите отменить изменения агента?' setState={(state: boolean) => {
+                            <ConfirmModal title='Вы действительно хотите отменить изменения клиента?' setState={(state: boolean) => {
                                 state && navigate(-1) && reset();
                             }}>
                                 <Button variant={'customOutline'} type="button" className="px-10">Отменить</Button>

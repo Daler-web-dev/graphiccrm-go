@@ -24,6 +24,7 @@ export const Clients: React.FC = () => {
 
     const loadPageData = async (page: number, search: string) => {
         setLoading(true);
+
         if (search === '') {
             const res = await getRequest({ url: `/clients?page=${page}&limit=10` });
 
@@ -111,7 +112,7 @@ export const Clients: React.FC = () => {
                                     </TableRow>
                                 )) : (
                                     <TableRow>
-                                        <TableCell className="text-base text-center rounded-xl bg-gray-100" colSpan={6}>
+                                        <TableCell className="text-base text-center rounded-xl" colSpan={6}>
                                             Нет данных по вашему запросу
                                         </TableCell>
                                     </TableRow>

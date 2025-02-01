@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState } from 'react';
 import { ICategory } from '@/models/categories';
 import { IProduct } from '@/models/products';
 import { useForm, UseFormReturn } from 'react-hook-form';
+import { toast } from '@/hooks/use-toast';
 
 export interface FormState {
     width: number;
@@ -52,7 +53,9 @@ export const StateManagerProvider: React.FC<StateManagerProviderProps> = ({ chil
     });
 
     const onSubmit = (data: FormState) => {
-        console.log("Submitted data:", data);
+        if (selectedProducts.length === 0) return toast({ title: 'Ошибка', description: 'Выберите детали и отредактируйте их', variant: 'destructive', });
+        const readyData = { ...data, selectedProducts };
+        console.log("Submitted data:", readyData);
     };
 
     return (

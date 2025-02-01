@@ -29,8 +29,23 @@ export function ClientSearch({ setValue }: ClientSearchProps) {
     const [clients, setClients] = React.useState<IClient[]>([]);
     const [loading, setLoading] = React.useState(false);
     const [selectedClient, setSelectedClient] = React.useState<IClient | null>(null);
-
     const debouncedQuery = useDebounce(query, 500);
+
+    React.useEffect(() => {
+        const fetchClients = async () => {
+            setLoading(true);
+            const response = await getRequest({ url: "/clients" });
+            if (response.status === 200 || response.status === 201) {
+                setClients(response.data.data);
+                setLoading(false);
+            } else {
+                setClients([]);
+                setLoading(false);
+            }
+        };
+
+        fetchClients();
+    }, [])
 
     React.useEffect(() => {
         if (!debouncedQuery) {
@@ -43,8 +58,6 @@ export function ClientSearch({ setValue }: ClientSearchProps) {
             const response = await getRequest({
                 url: `/clients/search?q=${debouncedQuery}`,
             });
-            console.log(response);
-
 
             if (response.status === 200 || response.status === 201) {
                 setClients(response.data.data);

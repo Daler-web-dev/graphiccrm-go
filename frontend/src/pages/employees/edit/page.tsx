@@ -72,7 +72,7 @@ export const EditEmployee: React.FC = () => {
             <Card className='w-full overflow-x-auto p-5 mb-5'>
                 {loading ? (
                     <div className='flex gap-5 relative'>
-                        <Skeleton className='w-1/2 aspect-square' />
+                        <Skeleton className='w-full max-w-[40%] aspect-square' />
                         <div className='w-full flex flex-col gap-3'>
                             <Skeleton className='w-full h-14' />
                             <Skeleton className='w-full h-14' />
@@ -98,7 +98,7 @@ export const EditEmployee: React.FC = () => {
                                 <input
                                     id='username'
                                     type="text"
-                                    {...register('username', { required: 'Логин обязателен' })}
+                                    {...register('username', { required: 'Логин обязателен', minLength: { value: 3, message: 'Минимум 3 символа' } })}
                                     className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                     placeholder='Логин'
                                     autoComplete='off'
@@ -110,8 +110,8 @@ export const EditEmployee: React.FC = () => {
                                 <label htmlFor='password' className="text-base font-semibold text-cDarkBlue cursor-pointer">Пароль</label>
                                 <input
                                     id='password'
-                                    type="text"
-                                    {...register('password', { required: 'Пароль обязателен' })}
+                                    type="password"
+                                    {...register('password', { required: 'Пароль обязателен', minLength: { value: 4, message: 'Минимум 4 символа' } })}
                                     className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                     placeholder='Пароль'
                                     autoComplete='off'

@@ -103,7 +103,7 @@ export const Employees: React.FC = () => {
 									</TableRow>
 								</TableHeader>
 								<TableBody>
-									{data.length > 0 ? data.map((agent, idx) => (
+									{data && data.length > 0 ? data.map((agent, idx) => (
 										<TableRow className="text-left" key={idx}>
 											<TableCell>{idx + 1}</TableCell>
 											<TableCell className='flex gap-1 items-center'>
