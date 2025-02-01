@@ -72,7 +72,7 @@ export const EditClient: React.FC = () => {
             <Card className='w-full overflow-x-auto p-5 mb-5'>
                 {loading ? (
                     <div className='flex gap-5 relative'>
-                        <Skeleton className='w-1/2 aspect-square' />
+                        <Skeleton className='w-full max-w-[40%] aspect-square' />
                         <div className='w-full flex flex-col gap-3'>
                             <Skeleton className='w-full h-14' />
                             <Skeleton className='w-full h-14' />
@@ -83,12 +83,13 @@ export const EditClient: React.FC = () => {
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit(onSubmit)} className="flex gap-5">
-                        <div className='w-1/2 aspect-square'>
+                        <div className='w-full max-w-[40%] aspect-square'>
                             <ImageUploader
                                 previewPlaceholder={`${data?.image}`}
                                 onUploadSuccess={(url: string) => {
                                     setValue('image', url, { shouldDirty: true });
                                 }}
+                                className='border border-cLightGray rounded-lg'
                             />
                         </div>
                         <div className="w-full space-y-2">
@@ -164,7 +165,7 @@ export const EditClient: React.FC = () => {
                         </div>
 
                         <div className='flex gap-3 absolute -top-20 right-5'>
-                            <ConfirmModal title='Вы действительно хотите отменить изменения агента?' setState={(state: boolean) => {
+                            <ConfirmModal title='Вы действительно хотите отменить изменения клиента?' setState={(state: boolean) => {
                                 state && navigate(-1) && reset();
                             }}>
                                 <Button variant={'customOutline'} type="button" className="px-10">Отменить</Button>

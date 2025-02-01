@@ -43,8 +43,6 @@ export const Clients: React.FC = () => {
             const res = await getRequest({ url: `/clients/search?q=${search}` });
 
             if (res.status === 200 || res.status === 201) {
-                console.log(res);
-                
                 setData(res.data.data);
                 setTotalPages(1);
                 setLoading(false);
