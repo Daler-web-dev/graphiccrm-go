@@ -144,7 +144,7 @@ export const Products: React.FC = () => {
                                 <TableBody>
                                     {data && data.length > 0 ? (
                                         data.map((item: IProduct, idx: number) => (
-                                            <TableRow className='text-left'>
+                                            <TableRow className='text-left' key={idx}>
                                                 <TableCell>{idx + 1}</TableCell>
                                                 <TableCell className='flex gap-1 items-center'>
                                                     <img src={item.image !== "" ? import.meta.env.VITE_API_URL + "/" + item.image : "/images/humanPlaceholder.png"} alt="product image" loading='lazy' className='w-10 h-10 object-cover rounded-lg border border-gray-200' />

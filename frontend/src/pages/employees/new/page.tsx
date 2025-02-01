@@ -57,7 +57,7 @@ export const AddEmployee = () => {
                             <input
                                 id='username'
                                 type="text"
-                                {...register('username', { required: 'Имя пользователя обязательно' })}
+                                {...register('username', { required: 'Имя пользователя обязательно', minLength: { value: 3, message: 'Минимум 3 символа' } })}
                                 className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                 placeholder='Логин'
                                 autoComplete='off'
@@ -70,7 +70,7 @@ export const AddEmployee = () => {
                             <input
                                 id='password'
                                 type="password"
-                                {...register('password', { required: 'Пароль обязателен' })}
+                                {...register('password', { required: 'Пароль обязателен', minLength: { value: 4, message: 'Минимум 4 символов' } })}
                                 className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                 placeholder='Пароль'
                                 autoComplete='off'
