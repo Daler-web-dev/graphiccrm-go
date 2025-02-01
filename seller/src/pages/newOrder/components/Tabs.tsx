@@ -4,6 +4,7 @@ import { toast } from '@/hooks/use-toast';
 import { getRequest } from '@/lib/apiHandlers';
 import { cn } from '@/lib/utils';
 import React, { useEffect } from 'react';
+import { TabModels } from './TabModels';
 
 interface Props {
     className?: string;
@@ -81,6 +82,7 @@ export const EditorTabs: React.FC<Props> = ({ className }) => {
                             </button>
                         ))}
                     </div>
+                    <TabModels />
                 </div>
             )}
         </div>

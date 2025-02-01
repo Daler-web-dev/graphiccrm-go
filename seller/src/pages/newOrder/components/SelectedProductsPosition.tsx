@@ -8,19 +8,22 @@ interface Props {
 }
 
 export const SelectedProductPosition: React.FC<Props> = ({ className }) => {
-    const { setSelectedProducts, selectedProduct, setSelectedProduct } = useStateManager();
-    const [formData, setFormData] = useState<Record<string, number>>({
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
+    const { setSelectedProducts, selectedProduct, setSelectedProduct, selectedProducts } = useStateManager();
+    const [formData, setFormData] = useState<Record<"upDown" | "leftRight", number>>({
+        upDown: 0,
+        leftRight: 0
     });
 
     useEffect(() => {
-        if (selectedProduct?.position) {
-            setFormData(selectedProduct.position);
+        if (!selectedProduct?.id) return;
+
+        const currentProduct = selectedProducts.find((prod) => prod.id === selectedProduct.id);
+
+        if (currentProduct?.position) {
+            setFormData(currentProduct.position);
         }
     }, [selectedProduct]);
+
 
     useEffect(() => {
         if (!selectedProduct?.id) return;
@@ -35,7 +38,6 @@ export const SelectedProductPosition: React.FC<Props> = ({ className }) => {
                 updatedProducts[existingProductIndex] = updatedProduct;
                 return updatedProducts;
             }
-
             return [...prevProducts, updatedProduct];
         });
     }, [formData]);
@@ -57,47 +59,27 @@ export const SelectedProductPosition: React.FC<Props> = ({ className }) => {
                 <div className="flex flex-col items-start gap-4">
                     <div className="w-full flex justify-between items-center my-2">
                         <h2 className="font-semibold text-base">Позиция</h2>
-                        <X size={16} className="cursor-pointer" onClick={handleRemoveProduct} />
+                        <X size={16} className="cursor-pointer" color='red' onClick={handleRemoveProduct} />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                        <label htmlFor="top" className="flex flex-col items-start">
-                            <span>Top</span>
+                        <label htmlFor="upDown" className="flex flex-col items-start">
+                            <span>Вверх/вниз</span>
                             <input
                                 type="number"
-                                id="top"
-                                value={formData.top || 0}
-                                onChange={(e) => handleInputChange('top', Number(e.target.value))}
+                                id="upDown"
+                                value={formData.upDown}
+                                onChange={(e) => handleInputChange('upDown', Number(e.target.value))}
                                 className="border rounded-md p-1 w-full"
                             />
                         </label>
-                        <label htmlFor="left" className="flex flex-col items-start">
-                            <span>Left</span>
+                        <label htmlFor="leftRight" className="flex flex-col items-start">
+                            <span>Влево/Вправо</span>
                             <input
                                 type="number"
-                                id="left"
-                                value={formData.left || 0}
-                                onChange={(e) => handleInputChange('left', Number(e.target.value))}
+                                id="leftRight"
+                                value={formData.leftRight}
+                                onChange={(e) => handleInputChange('leftRight', Number(e.target.value))}
                                 className="border rounded-md p-1 w-full"
-                            />
-                        </label>
-                        <label htmlFor="right" className="w-full flex flex-col items-start">
-                            <span>Right</span>
-                            <input
-                                type="number"
-                                id="right"
-                                value={formData.right || 0}
-                                onChange={(e) => handleInputChange('right', Number(e.target.value))}
-                                className="w-full border rounded-md p-1"
-                            />
-                        </label>
-                        <label htmlFor="bottom" className="w-full flex flex-col items-start">
-                            <span>Bottom</span>
-                            <input
-                                type="number"
-                                id="bottom"
-                                value={formData.bottom || 0}
-                                onChange={(e) => handleInputChange('bottom', Number(e.target.value))}
-                                className="w-full border rounded-md p-1"
                             />
                         </label>
                     </div>
