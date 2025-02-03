@@ -1,9 +1,9 @@
 import { useStateManager } from "@/contexts/useStateContext";
 
 export const ViewZone = () => {
-    const { formMethods, selectedProducts } = useStateManager();
+    const { formMethods, selectedProducts, setSelectedProduct } = useStateManager();
     const { width, height, arc: rounded } = formMethods.watch();
-    
+
     return (
         <div className="flex flex-col justify-center items-center relative">
             {rounded !== 0 && (
@@ -31,11 +31,12 @@ export const ViewZone = () => {
                         key={product.id}
                         src={`${import.meta.env.VITE_API_URL}/${product.image}`}
                         alt={product.name}
-                        className="w-20 h-20 aspect-square border border-gray-200 rounded-xl bg-gray-100 absolute"
+                        className="w-20 h-20 aspect-square border border-gray-200 rounded-xl bg-gray-100 absolute cursor-pointer"
                         style={{
                             top: product?.position?.upDown || 0,
                             left: product?.position?.leftRight || 0,
                         }}
+                        onClick={() => setSelectedProduct(product)}
                     />
                 ))}
             </div>

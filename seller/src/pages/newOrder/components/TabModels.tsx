@@ -4,28 +4,27 @@ import { useStateManager } from "@/contexts/useStateContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { IProduct } from "@/models/products";
 import { SelectedProductPosition } from "./SelectedProductsPosition";
+import { v4 as uuidv4 } from 'uuid';
 
 interface Props {
     className?: string;
 }
 
 export const TabModels: React.FC<Props> = ({ className }) => {
-    const { filteredProducts, setSelectedProducts, selectedProduct, setSelectedProduct, loading } = useStateManager();
+    const {
+        filteredProducts,
+        setSelectedProducts,
+        selectedProduct,
+        setSelectedProduct,
+        loading,
+    } = useStateManager();
 
     const handleProductClick = (product: IProduct) => {
-        setSelectedProducts((prevSelectedProducts) => {
-            const alreadySelected = prevSelectedProducts.some(
-                (selectedProduct) => selectedProduct.id === product.id
-            );
+        const newProduct = { ...product, id: uuidv4(), position: { upDown: 0, leftRight: 0 } };
 
-            if (alreadySelected) return prevSelectedProducts;
-
-            return [...prevSelectedProducts, product];
-        });
-
-        setSelectedProduct(product);
+        setSelectedProducts((prevSelectedProducts) => [...prevSelectedProducts, newProduct]);
+        setSelectedProduct(newProduct);
     };
-
 
     return (
         <div className={cn("w-[350px] pt-2 relative", className)}>
@@ -43,18 +42,14 @@ export const TabModels: React.FC<Props> = ({ className }) => {
                                 key={product.id}
                                 src={`${import.meta.env.VITE_API_URL}/${product.image}`}
                                 alt={product.name}
-                                className={cn("w-20 h-20 aspect-square border border-gray-200 rounded-xl bg-gray-100", selectedProduct?.id === product.id && "border border-cDarkBlue")}
+                                className={cn(
+                                    "w-20 h-20 aspect-square border border-gray-200 rounded-xl bg-gray-100 cursor-pointer",
+                                )}
                                 onClick={() => handleProductClick(product)}
-                            // onDoubleClick={() => {
-                            //     if (selectedProducts.some((selectedProduct) => selectedProduct.id === product.id)) {
-                            //         setSelectedProducts((prevSelectedProducts) =>
-                            //             prevSelectedProducts.filter((selectedProduct) => selectedProduct.id !== product.id)
-                            //         );
-                            //     }
-                            // }}
                             />
                         ))}
                     </div>
+
                     {selectedProduct && <SelectedProductPosition />}
                 </>
             )}
