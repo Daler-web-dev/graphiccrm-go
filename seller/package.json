@@ -34,7 +34,8 @@
     "react-router-dom": "^6.28.0",
     "recharts": "^2.13.3",
     "tailwind-merge": "^2.5.4",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "uuid": "^11.0.5"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",

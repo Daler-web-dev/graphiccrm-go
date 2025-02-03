@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { cn } from '@/lib/utils';
-import { useStateManager } from '@/contexts/useStateContext';
-import { X } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import { useStateManager } from "@/contexts/useStateContext";
+import { X } from "lucide-react";
 
 interface Props {
     className?: string;
 }
 
 export const SelectedProductPosition: React.FC<Props> = ({ className }) => {
-    const { setSelectedProducts, selectedProduct, setSelectedProduct, selectedProducts } = useStateManager();
+    const { setSelectedProducts, selectedProduct, setSelectedProduct, selectedProducts } =
+        useStateManager();
     const [formData, setFormData] = useState<Record<"upDown" | "leftRight", number>>({
         upDown: 0,
-        leftRight: 0
+        leftRight: 0,
     });
 
     useEffect(() => {
@@ -24,21 +25,13 @@ export const SelectedProductPosition: React.FC<Props> = ({ className }) => {
         }
     }, [selectedProduct]);
 
-
     useEffect(() => {
         if (!selectedProduct?.id) return;
 
         const updatedProduct = { ...selectedProduct, position: formData };
 
         setSelectedProducts((prevProducts) => {
-            const existingProductIndex = prevProducts.findIndex((prod) => prod.id === selectedProduct.id);
-
-            if (existingProductIndex !== -1) {
-                const updatedProducts = [...prevProducts];
-                updatedProducts[existingProductIndex] = updatedProduct;
-                return updatedProducts;
-            }
-            return [...prevProducts, updatedProduct];
+            return prevProducts.map((prod) => (prod.id === selectedProduct.id ? updatedProduct : prod));
         });
     }, [formData]);
 
@@ -46,10 +39,10 @@ export const SelectedProductPosition: React.FC<Props> = ({ className }) => {
         setSelectedProducts((prevProducts) =>
             prevProducts.filter((prod) => prod.id !== selectedProduct.id)
         );
-        setSelectedProduct(null)
+        setSelectedProduct(null);
     };
 
-    const handleInputChange = (key: string, value: number) => {
+    const handleInputChange = (key: "upDown" | "leftRight", value: number) => {
         setFormData((prevData) => ({ ...prevData, [key]: value }));
     };
 
@@ -59,7 +52,7 @@ export const SelectedProductPosition: React.FC<Props> = ({ className }) => {
                 <div className="flex flex-col items-start gap-4">
                     <div className="w-full flex justify-between items-center my-2">
                         <h2 className="font-semibold text-base">Позиция</h2>
-                        <X size={16} className="cursor-pointer" color='red' onClick={handleRemoveProduct} />
+                        <X size={16} className="cursor-pointer" color="red" onClick={handleRemoveProduct} />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <label htmlFor="upDown" className="flex flex-col items-start">
@@ -68,7 +61,7 @@ export const SelectedProductPosition: React.FC<Props> = ({ className }) => {
                                 type="number"
                                 id="upDown"
                                 value={formData.upDown}
-                                onChange={(e) => handleInputChange('upDown', Number(e.target.value))}
+                                onChange={(e) => handleInputChange("upDown", Number(e.target.value))}
                                 className="border rounded-md p-1 w-full"
                             />
                         </label>
@@ -78,7 +71,7 @@ export const SelectedProductPosition: React.FC<Props> = ({ className }) => {
                                 type="number"
                                 id="leftRight"
                                 value={formData.leftRight}
-                                onChange={(e) => handleInputChange('leftRight', Number(e.target.value))}
+                                onChange={(e) => handleInputChange("leftRight", Number(e.target.value))}
                                 className="border rounded-md p-1 w-full"
                             />
                         </label>
