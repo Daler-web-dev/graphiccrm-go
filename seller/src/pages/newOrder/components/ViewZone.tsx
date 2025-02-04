@@ -31,8 +31,10 @@ export const ViewZone = () => {
                         key={product.id}
                         src={`${import.meta.env.VITE_API_URL}/${product.image}`}
                         alt={product.name}
-                        className="w-20 h-20 aspect-square border border-gray-200 rounded-xl bg-gray-100 absolute cursor-pointer"
+                        className="aspect-square border border-gray-200 rounded-xl bg-gray-100 absolute cursor-pointer"
                         style={{
+                            width: `${product?.width}px` || 0,
+                            height: `${product?.height}px` || 0,
                             top: product?.position?.upDown || 0,
                             left: product?.position?.leftRight || 0,
                         }}

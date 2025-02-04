@@ -48,6 +48,16 @@ export const SelectedProductPosition: React.FC<Props> = ({ className }) => {
 
     return (
         <div className={cn(className)}>
+            <div>
+                <div className="flex justify-between items-center mt-2">
+                    <span className="text-sm">Высота</span>
+                    <p className="text-sm font-medium">{selectedProduct?.height} см.</p>
+                </div>
+                <div className="flex justify-between items-center mt-2">
+                    <span className="text-sm">Ширина</span>
+                    <p className="text-sm font-medium">{selectedProduct?.width} см.</p>
+                </div>
+            </div>
             <form className="h-full flex flex-col justify-between">
                 <div className="flex flex-col items-start gap-4">
                     <div className="w-full flex justify-between items-center my-2">
