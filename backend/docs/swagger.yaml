@@ -932,29 +932,6 @@ paths:
       tags:
       - Auth
   /orders:
-    delete:
-      parameters:
-      - description: UUID заказа
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Успешно
-          schema:
-            $ref: '#/definitions/model.Order'
-        "500":
-          description: Ошибка сервера при удалении
-          schema:
-            $ref: '#/definitions/handlers.APIError'
-      security:
-      - BearerAuth: []
-      summary: Удаления заказа
-      tags:
-      - Orders
     get:
       description: Эта функция возвращает список всех заказов с поддержкой пагинации.
       parameters:
@@ -1060,6 +1037,29 @@ paths:
       tags:
       - Orders
   /orders/{id}:
+    delete:
+      parameters:
+      - description: UUID заказа
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешно
+          schema:
+            $ref: '#/definitions/model.Order'
+        "500":
+          description: Ошибка сервера при удалении
+          schema:
+            $ref: '#/definitions/handlers.APIError'
+      security:
+      - BearerAuth: []
+      summary: Удаление заказа
+      tags:
+      - Orders
     get:
       description: Эта функция возвращает информацию о заказе по его уникальному идентификатору.
         Заказ включает все продукты в нём.

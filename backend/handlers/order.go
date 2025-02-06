@@ -419,14 +419,14 @@ func UpdateOrder(c *fiber.Ctx) error {
 
 // DeleteOrder Удаление заказа
 //
-//	@Summary	Удаления заказа
+//	@Summary	Удаление заказа
 //	@Tags		Orders
 //	@Produce	json
 //	@Security	BearerAuth
 //	@Param		id	path		string		true	"UUID заказа"
 //	@Success	200	{object}	model.Order	"Успешно"
 //	@Failure	500	{object}	APIError	"Ошибка сервера при удалении"
-//	@Router		/orders [delete]
+//	@Router		/orders/{id} [delete]
 func DeleteOrder(c *fiber.Ctx) error {
 	id, err := guuid.Parse(c.Params("id"))
 

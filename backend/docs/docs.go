@@ -805,43 +805,6 @@ const docTemplate = `{
                     }
                 }
             },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Orders"
-                ],
-                "summary": "Удаления заказа",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "UUID заказа",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Успешно",
-                        "schema": {
-                            "$ref": "#/definitions/model.Order"
-                        }
-                    },
-                    "500": {
-                        "description": "Ошибка сервера при удалении",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.APIError"
-                        }
-                    }
-                }
-            },
             "patch": {
                 "security": [
                     {
@@ -934,6 +897,43 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Ошибка сервера при получении данных заказа",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Удаление заказа",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "UUID заказа",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешно",
+                        "schema": {
+                            "$ref": "#/definitions/model.Order"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера при удалении",
                         "schema": {
                             "$ref": "#/definitions/handlers.APIError"
                         }
