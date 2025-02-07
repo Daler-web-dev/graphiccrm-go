@@ -12,9 +12,8 @@ interface EditorProps { }
 
 const Editor: React.FC<EditorProps> = () => {
     const navigate = useNavigate();
-    const { formMethods, onSubmit } = useStateManager();
-    const { register, reset, handleSubmit, watch } = formMethods;
-    const { width } = watch();
+    const { formMethods, onSubmit, setSelectedProducts, setSelectedProduct } = useStateManager();
+    const { register, reset, handleSubmit } = formMethods;
 
     return (
         <div className="w-full flex items-start justify-between gap-5 p-5">
@@ -25,7 +24,11 @@ const Editor: React.FC<EditorProps> = () => {
                     </CardTitle>
                     <RotateCcw
                         className="cursor-pointer w-5 h-5 text-cDarkBlue"
-                        onClick={() => reset()}
+                        onClick={() => {
+                            reset()
+                            setSelectedProducts([])
+                            setSelectedProduct(null)
+                        }}
                     />
                 </CardHeader>
                 <CardContent className="h-[90vh]">
@@ -58,7 +61,6 @@ const Editor: React.FC<EditorProps> = () => {
                                 <input
                                     type="number"
                                     id="arc"
-                                    max={width / 2}
                                     min={0}
                                     {...register("arc")}
                                     className="w-full border rounded-md p-1"

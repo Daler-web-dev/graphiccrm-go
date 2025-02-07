@@ -38,6 +38,7 @@ interface StateManagerProviderProps {
 }
 
 export const StateManagerProvider: React.FC<StateManagerProviderProps> = ({ children }) => {
+    const [editorData, setEditorData] = useState<any>([]);
     const [tabs, setTabs] = useState<ICategory[]>([]);
     const [activeTabId, setActiveTabId] = useState<string>("");
     const [products, setProducts] = useState<IProduct[]>([]);
@@ -55,6 +56,7 @@ export const StateManagerProvider: React.FC<StateManagerProviderProps> = ({ chil
     const onSubmit = (data: FormState) => {
         if (selectedProducts.length === 0) return toast({ title: 'Ошибка', description: 'Выберите детали и отредактируйте их', variant: 'destructive', });
         const readyData = { ...data, selectedProducts };
+        setEditorData([...editorData, readyData]);
         console.log("Submitted data:", readyData);
     };
 
