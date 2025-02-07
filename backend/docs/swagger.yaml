@@ -120,6 +120,13 @@ definitions:
       units_sold:
         type: integer
     type: object
+  handlers.ResponseSuccess:
+    properties:
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
   handlers.SalesData:
     properties:
       date:
@@ -360,7 +367,7 @@ definitions:
         - pending
         - in_production
         - completed
-        - paid
+        - rejected
         type: string
       totalPrice:
         type: number
@@ -473,6 +480,31 @@ info:
   title: Fiber CRM-API
   version: "1.0"
 paths:
+  /accept/{id}:
+    post:
+      description: Принимает заказ и изменяет его статус на "в производстве"
+      parameters:
+      - description: ID заказа
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Заказ успешно принят
+          schema:
+            $ref: '#/definitions/handlers.ResponseSuccess'
+        "400":
+          description: Неверный формат UUID
+          schema:
+            $ref: '#/definitions/handlers.APIError'
+      security:
+      - BearerAuth: []
+      summary: Принять заказ
+      tags:
+      - Orders
   /categories:
     get:
       description: Эта функция позволяет получить список всех категорий с поддержкой
