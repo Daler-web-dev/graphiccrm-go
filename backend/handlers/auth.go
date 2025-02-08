@@ -38,7 +38,7 @@ func Login(c *fiber.Ctx) error {
 	json := new(LoginRequest)
 
 	if err := c.BodyParser(json); err != nil {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status":  400,
 			"message": "Invalid JSON",
 			"success": false,
@@ -50,14 +50,14 @@ func Login(c *fiber.Ctx) error {
 	query := model.User{Username: json.Username}
 	err := db.First(&found, &query).Error
 	if err == gorm.ErrRecordNotFound {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status":  404,
 			"success": false,
 			"message": "Username not found",
 		})
 	}
 	if !utils.ComparePasswords(found.Password, []byte(json.Password)) {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status":  401,
 			"success": false,
 			"message": "Invalid Password",
@@ -67,14 +67,14 @@ func Login(c *fiber.Ctx) error {
 	tokenString, err := utils.GenerateJWT(found)
 
 	if err != nil {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"status":  500,
 			"success": false,
 			"message": "Could not generate token",
 		})
 	}
 
-	return c.JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"status":  200,
 		"message": "success",
 		"success": true,
