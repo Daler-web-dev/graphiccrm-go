@@ -1,16 +1,24 @@
-import React, { createContext, useContext, useState } from 'react';
-import { ICategory } from '@/models/categories';
-import { IProduct } from '@/models/products';
-import { useForm, UseFormReturn } from 'react-hook-form';
-import { toast } from '@/hooks/use-toast';
+import React, { createContext, useContext, useState } from "react";
+import { ICategory } from "@/models/categories";
+import { IProduct } from "@/models/products";
+import { useForm, UseFormReturn } from "react-hook-form";
+import { toast } from "@/hooks/use-toast";
 
 export interface FormState {
     width: number;
     height: number;
     arc: number;
+    window: {
+        id: number;
+        name: string;
+    };
 }
 
 interface StateManagerContextProps {
+    resData: any[];
+    setResData: React.Dispatch<React.SetStateAction<any[]>>;
+    selectedWindow: { id: number, name: string };
+    setSelectedWindow: React.Dispatch<React.SetStateAction<{ id: number; name: string }>>;
     tabs: ICategory[];
     setTabs: React.Dispatch<React.SetStateAction<ICategory[]>>;
     activeTabId: string;
@@ -23,8 +31,8 @@ interface StateManagerContextProps {
     setSelectedProducts: React.Dispatch<React.SetStateAction<any[]>>;
     selectedProduct: any;
     setSelectedProduct: React.Dispatch<React.SetStateAction<any>>;
-    selectedProductPosition: any
-    setSelectedProductPosition: any
+    selectedProductPosition: any;
+    setSelectedProductPosition: any;
     loading: boolean;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     formMethods: UseFormReturn<FormState>;
@@ -38,29 +46,43 @@ interface StateManagerProviderProps {
 }
 
 export const StateManagerProvider: React.FC<StateManagerProviderProps> = ({ children }) => {
+    const [resData, setResData] = useState<any[]>([]);
+    const [selectedWindow, setSelectedWindow] = useState<{ id: number; name: string }>({ id: 1, name: "Окно 1" });
     const [tabs, setTabs] = useState<ICategory[]>([]);
     const [activeTabId, setActiveTabId] = useState<string>("");
     const [products, setProducts] = useState<IProduct[]>([]);
     const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
-    const [selectedProducts, setSelectedProducts] = useState<any>([]);
+    const [selectedProducts, setSelectedProducts] = useState<any[]>([]);
     const [selectedProduct, setSelectedProduct] = useState<any>();
     const [selectedProductPosition, setSelectedProductPosition] = useState<any>();
     const [loading, setLoading] = useState<boolean>(false);
 
     const formMethods = useForm<FormState>({
         defaultValues: { width: 250, height: 400, arc: 0 },
-        mode: 'onChange'
+        mode: "onChange",
     });
 
     const onSubmit = (data: FormState) => {
-        if (selectedProducts.length === 0) return toast({ title: 'Ошибка', description: 'Выберите детали и отредактируйте их', variant: 'destructive', });
-        const readyData = { ...data, selectedProducts };
-        console.log("Submitted data:", readyData);
+        if (selectedProducts.length === 0)
+            return toast({
+                title: "Ошибка",
+                description: "Выберите детали и отредактируйте их",
+                variant: "destructive",
+            });
+        const updatedData = { ...data, products: selectedProducts, window: selectedWindow };
+        console.log("updatedData", updatedData);
+        setResData([...resData, updatedData]);
+
+        console.log("resData", resData);
     };
 
     return (
         <StateManagerContext.Provider
             value={{
+                resData,
+                setResData,
+                selectedWindow,
+                setSelectedWindow,
                 tabs,
                 setTabs,
                 activeTabId,
@@ -78,7 +100,7 @@ export const StateManagerProvider: React.FC<StateManagerProviderProps> = ({ chil
                 loading,
                 setLoading,
                 formMethods,
-                onSubmit
+                onSubmit,
             }}
         >
             {children}
@@ -89,7 +111,7 @@ export const StateManagerProvider: React.FC<StateManagerProviderProps> = ({ chil
 export const useStateManager = () => {
     const context = useContext(StateManagerContext);
     if (!context) {
-        throw new Error('useStateManager must be used within a StateManagerProvider');
+        throw new Error("useStateManager must be used within a StateManagerProvider");
     }
     return context;
 };

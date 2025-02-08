@@ -13,7 +13,6 @@ export const SelectedProductPosition: React.FC<Props> = ({ className }) => {
     const [formData, setFormData] = useState<any>({
         upDown: 0,
         leftRight: 0,
-        side: "topSide", // Устанавливаем topSide по умолчанию
     });
 
     useEffect(() => {
@@ -23,9 +22,6 @@ export const SelectedProductPosition: React.FC<Props> = ({ className }) => {
 
         if (currentProduct?.position) {
             setFormData(currentProduct.position);
-        } else if (selectedProduct.unit === "meter") {
-            // Если unit === "meter" и позиция не задана, устанавливаем side по умолчанию
-            setFormData({ ...formData, side: "topSide" });
         }
     }, [selectedProduct]);
 

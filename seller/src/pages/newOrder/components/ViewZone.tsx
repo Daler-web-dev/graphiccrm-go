@@ -5,17 +5,28 @@ export const ViewZone = () => {
     const { width, height, arc: rounded } = formMethods.watch();
 
     return (
-        <div className="flex flex-col justify-center items-center relative">
+        <div className="flex flex-col justify-center items-center relative mt-20">
             {rounded !== 0 && (
                 <div
                     style={{
                         width: width + "px",
                         height: rounded + "px",
-                        borderStartStartRadius: rounded + "px",
-                        borderStartEndRadius: rounded + "px",
-                        border: "1px solid #000",
+                        position: "relative",
                     }}
-                />
+                >
+                    <div
+                        style={{
+                            width: "100%",
+                            height: "200%",
+                            borderRadius: "50%",
+                            position: "absolute",
+                            top: 0,
+                            clipPath: `ellipse(${width}px ${rounded}px at 50% 7%)`,
+                            backgroundColor: "#fff",
+                            border: "1px solid #000",
+                        }}
+                    />
+                </div>
             )}
 
             <div
@@ -24,6 +35,7 @@ export const ViewZone = () => {
                     height: height + "px",
                     border: "1px solid #000",
                     position: "relative",
+                    borderTop: rounded !== 0 ? "none" : "1px solid #000",
                 }}
             >
                 {selectedProducts.map((product) => {
