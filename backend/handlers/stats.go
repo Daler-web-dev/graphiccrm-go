@@ -211,6 +211,7 @@ func GetSalesChart(c *fiber.Ctx) error {
 			"SUM(total_price) as total_amount",
 			fmt.Sprintf("to_char(created_at, '%s') as date", getDateFormat(period)),
 		).
+		Where("status NOT IN (?)", []string{"rejected", "pending"}).
 		Where("created_at BETWEEN ? AND ?", startDate, endDate).
 		Group("date").
 		Order("date ASC")
