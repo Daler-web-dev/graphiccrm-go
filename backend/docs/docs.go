@@ -16,6 +16,46 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/accept/{id}": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Принимает заказ и изменяет его статус на \"в производстве\"",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Принять заказ",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID заказа",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Заказ успешно принят",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ResponseSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный формат UUID",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIError"
+                        }
+                    }
+                }
+            }
+        },
         "/categories": {
             "get": {
                 "description": "Эта функция позволяет получить список всех категорий с поддержкой пагинации.",
@@ -805,43 +845,6 @@ const docTemplate = `{
                     }
                 }
             },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Orders"
-                ],
-                "summary": "Удаления заказа",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "UUID заказа",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Успешно",
-                        "schema": {
-                            "$ref": "#/definitions/model.Order"
-                        }
-                    },
-                    "500": {
-                        "description": "Ошибка сервера при удалении",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.APIError"
-                        }
-                    }
-                }
-            },
             "patch": {
                 "security": [
                     {
@@ -934,6 +937,43 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Ошибка сервера при получении данных заказа",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Удаление заказа",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "UUID заказа",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешно",
+                        "schema": {
+                            "$ref": "#/definitions/model.Order"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера при удалении",
                         "schema": {
                             "$ref": "#/definitions/handlers.APIError"
                         }
@@ -1948,6 +1988,17 @@ const docTemplate = `{
                 }
             }
         },
+        "handlers.ResponseSuccess": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "handlers.SalesData": {
             "type": "object",
             "properties": {
@@ -2291,7 +2342,7 @@ const docTemplate = `{
                         "pending",
                         "in_production",
                         "completed",
-                        "paid"
+                        "rejected"
                     ]
                 },
                 "totalPrice": {

@@ -47,35 +47,35 @@ func CreateOrder(c *fiber.Ctx) error {
 
 	if user.Role != "seller" && user.Role != "admin" {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"status":   403,
-			"succeess": false,
-			"message":  "Insufficient permissions to create an order",
+			"status":  403,
+			"success": false,
+			"message": "Insufficient permissions to create an order",
 		})
 	}
 
 	order := new(model.Order)
 	if err := c.BodyParser(order); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status":   400,
-			"succeess": false,
-			"message":  "Invalid request",
+			"status":  400,
+			"success": false,
+			"message": "Invalid request",
 		})
 	}
 
 	validate := validator.New()
 	if err := validate.Struct(order); err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"status":   422,
-			"succeess": false,
-			"message":  err.Error(),
+			"status":  422,
+			"success": false,
+			"message": err.Error(),
 		})
 	}
 
 	if len(order.Products) == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status":   400,
-			"succeess": false,
-			"message":  "Order must include at least one product",
+			"status":  400,
+			"success": false,
+			"message": "Order must include at least one product",
 		})
 	}
 
@@ -86,54 +86,70 @@ func CreateOrder(c *fiber.Ctx) error {
 	order.SalespersonID = user.ID
 	order.TotalPrice = 0
 
+	// Создаем заказ с TotalPrice = 0
 	if err := tx.Omit("Products").Create(&order).Error; err != nil {
 		log.Printf("Error creating order: %v", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":   500,
-			"succeess": false,
-			"message":  "Failed to create order",
+			"status":  500,
+			"success": false,
+			"message": "Failed to create order",
 		})
 	}
 
+	// Рассчитываем TotalPrice
 	for i := range order.Products {
 		product := &order.Products[i]
 		product.OrderID = order.ID
 		product.ID = guuid.New()
 
+		// Используем транзакцию для запроса продукта
 		var dbProduct model.Product
-		if err := database.DB.First(&dbProduct, "id = ?", product.ProductID).Error; err != nil {
+		if err := tx.First(&dbProduct, "id = ?", product.ProductID).Error; err != nil {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"status":   404,
-				"succeess": false,
-				"message":  "Product not found",
+				"status":  404,
+				"success": false,
+				"message": "Product not found",
 			})
 		}
+
 		if dbProduct.Amount < product.Quantity {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"status":   400,
-				"succeess": false,
-				"message":  fmt.Sprintf("Product named '%s' is not available in sufficient quantity. Only %f left.", dbProduct.Name, dbProduct.Amount),
+				"status":  400,
+				"success": false,
+				"message": fmt.Sprintf("Product named '%s' is not available in sufficient quantity. Only %f left.", dbProduct.Name, dbProduct.Amount),
 			})
 		}
 
 		product.TotalPrice = dbProduct.Price * product.Quantity
-		order.TotalPrice += product.TotalPrice
+		order.TotalPrice += product.TotalPrice // Увеличиваем TotalPrice в памяти
 
+		// Сохраняем продукт заказа
 		if err := tx.Create(&product).Error; err != nil {
 			log.Println(err, "Error saving order item")
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"status":   500,
-				"succeess": false,
-				"message":  "Failed to save order item",
+				"status":  500,
+				"success": false,
+				"message": "Failed to save order item",
 			})
 		}
 	}
 
+	// Обновляем TotalPrice заказа в базе данных
+	if err := tx.Model(&order).Update("total_price", order.TotalPrice).Error; err != nil {
+		log.Printf("Error updating order total price: %v", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  500,
+			"success": false,
+			"message": "Failed to update order total price",
+		})
+	}
+
+	// Коммит транзакции
 	if err := tx.Commit().Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":   500,
-			"succeess": false,
-			"message":  "Failed to commit transaction",
+			"status":  500,
+			"success": false,
+			"message": "Failed to commit transaction",
 		})
 	}
 
@@ -419,14 +435,14 @@ func UpdateOrder(c *fiber.Ctx) error {
 
 // DeleteOrder Удаление заказа
 //
-//	@Summary	Удаления заказа
+//	@Summary	Удаление заказа
 //	@Tags		Orders
 //	@Produce	json
 //	@Security	BearerAuth
 //	@Param		id	path		string		true	"UUID заказа"
 //	@Success	200	{object}	model.Order	"Успешно"
 //	@Failure	500	{object}	APIError	"Ошибка сервера при удалении"
-//	@Router		/orders [delete]
+//	@Router		/orders/{id} [delete]
 func DeleteOrder(c *fiber.Ctx) error {
 	id, err := guuid.Parse(c.Params("id"))
 
