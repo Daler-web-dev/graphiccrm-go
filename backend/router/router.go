@@ -71,6 +71,7 @@ func Initalize(router *fiber.App) {
 
 	ordersFlow := router.Group("/api/orders", middleware.ProtectRoute("admin"))
 	ordersFlow.Post("/:id/accept", handlers.AcceptOrder)
+	ordersFlow.Post("/:id/reject", handlers.RejectOrder)
 
 	router.Post("/api/login", handlers.Login)
 }

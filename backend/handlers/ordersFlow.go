@@ -5,6 +5,7 @@ import (
 	"backend/model"
 	"errors"
 	"fmt"
+	"slices"
 
 	"github.com/gofiber/fiber/v2"
 	guuid "github.com/google/uuid"
@@ -157,11 +158,12 @@ func RejectOrder(c *fiber.Ctx) error {
 		})
 	}
 
-	if order.Status != "pending" {
+	// Проверяем допустимые статусы для отклонения
+	if !slices.Contains([]string{"pending"}, order.Status) {
 		tx.Rollback()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
-			"message": "Order cannot be accepted in its current status",
+			"message": fmt.Sprintf("Order cannot be rejected from '%s' status", order.Status),
 		})
 	}
 
@@ -184,5 +186,6 @@ func RejectOrder(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"success": true,
 		"message": "Order rejected successfully",
+		"data":    order,
 	})
 }
