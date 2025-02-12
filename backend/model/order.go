@@ -24,6 +24,5 @@ type CreateOrderRequest struct {
 	SalespersonID guuid.UUID               `json:"salespersonId" validate:"required,uuid" example:"123e4567-e89b-12d3-a456-426614174000"`
 	ClientID      guuid.UUID               `json:"clientId" validate:"required,uuid" example:"123e4567-e89b-12d3-a456-426614174001"`
 	Products      []CreateOrderItemRequest `json:"products" validate:"required,dive"`
-	Status        string                   `json:"status" validate:"required,oneof=pending in_production completed paid" example:"pending"`
 	PaymentMethod string                   `json:"paymentMethod" validate:"required,oneof=cash transfer credit" example:"cash"`
 }

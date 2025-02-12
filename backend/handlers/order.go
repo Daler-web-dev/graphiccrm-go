@@ -62,6 +62,8 @@ func CreateOrder(c *fiber.Ctx) error {
 		})
 	}
 
+	order.Status = "pending"
+
 	validate := validator.New()
 	if err := validate.Struct(order); err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
@@ -86,7 +88,6 @@ func CreateOrder(c *fiber.Ctx) error {
 	order.SalespersonID = user.ID
 	order.TotalPrice = 0
 
-	// Создаем заказ с TotalPrice = 0
 	if err := tx.Omit("Products").Create(&order).Error; err != nil {
 		log.Printf("Error creating order: %v", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
