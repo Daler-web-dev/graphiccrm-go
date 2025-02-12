@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { IStatistics } from "@/models/stats";
 import { useNavigate } from "react-router-dom";
 import { formatPrice } from "@/lib/utils";
+import { toast } from "@/hooks/use-toast";
 
 export default function TopRatedList() {
     const navigate = useNavigate();
@@ -19,7 +20,11 @@ export default function TopRatedList() {
             if (res.status === 200 || res.status === 201) {
                 setLoading(false);
                 setData(res.data);
-                console.log(res);
+            } else {
+                toast({
+                    title: "Ошибка",
+                    description: "Произошла ошибка при загрузке статистики",
+                })
             }
         }
 
