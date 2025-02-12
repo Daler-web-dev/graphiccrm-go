@@ -74,8 +74,8 @@ export const Clients: React.FC = () => {
                     <CardDescription>Список активных клиентов</CardDescription>
                 </div>
                 <Input
-                    placeholder='Поиск...'
-                    className='max-w-[300px] px-10'
+                    placeholder="Поиск..."
+                    className="max-w-[300px] px-10"
                     onChange={(e) => setSearch(e.target.value)}
                 />
             </CardHeader>
@@ -87,28 +87,28 @@ export const Clients: React.FC = () => {
                         <Table>
                             <TableHeader>
                                 <TableRow className="border-none hover:bg-white">
-                                    <TableHead>#</TableHead>
-                                    <TableHead>Имя</TableHead>
-                                    <TableHead>Контакт</TableHead>
-                                    <TableHead>Адрес</TableHead>
-                                    <TableHead>Общий долг</TableHead>
-                                    <TableHead className='text-right'>Действия</TableHead>
+                                    <TableHead className='text-base'>#</TableHead>
+                                    <TableHead className='text-base'>Имя</TableHead>
+                                    <TableHead className='text-base'>Контакт</TableHead>
+                                    <TableHead className='text-base'>Адрес</TableHead>
+                                    <TableHead className='text-base'>Общий долг</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {data && data.length > 0 ? data.map((client, idx) => (
-                                    <TableRow className='text-left' key={idx}>
-                                        <TableCell>{idx + 1}</TableCell>
-                                        <TableCell className='flex gap-1 justify-start items-center'>
-                                            <img src={import.meta.env.VITE_API_URL + '/' + client.image} alt="client image" loading='lazy' className='w-10 h-10 object-cover rounded-lg' />
+                                    <TableRow
+                                        className='text-left'
+                                        key={idx}
+                                        onClick={() => navigate(`/clients/${client.id}`)}
+                                    >
+                                        <TableCell className='text-base'>{idx + 1}</TableCell>
+                                        <TableCell className='flex gap-1 justify-start items-center text-base'>
+                                            <img src={import.meta.env.VITE_API_URL + '/' + client.image} alt="client image" loading='lazy' className='w-14 h-14 object-cover rounded-lg' />
                                             {client.name}
                                         </TableCell>
-                                        <TableCell>{client.contactInfo}</TableCell>
-                                        <TableCell>{client.address}</TableCell>
-                                        <TableCell>{formatPrice(client.balance)}</TableCell>
-                                        <TableCell className='text-right'>
-                                            <Button className='px-10' onClick={() => navigate(`/clients/${client.id}`)}>Просмотр</Button>
-                                        </TableCell>
+                                        <TableCell className='text-base'>{client.contactInfo}</TableCell>
+                                        <TableCell className='text-base'>{client.address}</TableCell>
+                                        <TableCell className='text-base'>{formatPrice(client.balance)}</TableCell>
                                     </TableRow>
                                 )) : (
                                     <TableRow>

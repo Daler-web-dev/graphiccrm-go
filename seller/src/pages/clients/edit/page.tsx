@@ -6,6 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/hooks/use-toast';
 import { getRequest, patchRequest } from '@/lib/apiHandlers';
 import { IClientCreateUpdate } from '@/models/clients';
+import { CircleAlert } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -95,60 +96,68 @@ export const EditClient: React.FC = () => {
                         <div className="w-full space-y-2">
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
                                 <label htmlFor='name' className="text-base font-semibold text-cDarkBlue cursor-pointer">Имя</label>
-                                <input
-                                    id='name'
-                                    type="text"
-                                    {...register('name', { required: 'Имя обязательно' })}
-                                    className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
-                                    placeholder='Имя'
-                                    autoComplete='off'
-                                />
-                                {errors.name && <p className="text-red-500 text-sm text-right">{errors.name.message}</p>}
+                                <div className='w-full flex justify-end items-center gap-2'>
+                                    {errors.name && <p className="text-red-500 text-sm text-right"><CircleAlert /></p>}
+                                    <input
+                                        id='name'
+                                        type="text"
+                                        {...register('name', { required: true })}
+                                        className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                                        placeholder='Имя'
+                                        autoComplete='off'
+                                    />
+                                </div>
                             </div>
 
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
                                 <label htmlFor='surname' className="text-base font-semibold text-cDarkBlue cursor-pointer">Фамилия</label>
-                                <input
-                                    id='surname'
-                                    type="text"
-                                    {...register('surname', { required: 'Фамилия обязательна' })}
-                                    className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
-                                    placeholder='Фамилия'
-                                    autoComplete='off'
-                                />
-                                {errors.surname && <p className="text-red-500 text-sm text-right">{errors.surname.message}</p>}
+                                <div className='w-full flex justify-end items-center gap-2'>
+                                    {errors.surname && <p className="text-red-500 text-sm text-right"><CircleAlert /></p>}
+                                    <input
+                                        id='surname'
+                                        type="text"
+                                        {...register('surname', { required: true })}
+                                        className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                                        placeholder='Фамилия'
+                                        autoComplete='off'
+                                    />
+                                </div>
                             </div>
 
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                                <label htmlFor='phoneNumber' className="text-base font-semibold text-cDarkBlue cursor-pointer">Номер телефона</label>
-                                <input
-                                    id='phoneNumber'
-                                    type="text"
-                                    placeholder="+998XXXXXXXXX"
-                                    {...register("contactInfo", {
-                                        required: "Номер телефона обязателен",
-                                        pattern: {
-                                            value: /^\+998\d{9}$/,
-                                            message: "Введите в формате +998XXXXXXXXX",
-                                        },
-                                    })}
-                                    className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
-                                    autoComplete='off'
-                                />
-                                {errors.contactInfo && <p className="text-red-500 text-sm text-right">{errors.contactInfo.message}</p>}
+                                <label htmlFor='phoneNumber' className="text-base font-semibold text-cDarkBlue cursor-pointer text-left">Номер телефона</label>
+                                <div className='w-full flex justify-end items-center gap-2'>
+                                    {errors.contactInfo && <p className="text-red-500 text-sm text-right"><CircleAlert /></p>}
+                                    <input
+                                        id='phoneNumber'
+                                        type="text"
+                                        placeholder="+998XXXXXXXXX"
+                                        {...register("contactInfo", {
+                                            required: true,
+                                            pattern: {
+                                                value: /^\+998\d{9}$/,
+                                                message: "Неправильный формат"
+                                            },
+                                        })}
+                                        className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                                        autoComplete='off'
+                                    />
+                                </div>
                             </div>
 
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
                                 <label htmlFor='address' className="text-base font-semibold text-cDarkBlue cursor-pointer">Адрес</label>
-                                <input
-                                    id='address'
-                                    type="text"
-                                    {...register('address', { required: 'Адрес обязателен' })}
-                                    className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
-                                    placeholder='Адрес'
-                                    autoComplete='off'
-                                />
-                                {errors.address && <p className="text-red-500 text-sm text-right">{errors.address.message}</p>}
+                                <div className='w-full flex justify-end items-center gap-2'>
+                                    {errors.address && <p className="text-red-500 text-sm text-right"><CircleAlert /></p>}
+                                    <input
+                                        id='address'
+                                        type="text"
+                                        {...register('address', { required: true })}
+                                        className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                                        placeholder='Адрес'
+                                        autoComplete='off'
+                                    />
+                                </div>
                             </div>
 
                             <div className='w-full flex justify-start items-start flex-col bg-cLightGray px-3 py-2 rounded-lg'>
