@@ -20,7 +20,6 @@ export const NewOrder: React.FC = () => {
     const onSubmit = async (data: any) => {
         if (data.clientId === "") return toast({ title: 'Ошибка', description: 'Выберите клиента', variant: 'destructive', });
         if (data.products.length <= 0) return toast({ title: 'Ошибка', description: 'Выберите продукты', variant: 'destructive', });
-        console.log(data);
 
         const res = await postRequest({ url: '/orders', data })
 
