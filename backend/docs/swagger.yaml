@@ -283,20 +283,11 @@ definitions:
       salespersonId:
         example: 123e4567-e89b-12d3-a456-426614174000
         type: string
-      status:
-        enum:
-        - pending
-        - in_production
-        - completed
-        - paid
-        example: pending
-        type: string
     required:
     - clientId
     - paymentMethod
     - products
     - salespersonId
-    - status
     type: object
   model.CreateProductRequest:
     properties:
@@ -965,7 +956,7 @@ paths:
       - Auth
   /orders:
     get:
-      description: Эта функция возвращает список всех заказов с поддержкой пагинации.
+      description: Возвращает список заказов с возможностью фильтрации по дате и пагинации.
       parameters:
       - default: 1
         description: Номер страницы
@@ -977,22 +968,32 @@ paths:
         in: query
         name: limit
         type: integer
+      - description: Фильтр по дате (не раньше, чем) в формате YYYY-MM-DD
+        in: query
+        name: dateGte
+        type: string
+      - description: Фильтр по дате (не позже, чем) в формате YYYY-MM-DD
+        in: query
+        name: dateLte
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: Список заказов с информацией о пагинации
           schema:
-            items:
-              $ref: '#/definitions/model.CreateOrderRequest'
-            type: array
+            $ref: '#/definitions/model.CreateOrderRequest'
+        "400":
+          description: Ошибка валидации параметров запроса
+          schema:
+            $ref: '#/definitions/handlers.APIError'
         "500":
           description: Ошибка сервера при получении списка заказов
           schema:
             $ref: '#/definitions/handlers.APIError'
       security:
       - BearerAuth: []
-      summary: Получить список всех заказов
+      summary: Получить список заказов с поддержкой фильтрации и пагинации
       tags:
       - Orders
     patch:

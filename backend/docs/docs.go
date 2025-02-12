@@ -736,14 +736,14 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Эта функция возвращает список всех заказов с поддержкой пагинации.",
+                "description": "Возвращает список заказов с возможностью фильтрации по дате и пагинации.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Orders"
                 ],
-                "summary": "Получить список всех заказов",
+                "summary": "Получить список заказов с поддержкой фильтрации и пагинации",
                 "parameters": [
                     {
                         "type": "integer",
@@ -758,16 +758,31 @@ const docTemplate = `{
                         "description": "Количество элементов на странице",
                         "name": "limit",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Фильтр по дате (не раньше, чем) в формате YYYY-MM-DD",
+                        "name": "dateGte",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Фильтр по дате (не позже, чем) в формате YYYY-MM-DD",
+                        "name": "dateLte",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "Список заказов с информацией о пагинации",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.CreateOrderRequest"
-                            }
+                            "$ref": "#/definitions/model.CreateOrderRequest"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации параметров запроса",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIError"
                         }
                     },
                     "500": {
@@ -2205,8 +2220,7 @@ const docTemplate = `{
                 "clientId",
                 "paymentMethod",
                 "products",
-                "salespersonId",
-                "status"
+                "salespersonId"
             ],
             "properties": {
                 "clientId": {
@@ -2231,16 +2245,6 @@ const docTemplate = `{
                 "salespersonId": {
                     "type": "string",
                     "example": "123e4567-e89b-12d3-a456-426614174000"
-                },
-                "status": {
-                    "type": "string",
-                    "enum": [
-                        "pending",
-                        "in_production",
-                        "completed",
-                        "paid"
-                    ],
-                    "example": "pending"
                 }
             }
         },

@@ -216,14 +216,17 @@ func GetOrderByID(c *fiber.Ctx) error {
 
 // GetAllOrders Получить список заказов
 //
-//	@Summary		Получить список всех заказов
-//	@Description	Эта функция возвращает список всех заказов с поддержкой пагинации.
+//	@Summary		Получить список заказов с поддержкой фильтрации и пагинации
+//	@Description	Возвращает список заказов с возможностью фильтрации по дате и пагинации.
 //	@Tags			Orders
 //	@Produce		json
 //	@Security		BearerAuth
 //	@Param			page	query		int							false	"Номер страницы"					default(1)
 //	@Param			limit	query		int							false	"Количество элементов на странице"	default(10)
-//	@Success		200		{array}		model.CreateOrderRequest	"Список заказов с информацией о пагинации"
+//	@Param			dateGte	query		string						false	"Фильтр по дате (не раньше, чем) в формате YYYY-MM-DD"
+//	@Param			dateLte	query		string						false	"Фильтр по дате (не позже, чем) в формате YYYY-MM-DD"
+//	@Success		200		{object}	model.CreateOrderRequest	"Список заказов с информацией о пагинации"
+//	@Failure		400		{object}	APIError					"Ошибка валидации параметров запроса"
 //	@Failure		500		{object}	APIError					"Ошибка сервера при получении списка заказов"
 //	@Router			/orders [get]
 func GetAllOrders(c *fiber.Ctx) error {
