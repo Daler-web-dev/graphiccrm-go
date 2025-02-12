@@ -14,10 +14,15 @@ export interface FormState {
     };
 }
 
+interface WindowData {
+    formData: FormState;
+    selectedProducts: any[];
+}
+
 interface StateManagerContextProps {
     resData: any[];
     setResData: React.Dispatch<React.SetStateAction<any[]>>;
-    selectedWindow: { id: number, name: string };
+    selectedWindow: { id: number; name: string };
     setSelectedWindow: React.Dispatch<React.SetStateAction<{ id: number; name: string }>>;
     tabs: ICategory[];
     setTabs: React.Dispatch<React.SetStateAction<ICategory[]>>;
@@ -37,6 +42,8 @@ interface StateManagerContextProps {
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     formMethods: UseFormReturn<FormState>;
     onSubmit: (data: FormState) => void;
+    windowsData: Record<number, WindowData>;
+    setWindowsData: React.Dispatch<React.SetStateAction<Record<number, WindowData>>>;
 }
 
 export const StateManagerContext = createContext<StateManagerContextProps | undefined>(undefined);
@@ -56,6 +63,7 @@ export const StateManagerProvider: React.FC<StateManagerProviderProps> = ({ chil
     const [selectedProduct, setSelectedProduct] = useState<any>();
     const [selectedProductPosition, setSelectedProductPosition] = useState<any>();
     const [loading, setLoading] = useState<boolean>(false);
+    const [windowsData, setWindowsData] = useState<Record<number, WindowData>>({});
 
     const formMethods = useForm<FormState>({
         defaultValues: { width: 250, height: 400, arc: 0 },
@@ -63,18 +71,19 @@ export const StateManagerProvider: React.FC<StateManagerProviderProps> = ({ chil
     });
 
     const onSubmit = (data: FormState) => {
-        if (selectedProducts.length === 0)
+        if (selectedProducts.length === 0) {
             return toast({
                 title: "Ошибка",
                 description: "Выберите детали и отредактируйте их",
                 variant: "destructive",
             });
-        const updatedData = { ...data, products: selectedProducts, window: selectedWindow };
-        console.log("updatedData", updatedData);
-        setResData([...resData, updatedData]);
+        }
 
-        console.log("resData", resData);
+        const updatedData = { ...data, products: selectedProducts, window: selectedWindow };
+        setResData((prev) => [...prev, updatedData]);
     };
+
+    console.log("resData", resData);
 
     return (
         <StateManagerContext.Provider
@@ -101,6 +110,8 @@ export const StateManagerProvider: React.FC<StateManagerProviderProps> = ({ chil
                 setLoading,
                 formMethods,
                 onSubmit,
+                windowsData,
+                setWindowsData,
             }}
         >
             {children}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import ConfirmModal from "@/components/custom/ConfirmModal";
@@ -9,45 +9,43 @@ import { ViewZone } from "../components/ViewZone";
 import { useStateManager } from "@/contexts/useStateContext";
 import { cn } from "@/lib/utils";
 
-interface EditorProps { }
 
-const Editor: React.FC<EditorProps> = () => {
+const Editor = () => {
     const navigate = useNavigate();
-    const [windows, setWindows] = useState<{ id: number; name: string; data?: any }[]>([
-        { id: 1, name: "Окно 1" },
-    ]);
+    const [windows, setWindows] = useState<{ id: number; name: string }[]>([{ id: 1, name: "Окно 1" }]);
     const {
-        resData,
         formMethods,
+        selectedProducts,
         setSelectedProduct,
         setSelectedProducts,
         selectedWindow,
         setSelectedWindow,
         onSubmit,
+        windowsData,
+        setWindowsData,
     } = useStateManager();
-    const { register, reset, handleSubmit, setValue } = formMethods;
+    const { register, reset, handleSubmit } = formMethods;
 
     const handleWindowSwitch = (window: { id: number; name: string }) => {
-        console.log(window);
-        
-        setSelectedWindow(window);
-        resData.map((data) => {
-            console.log(data);
-            
-            if (data.window.id === window.id) {
-                setValue("width", data.width);
-                setValue("height", data.height);
-                setValue("arc", data.arc);
-                console.log(data);
+        setWindowsData((prev) => ({
+            ...prev,
+            [selectedWindow.id]: {
+                formData: formMethods.getValues(),
+                selectedProducts: selectedProducts,
+            },
+        }));
+        console.log(selectedWindow, windowsData);
 
-                setSelectedProducts(data.products);
-                setSelectedProduct(null)
-            } else {
-                reset({ width: 250, height: 400, arc: 0 });
-                setSelectedProducts([]);
-                setSelectedProduct(null);
-            }
-        })
+        const windowData = windowsData[window.id];
+        if (windowData) {
+            console.log(windowData);
+
+            formMethods.reset(windowData.formData);
+            setSelectedProducts(windowData.selectedProducts);
+        } else {
+            formMethods.reset({ width: 250, height: 400, arc: 0 });
+            setSelectedProducts([]);
+        }
 
         setSelectedWindow(window);
     };
@@ -55,12 +53,25 @@ const Editor: React.FC<EditorProps> = () => {
     const addWindow = () => {
         const newWindow = { id: windows.length + 1, name: `Окно ${windows.length + 1}` };
         setWindows((prev) => [...prev, newWindow]);
+        setWindowsData((prev) => ({
+            ...prev,
+            [newWindow.id]: {
+                formData: { width: 250, height: 400, arc: 0, window: newWindow },
+                selectedProducts: [],
+            },
+        }))
     };
 
     const removeWindow = (id: number) => {
         const updatedWindows = windows.filter((window) => window.id !== id);
         setWindows(updatedWindows);
         setSelectedWindow(updatedWindows[0]);
+
+        setWindowsData((prev) => {
+            const newData = { ...prev };
+            delete newData[id];
+            return newData;
+        });
     };
 
     return (
@@ -78,6 +89,7 @@ const Editor: React.FC<EditorProps> = () => {
                             setSelectedProduct(null);
                             setSelectedWindow({ id: 1, name: "Окно 1" });
                             setWindows([{ id: 1, name: "Окно 1" }]);
+                            setWindowsData({});
                         }}
                     />
                 </CardHeader>
@@ -100,7 +112,7 @@ const Editor: React.FC<EditorProps> = () => {
                                         )}
                                         onClick={() => {
                                             if (window.id === selectedWindow.id) return;
-                                            handleWindowSwitch(window)
+                                            handleWindowSwitch(window);
                                         }}
                                     >
                                         {window.name}
@@ -155,11 +167,9 @@ const Editor: React.FC<EditorProps> = () => {
                                         className="w-full border rounded-md p-1"
                                     />
                                 </label>
-                                {/* Tabs component */}
                                 <EditorTabs />
                             </div>
                         </div>
-                        {/* save or reset div */}
                         <div className="flex justify-start items-end gap-3">
                             <Button type="submit" className="px-5">
                                 Сохранить
