@@ -97,7 +97,7 @@ export const Clients: React.FC = () => {
                             <TableBody>
                                 {data && data.length > 0 ? data.map((client, idx) => (
                                     <TableRow
-                                        className='text-left'
+                                        className='text-left cursor-pointer'
                                         key={idx}
                                         onClick={() => navigate(`/clients/${client.id}`)}
                                     >

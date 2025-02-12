@@ -46,7 +46,7 @@ export default function Sidebar() {
                     <button
                         className="flex items-center text-red-500 hover:text-red-600"
                     >
-                        <LogOut />
+                        <LogOut className='rotate-180' />
                         <span className="ml-2">Выход</span>
                     </button>
                 </ConfirmModal>
