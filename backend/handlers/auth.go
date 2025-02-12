@@ -49,6 +49,7 @@ func Login(c *fiber.Ctx) error {
 
 	query := model.User{Username: json.Username}
 	err := db.First(&found, &query).Error
+
 	if err == gorm.ErrRecordNotFound {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status":  404,
