@@ -356,9 +356,11 @@ definitions:
       status:
         enum:
         - pending
-        - in_production
-        - completed
+        - accepted
         - rejected
+        - in_production
+        - ready
+        - delivered
         type: string
       totalPrice:
         type: number
@@ -471,31 +473,6 @@ info:
   title: Fiber CRM-API
   version: "1.0"
 paths:
-  /accept/{id}:
-    post:
-      description: Принимает заказ и изменяет его статус на "в производстве"
-      parameters:
-      - description: ID заказа
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Заказ успешно принят
-          schema:
-            $ref: '#/definitions/handlers.ResponseSuccess'
-        "400":
-          description: Неверный формат UUID
-          schema:
-            $ref: '#/definitions/handlers.APIError'
-      security:
-      - BearerAuth: []
-      summary: Принять заказ
-      tags:
-      - Orders
   /categories:
     get:
       description: Эта функция позволяет получить список всех категорий с поддержкой
@@ -1126,6 +1103,56 @@ paths:
       summary: Получить заказ
       tags:
       - Orders
+  /orders/{id}/accept:
+    post:
+      description: Принимает заказ и изменяет его статус на "в производстве"
+      parameters:
+      - description: ID заказа
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Заказ успешно принят
+          schema:
+            $ref: '#/definitions/handlers.ResponseSuccess'
+        "400":
+          description: Неверный формат UUID
+          schema:
+            $ref: '#/definitions/handlers.APIError'
+      security:
+      - BearerAuth: []
+      summary: Принять заказ
+      tags:
+      - Orders
+  /orders/{id}/reject:
+    post:
+      description: Отклоняет заказ и изменяет его статус на "rejected"
+      parameters:
+      - description: ID заказа
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Заказ успешно отклонен
+          schema:
+            $ref: '#/definitions/handlers.ResponseSuccess'
+        "400":
+          description: Неверный формат UUID
+          schema:
+            $ref: '#/definitions/handlers.APIError'
+      security:
+      - BearerAuth: []
+      summary: Отклонить заказ
+      tags:
+      - Orders
   /products:
     get:
       description: Эта функция возвращает список всех продуктов с пагинацией и возможностью
@@ -1682,6 +1709,56 @@ paths:
       summary: Поиск пользователей
       tags:
       - Users
+  /warehouse/{id}/delivered:
+    post:
+      description: изменяет статус заказа на "delivered"
+      parameters:
+      - description: ID заказа
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Заказ успешно изменен
+          schema:
+            $ref: '#/definitions/handlers.ResponseSuccess'
+        "400":
+          description: Неверный формат UUID
+          schema:
+            $ref: '#/definitions/handlers.APIError'
+      security:
+      - BearerAuth: []
+      summary: Доставлен
+      tags:
+      - warehouse
+  /warehouse/{id}/in_production:
+    post:
+      description: изменяет статус заказа на "ready"
+      parameters:
+      - description: ID заказа
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Заказ успешно изменен
+          schema:
+            $ref: '#/definitions/handlers.ResponseSuccess'
+        "400":
+          description: Неверный формат UUID
+          schema:
+            $ref: '#/definitions/handlers.APIError'
+      security:
+      - BearerAuth: []
+      summary: Готово
+      tags:
+      - warehouse
 security:
 - BearerAuth: []
 securityDefinitions:

@@ -16,46 +16,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/accept/{id}": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Принимает заказ и изменяет его статус на \"в производстве\"",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Orders"
-                ],
-                "summary": "Принять заказ",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID заказа",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Заказ успешно принят",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.ResponseSuccess"
-                        }
-                    },
-                    "400": {
-                        "description": "Неверный формат UUID",
-                        "schema": {
-                            "$ref": "#/definitions/handlers.APIError"
-                        }
-                    }
-                }
-            }
-        },
         "/categories": {
             "get": {
                 "description": "Эта функция позволяет получить список всех категорий с поддержкой пагинации.",
@@ -996,6 +956,86 @@ const docTemplate = `{
                 }
             }
         },
+        "/orders/{id}/accept": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Принимает заказ и изменяет его статус на \"в производстве\"",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Принять заказ",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID заказа",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Заказ успешно принят",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ResponseSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный формат UUID",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/{id}/reject": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Отклоняет заказ и изменяет его статус на \"rejected\"",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Отклонить заказ",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID заказа",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Заказ успешно отклонен",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ResponseSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный формат UUID",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIError"
+                        }
+                    }
+                }
+            }
+        },
         "/products": {
             "get": {
                 "description": "Эта функция возвращает список всех продуктов с пагинацией и возможностью подгрузки категорий",
@@ -1822,6 +1862,86 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/warehouse/{id}/delivered": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "изменяет статус заказа на \"delivered\"",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "warehouse"
+                ],
+                "summary": "Доставлен",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID заказа",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Заказ успешно изменен",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ResponseSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный формат UUID",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/{id}/in_production": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "изменяет статус заказа на \"ready\"",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "warehouse"
+                ],
+                "summary": "Готово",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID заказа",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Заказ успешно изменен",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.ResponseSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный формат UUID",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.APIError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -2344,9 +2464,11 @@ const docTemplate = `{
                     "type": "string",
                     "enum": [
                         "pending",
+                        "accepted",
+                        "rejected",
                         "in_production",
-                        "completed",
-                        "rejected"
+                        "ready",
+                        "delivered"
                     ]
                 },
                 "totalPrice": {

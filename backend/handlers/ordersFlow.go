@@ -25,10 +25,10 @@ type ResponseSuccess struct {
 //	@Tags			Orders
 //	@Produce		json
 //	@Security		BearerAuth
-//	@Param			id				path		string			true	"ID заказа"
-//	@Success		201				{object}	ResponseSuccess	"Заказ успешно принят"
-//	@Failure		400				{object}	APIError		"Неверный формат UUID"
-//	@Router			/accept/{id}	[POST]
+//	@Param			id					path		string			true	"ID заказа"
+//	@Success		201					{object}	ResponseSuccess	"Заказ успешно принят"
+//	@Failure		400					{object}	APIError		"Неверный формат UUID"
+//	@Router			/orders/{id}/accept	[POST]
 func AcceptOrder(c *fiber.Ctx) error {
 	id, err := guuid.Parse(c.Params("id"))
 	if err != nil {
@@ -122,6 +122,17 @@ func AcceptOrder(c *fiber.Ctx) error {
 	})
 }
 
+// RejectOrder Отклонить заказ
+//
+//	@Summary		Отклонить заказ
+//	@Description	Отклоняет заказ и изменяет его статус на "rejected"
+//	@Tags			Orders
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id					path		string			true	"ID заказа"
+//	@Success		201					{object}	ResponseSuccess	"Заказ успешно отклонен"
+//	@Failure		400					{object}	APIError		"Неверный формат UUID"
+//	@Router			/orders/{id}/reject	[POST]
 func RejectOrder(c *fiber.Ctx) error {
 	id, err := guuid.Parse(c.Params("id"))
 	if err != nil {
@@ -190,6 +201,17 @@ func RejectOrder(c *fiber.Ctx) error {
 	})
 }
 
+// InProduction Перенести в производство
+//
+//	@Summary		В производство
+//	@Description	изменяет статус заказа на "in_production"
+//	@Tags			warehouse
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id								path		string			true	"ID заказа"
+//	@Success		201								{object}	ResponseSuccess	"Заказ успешно изменен"
+//	@Failure		400								{object}	APIError		"Неверный формат UUID"
+//	@Router			/warehouse/{id}/in_production	[POST]
 func InProduction(c *fiber.Ctx) error {
 	id, err := guuid.Parse(c.Params("id"))
 	if err != nil {
@@ -258,6 +280,17 @@ func InProduction(c *fiber.Ctx) error {
 	})
 }
 
+// OrderReady Перенести в готово
+//
+//	@Summary		Готово
+//	@Description	изменяет статус заказа на "ready"
+//	@Tags			warehouse
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id								path		string			true	"ID заказа"
+//	@Success		201								{object}	ResponseSuccess	"Заказ успешно изменен"
+//	@Failure		400								{object}	APIError		"Неверный формат UUID"
+//	@Router			/warehouse/{id}/in_production	[POST]
 func OrderReady(c *fiber.Ctx) error {
 	id, err := guuid.Parse(c.Params("id"))
 	if err != nil {
@@ -326,6 +359,17 @@ func OrderReady(c *fiber.Ctx) error {
 	})
 }
 
+// Delivered Перенести в готово
+//
+//	@Summary		Доставлен
+//	@Description	изменяет статус заказа на "delivered"
+//	@Tags			warehouse
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			id							path		string			true	"ID заказа"
+//	@Success		201							{object}	ResponseSuccess	"Заказ успешно изменен"
+//	@Failure		400							{object}	APIError		"Неверный формат UUID"
+//	@Router			/warehouse/{id}/delivered	[POST]
 func Delivered(c *fiber.Ctx) error {
 	id, err := guuid.Parse(c.Params("id"))
 	if err != nil {
