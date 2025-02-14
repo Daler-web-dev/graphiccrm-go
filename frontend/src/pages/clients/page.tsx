@@ -92,12 +92,11 @@ export const Clients: React.FC = () => {
                                     <TableHead>Контакт</TableHead>
                                     <TableHead>Адрес</TableHead>
                                     <TableHead>Общий долг</TableHead>
-                                    <TableHead className='text-right'>Действия</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {data && data.length > 0 ? data.map((client, idx) => (
-                                    <TableRow className='text-left' key={idx}>
+                                    <TableRow className='text-left cursor-pointer' key={idx} onClick={() => navigate(`/clients/${client.id}`)}>
                                         <TableCell>{idx + 1}</TableCell>
                                         <TableCell className='flex gap-1 justify-start items-center'>
                                             <img src={import.meta.env.VITE_API_URL + '/' + client.image} alt="client image" loading='lazy' className='w-10 h-10 object-cover rounded-lg' />
@@ -106,9 +105,6 @@ export const Clients: React.FC = () => {
                                         <TableCell>{client.contactInfo}</TableCell>
                                         <TableCell>{client.address}</TableCell>
                                         <TableCell>{formatPrice(client.balance)}</TableCell>
-                                        <TableCell className='text-right'>
-                                            <Button className='px-10' onClick={() => navigate(`/clients/${client.id}`)}>Просмотр</Button>
-                                        </TableCell>
                                     </TableRow>
                                 )) : (
                                     <TableRow>
