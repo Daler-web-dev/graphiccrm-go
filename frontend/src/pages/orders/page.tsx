@@ -1,4 +1,5 @@
 import { LoaderTable } from "@/components/custom/LoaderTable";
+import { OrdersQuery } from "@/components/custom/OrdersQuery";
 import Pagination from "@/components/custom/Pagination";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,11 +26,11 @@ export const Orders: React.FC = () => {
 	const [totalPages, setTotalPages] = useState(1);
 	const [loading, setLoading] = useState(true);
 	const [isStatusChanged, setIsStatusChanged] = useState(false);
+	const [queryParams, setQueryParams] = useState({});
 
-
-	const loadPageData = async (page: number) => {
+	const loadPageData = async (page: number, params: any) => {
 		setLoading(true);
-		const res = await getRequest({ url: `/orders?page=${page}&limit=10` });
+		const res = await getRequest({ url: `/orders?page=${page}&limit=10`, params: params });
 
 		if (res.status === 200 || res.status === 201) {
 			setData(res.data.data);
@@ -45,8 +46,8 @@ export const Orders: React.FC = () => {
 	};
 
 	useEffect(() => {
-		loadPageData(currentPage);
-	}, [currentPage]);
+		loadPageData(currentPage, queryParams);
+	}, [currentPage, queryParams]);
 
 	const handleStatusChange = async (id: string, status: string) => {
 		const res = await postRequest({ url: `/orders/${id}/${status.split('ed')[0]}` });
@@ -69,9 +70,12 @@ export const Orders: React.FC = () => {
 	return (
 		<div className="w-full relative">
 			<Card>
-				<CardHeader className="flex flex-col items-start">
-					<CardTitle>Заказы</CardTitle>
-					<CardDescription>История заказов</CardDescription>
+				<CardHeader className="flex justify-between items-center">
+					<div className="flex flex-col items-start">
+						<CardTitle>Заказы</CardTitle>
+						<CardDescription>История заказов</CardDescription>
+					</div>
+					<OrdersQuery setParams={setQueryParams} />
 				</CardHeader>
 				<CardContent>
 					{loading ? (
