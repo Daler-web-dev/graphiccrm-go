@@ -177,7 +177,7 @@ export const EditProduct: React.FC = () => {
                                 >
                                     <option value="" disabled selected hidden className="text-base font-semibold text-cDarkBlue">Выберите eдиницу измерения</option>
                                     <option value={"piece"}>В штуках</option>
-                                    <option value={"meter"}>В метрах</option>
+                                    <option value={"meter"}>В сантиметрах</option>
                                 </select>
                                 {errors.unit && <p className="text-red-500 text-sm text-right">{errors.unit.message}</p>}
                             </div>

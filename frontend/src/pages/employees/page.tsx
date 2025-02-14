@@ -99,21 +99,17 @@ export const Employees: React.FC = () => {
 										<TableHead>№</TableHead>
 										<TableHead>Логин</TableHead>
 										<TableHead>Роль</TableHead>
-										<TableHead className="text-right">Действия</TableHead>
 									</TableRow>
 								</TableHeader>
 								<TableBody>
 									{data && data.length > 0 ? data.map((agent, idx) => (
-										<TableRow className="text-left" key={idx}>
+										<TableRow className="text-left cursor-pointer" key={idx} onClick={() => navigate(`/employees/${agent.id}`)}>
 											<TableCell>{idx + 1}</TableCell>
 											<TableCell className='flex gap-1 items-center'>
 												<img src={agent.image !== "" ? import.meta.env.VITE_API_URL + "/" + agent.image : "/images/humanPlaceholder.png"} alt="product image" loading='lazy' className='w-10 h-10 object-cover rounded-lg border border-gray-200' />
 												{agent.username}
 											</TableCell>
 											<TableCell>{agent?.role === "admin" ? "Администратор" : agent?.role === "manager" ? "Менеджер" : "Продавец"}</TableCell>
-											<TableCell className="text-right">
-												<Button onClick={() => navigate(`/employees/${agent.id}`)}>Просмотр</Button>
-											</TableCell>
 										</TableRow>
 									)) : (
 										<TableRow>
