@@ -13,7 +13,7 @@ type Order struct {
 	ClientID      guuid.UUID  `gorm:"type:uuid;not null;index" validate:"required,uuid" json:"clientId"`
 	Client        *Client     `gorm:"foreignKey:ClientID" validate:"-" json:"client"`
 	Products      []OrderItem `gorm:"foreignKey:OrderID;" json:"products"`
-	Status        string      `json:"status" gorm:"not null" validate:"required,oneof=pending accepted in_production completed rejected"`
+	Status        string      `json:"status" gorm:"not null" validate:"required,oneof=pending accepted rejected in_production ready delivered"`
 	PaymentMethod string      `json:"paymentMethod" gorm:"not null" validate:"required,oneof=cash transfer credit"`
 	TotalPrice    float64     `json:"totalPrice"`
 	CreatedAt     time.Time   `json:"createdAt"`
