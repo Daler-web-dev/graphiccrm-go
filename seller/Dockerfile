@@ -9,10 +9,12 @@ RUN npm install
 RUN npm i -g serve
 
 COPY . .
+
 ARG VITE_API_URL
 ENV VITE_API_URL=${VITE_API_URL}
+
 RUN npm run build
 
-EXPOSE 3000
+EXPOSE 3002
 
-CMD ["serve", "-s", "dist"]
+CMD ["serve", "-l", "3002", "-s", "dist"]
