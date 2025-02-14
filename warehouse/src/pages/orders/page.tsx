@@ -1,6 +1,6 @@
 import { LoaderTable } from "@/components/custom/LoaderTable";
+import { OrdersQuery } from "@/components/custom/OrdersQuery";
 import Pagination from "@/components/custom/Pagination";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
 	Table,
@@ -23,11 +23,12 @@ export const Orders: React.FC = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
 	const [loading, setLoading] = useState(true);
+	const [queryParams, setQueryParams] = useState({});
 
 
-	const loadPageData = async (page: number) => {
+	const loadPageData = async (page: number, params: any) => {
 		setLoading(true);
-		const res = await getRequest({ url: `/orders?page=${page}&limit=10` });
+		const res = await getRequest({ url: `/orders?page=${page}&limit=10`, params: params });
 
 		if (res.status === 200 || res.status === 201) {
 			setData(res.data.data);
@@ -43,15 +44,18 @@ export const Orders: React.FC = () => {
 	};
 
 	useEffect(() => {
-		loadPageData(currentPage);
-	}, [currentPage]);
+		loadPageData(currentPage, queryParams);
+	}, [currentPage, queryParams]);
 
 	return (
 		<div className="w-full relative">
 			<Card>
-				<CardHeader className="flex flex-col items-start">
-					<CardTitle>Заказы</CardTitle>
-					<CardDescription>История заказов</CardDescription>
+				<CardHeader className="flex justify-between items-center">
+					<div className="flex flex-col items-start">
+						<CardTitle>Заказы</CardTitle>
+						<CardDescription>История заказов</CardDescription>
+					</div>
+					<OrdersQuery setParams={setQueryParams} />
 				</CardHeader>
 				<CardContent>
 					{loading ? (
@@ -60,30 +64,32 @@ export const Orders: React.FC = () => {
 						<>
 							<Table>
 								<TableHeader>
-									<TableRow className="hover:bg-white border-none">
+									<TableRow className="hover:bg-white border-none text-base">
 										<TableHead>#</TableHead>
 										<TableHead>Номер</TableHead>
 										<TableHead>Дата</TableHead>
 										<TableHead>Сумма</TableHead>
 										<TableHead>Тип оплаты</TableHead>
 										<TableHead>Статус</TableHead>
-										<TableHead className="text-right">Действия</TableHead>
 									</TableRow>
 								</TableHeader>
 								<TableBody>
 									{data.length > 0 ? data.map((item, index) => (
-										<TableRow className='text-left' key={index}>
+										<TableRow
+											className='text-left cursor-pointer text-base'
+											key={index}
+											onClick={() => navigate(`/orders/${item?.id}`)}
+										>
 											<TableCell>{index + 1}</TableCell>
-											<TableCell>{item.id}</TableCell>
-											<TableCell>{item.createdAt.split('T')[0]}</TableCell>
-											<TableCell>{formatPrice(item.totalPrice)}</TableCell>
-											<TableCell>{item.paymentMethod === 'cash' ? 'Наличными' : item.paymentMethod === "transfer" ? "Переводом" : "Картой"}</TableCell>
-											{item.status === "paid" ? <TableCell className='text-black'>Оплачен</TableCell> : item.status === 'completed' ? <TableCell className='text-cDarkBlue'>Готово</TableCell> : item.status === 'in_production' ? <TableCell className='text-cLightBlue'>В процессе</TableCell> : <TableCell className='text-gray-400'>В ожидании</TableCell>}
-											<TableCell className="text-right"><Button onClick={() => navigate(`/orders/${item.id}`)}>Просмотр</Button></TableCell>
+											<TableCell>№ {item?.id}</TableCell>
+											<TableCell>{item?.createdAt.split('T')[0]}</TableCell>
+											<TableCell>{formatPrice(item?.totalPrice)}</TableCell>
+											<TableCell>{item?.paymentMethod === 'cash' ? 'Наличными' : item?.paymentMethod === "transfer" ? "Переводом" : "Картой"}</TableCell>
+											{item?.status === "paid" ? <TableCell className='text-black'>Оплачен</TableCell> : item?.status === 'completed' ? <TableCell className='text-cDarkBlue'>Готово</TableCell> : item?.status === 'in_production' ? <TableCell className='text-cLightBlue'>В процессе</TableCell> : <TableCell className='text-gray-400'>В ожидании</TableCell>}
 										</TableRow>
 									)) : (
 										<TableRow>
-											<TableCell className="text-base text-center rounded-xl" colSpan={7}>
+											<TableCell className="text-base text-center rounded-xl" colSpan={6}>
 												Нет данных по вашему запросу
 											</TableCell>
 										</TableRow>

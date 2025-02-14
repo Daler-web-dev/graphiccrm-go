@@ -20,7 +20,7 @@ export const Products: React.FC = () => {
     const [data, setData] = useState<Array<IProduct>>([]);
     const [categories, setCategories] = useState<ICategory[]>([]);
     const [search, setSearch] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState<string | undefined>();
+    const [selectedCategory, setSelectedCategory] = useState<string>("");
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
@@ -28,25 +28,34 @@ export const Products: React.FC = () => {
 
     const loadPageData = async (page: number, searchQuery: string, category?: string) => {
         setLoading(true);
-        const params = new URLSearchParams({
-            page: String(page),
-            limit: '10',
-            search: searchQuery,
-            ...(category ? { category: category } : {}),
-        });
+        if (searchQuery === '') {
+            const res = await getRequest({ url: `/products?page=${page}&limit=10&category=${category}` });
 
-        const res = await getRequest({ url: `/products?${params.toString()}` });
-
-        if (res.status === 200 || res.status === 201) {
-            setData(res.data.data);
-            setTotalPages(res.data.pagination.totalPages);
-            setLoading(false);
+            if (res.status === 200 || res.status === 201) {
+                setData(res.data.data);
+                setTotalPages(res.data.pagination.totalPages);
+                setLoading(false);
+            } else {
+                toast({
+                    title: 'Ошибка',
+                    description: 'Произошла ошибка при загрузке товаров',
+                    variant: 'destructive',
+                });
+            }
         } else {
-            toast({
-                title: 'Ошибка',
-                description: 'Произошла ошибка при загрузке товаров',
-                variant: 'destructive',
-            });
+            const res = await getRequest({ url: `/products/search?q=${searchQuery}` }); //&category=${category}
+
+            if (res.status === 200 || res.status === 201) {
+                setData(res.data.data);
+                setTotalPages(1);
+                setLoading(false);
+            } else {
+                toast({
+                    title: 'Ошибка',
+                    description: 'Произошла ошибка при загрузке товаров',
+                    variant: 'destructive',
+                });
+            }
         }
     };
 
@@ -70,7 +79,6 @@ export const Products: React.FC = () => {
     useEffect(() => {
         loadPageData(currentPage, debouncedSearch, selectedCategory);
     }, [currentPage, debouncedSearch, selectedCategory]);
-
 
     return (
         <div className='relative'>
@@ -125,36 +133,32 @@ export const Products: React.FC = () => {
                                     <TableRow className='hover:bg-white border-none'>
                                         <TableHead>№</TableHead>
                                         <TableHead>Наименование</TableHead>
-                                        <TableHead>Ед. измерения</TableHead>
-                                        <TableHead>Катерогия</TableHead>
                                         <TableHead>Цена</TableHead>
                                         <TableHead>Количество на складу</TableHead>
                                         <TableHead>Товара на сумму</TableHead>
-                                        <TableHead>Действия</TableHead>
+                                        <TableHead>Ед. измерения</TableHead>
+                                        <TableHead>Катерогия</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {data.length > 0 ? (
+                                    {data && data.length > 0 ? (
                                         data.map((item: IProduct, idx: number) => (
-                                            <TableRow className='text-left'>
+                                            <TableRow className='text-left cursor-pointer' key={idx} onClick={() => navigate(`/products/${item.id}`)}>
                                                 <TableCell>{idx + 1}</TableCell>
                                                 <TableCell className='flex gap-1 items-center'>
-                                                    <img src={item.image} alt="product image" loading='lazy' className='w-10 h-10 object-cover rounded-lg border border-gray-200' />
+                                                    <img src={item.image !== "" ? import.meta.env.VITE_API_URL + "/" + item.image : "/images/humanPlaceholder.png"} alt="product image" loading='lazy' className='w-10 h-10 object-cover rounded-lg border border-gray-200' />
                                                     {item.name}
                                                 </TableCell>
-                                                <TableCell>{item.unit === 'piece' ? 'В штуках' : 'В сантиметрах'}</TableCell>
-                                                <TableCell>{item.category.name}</TableCell>
                                                 <TableCell>{formatPrice(item.price)}</TableCell>
                                                 <TableCell>{item.amount} шт.</TableCell>
                                                 <TableCell>{formatPrice(item.price * item.amount)}</TableCell>
-                                                <TableCell className='flex gap-2'>
-                                                    <Button onClick={() => navigate(`/products/${item.id}`)}>Просмотр</Button>
-                                                </TableCell>
+                                                <TableCell>{item.unit === 'piece' ? 'В штуках' : 'В метрах'}</TableCell>
+                                                <TableCell>{item?.category?.name}</TableCell>
                                             </TableRow>
                                         ))
                                     ) : (
                                         <TableRow>
-                                            <TableCell colSpan={7} className="text-center">
+                                            <TableCell colSpan={8} className="text-center">
                                                 Нет данных по вашему запросу
                                             </TableCell>
                                         </TableRow>
