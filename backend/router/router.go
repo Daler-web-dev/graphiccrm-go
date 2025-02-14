@@ -73,5 +73,10 @@ func Initalize(router *fiber.App) {
 	ordersFlow.Post("/:id/accept", handlers.AcceptOrder)
 	ordersFlow.Post("/:id/reject", handlers.RejectOrder)
 
+	warehouseOrderFlow := router.Group("/api/warehouse", middleware.ProtectRoute("manager"))
+	warehouseOrderFlow.Post("/:id/in_production", handlers.InProduction)
+	warehouseOrderFlow.Post("/:id/ready", handlers.OrderReady)
+	warehouseOrderFlow.Post("/:id/delivered", handlers.Delivered)
+
 	router.Post("/api/login", handlers.Login)
 }

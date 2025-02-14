@@ -73,7 +73,7 @@ func AcceptOrder(c *fiber.Ctx) error {
 		})
 	}
 
-	order.Status = "in_production"
+	order.Status = "accepted"
 	if err := tx.Save(&order).Error; err != nil {
 		tx.Rollback()
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -186,6 +186,210 @@ func RejectOrder(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"success": true,
 		"message": "Order rejected successfully",
+		"data":    order,
+	})
+}
+
+func InProduction(c *fiber.Ctx) error {
+	id, err := guuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Invalid UUID format for Order ID",
+		})
+	}
+
+	tx := database.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	order := model.Order{}
+	err = tx.Preload("Products.Product").
+		Clauses(clause.Locking{Strength: "UPDATE"}).
+		Where("id = ?", id).
+		First(&order).Error
+
+	if err != nil {
+		tx.Rollback()
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"success": false,
+				"message": "Order not found",
+			})
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Internal Server Error",
+		})
+	}
+
+	// Проверяем допустимые статусы для производства
+	if !slices.Contains([]string{"accepted"}, order.Status) {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": fmt.Sprintf("Order cannot be in_production from '%s' status", order.Status),
+		})
+	}
+
+	order.Status = "in_production"
+	if err := tx.Save(&order).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to update order status",
+		})
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to finalize transaction",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"success": true,
+		"message": "Order in production",
+		"data":    order,
+	})
+}
+
+func OrderReady(c *fiber.Ctx) error {
+	id, err := guuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Invalid UUID format for Order ID",
+		})
+	}
+
+	tx := database.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	order := model.Order{}
+	err = tx.Preload("Products.Product").
+		Clauses(clause.Locking{Strength: "UPDATE"}).
+		Where("id = ?", id).
+		First(&order).Error
+
+	if err != nil {
+		tx.Rollback()
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"success": false,
+				"message": "Order not found",
+			})
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Internal Server Error",
+		})
+	}
+
+	// Проверяем допустимые статусы для производства
+	if !slices.Contains([]string{"in_production"}, order.Status) {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": fmt.Sprintf("Order cannot be ready from '%s' status", order.Status),
+		})
+	}
+
+	order.Status = "ready"
+	if err := tx.Save(&order).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to update order status",
+		})
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to finalize transaction",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"success": true,
+		"message": "Order is ready",
+		"data":    order,
+	})
+}
+
+func Delivered(c *fiber.Ctx) error {
+	id, err := guuid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Invalid UUID format for Order ID",
+		})
+	}
+
+	tx := database.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	order := model.Order{}
+	err = tx.Preload("Products.Product").
+		Clauses(clause.Locking{Strength: "UPDATE"}).
+		Where("id = ?", id).
+		First(&order).Error
+
+	if err != nil {
+		tx.Rollback()
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"success": false,
+				"message": "Order not found",
+			})
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Internal Server Error",
+		})
+	}
+
+	// Проверяем допустимые статусы для производства
+	if !slices.Contains([]string{"ready"}, order.Status) {
+		tx.Rollback()
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": fmt.Sprintf("Order cannot be delivered from '%s' status", order.Status),
+		})
+	}
+
+	order.Status = "delivered"
+	if err := tx.Save(&order).Error; err != nil {
+		tx.Rollback()
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to update order status",
+		})
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to finalize transaction",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"success": true,
+		"message": "Order is delivered",
 		"data":    order,
 	})
 }
