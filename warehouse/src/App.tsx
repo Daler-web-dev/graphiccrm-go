@@ -20,7 +20,7 @@ function App() {
 						element={<Orders />}
 					/>
 					<Route
-						path="/order/:id"
+						path="/orders/:id"
 						element={<Order />}
 					/>
 					<Route
