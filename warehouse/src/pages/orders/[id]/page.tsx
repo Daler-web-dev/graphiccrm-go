@@ -2,6 +2,7 @@ import {
 	Card,
 	CardTitle,
 } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -37,6 +38,10 @@ export const Order: React.FC = () => {
 		fetchOrder();
 	}, [id]);
 
+	const onChangeStatus = async (status: string) => {
+		console.log(status);
+	}
+
 	return (
 		<div>
 			{loading ? (
@@ -71,7 +76,21 @@ export const Order: React.FC = () => {
 					</Card>
 				</>
 			) : (
-				<div className="space-y-5">
+				<div className="space-y-5 relative">
+					<div className="absolute -top-20 right-5">
+						<Select onValueChange={(value) => onChangeStatus(value)}>
+							<SelectTrigger className="w-96">
+								<SelectValue placeholder="Изменить статус" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="accepted">Принят</SelectItem>
+								<SelectItem value="in_production">На производстве</SelectItem>
+								<SelectItem value="ready">Выполнен</SelectItem>
+								<SelectItem value="completed">Завершен</SelectItem>
+								<SelectItem value="rejected">Отклонен</SelectItem>
+							</SelectContent>
+						</Select>
+					</div>
 					<Card className="flex flex-col items-start gap-5 p-5">
 						<CardTitle>Заказ № {id}</CardTitle>
 						<div className="w-full flex justify-between items-center gap-5">
