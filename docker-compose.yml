@@ -81,10 +81,10 @@ services:
             - "traefik.enable=true"
             - "traefik.http.routers.warehouse.rule=PathPrefix(`/warehouse`) && !PathPrefix(`/api`)"
             - "traefik.http.routers.warehouse.entrypoints=web"
-            - traefik.http.services.warehouse.loadbalancer.server.port=3000
+            - traefik.http.services.warehouse.loadbalancer.server.port=3001
             # - "traefik.http.routers.frontend.tls.certresolver=myresolver"
         ports:
-            - "3000:3000"
+            - "3001:3001"
         depends_on:
             - backend
 
@@ -103,10 +103,10 @@ services:
             - "traefik.enable=true"
             - "traefik.http.routers.seller.rule=PathPrefix(`/seller`) && !PathPrefix(`/api`)"
             - "traefik.http.routers.seller.entrypoints=web"
-            - traefik.http.services.seller.loadbalancer.server.port=3000
+            - traefik.http.services.seller.loadbalancer.server.port=3002
             # - "traefik.http.routers.frontend.tls.certresolver=myresolver"
         ports:
-            - "3000:3000"
+            - "3002:3002"
         depends_on:
             - backend
 
