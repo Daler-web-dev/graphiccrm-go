@@ -17,4 +17,4 @@ RUN npm run build
 
 EXPOSE 3002
 
-CMD ["serve", "-l", "3002", "-s", "dist"]
+CMD ["serve", "-s", "dist", "-l", "3002"]

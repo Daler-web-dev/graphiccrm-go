@@ -17,4 +17,4 @@ ENV VITE_API_URL=${VITE_API_URL}
 
 EXPOSE 3001
 
-CMD ["serve", "-l", "3001", "-s", "dist"]
+CMD ["serve", "-s", "dist", "-l", "3001"]

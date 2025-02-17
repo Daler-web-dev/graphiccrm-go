@@ -58,12 +58,13 @@ services:
             - dropin
         labels:
             - "traefik.enable=true"
-            - "traefik.http.routers.frontend.rule=PathPrefix(`/`) && !PathPrefix(`/api`)"
+            - "traefik.http.routers.frontend.rule=PathPrefix(`/`) && !PathPrefix(`/api`, `/warehouse`, `/seller`)"
             - "traefik.http.routers.frontend.entrypoints=web"
-            - traefik.http.services.frontend.loadbalancer.server.port=3000
-            # - "traefik.http.routers.frontend.tls.certresolver=myresolver"
-        ports:
-            - "3000:3000"
+            - "traefik.http.middlewares.frontend-stripprefix.stripprefix.prefixes=/"
+            - "traefik.http.routers.frontend.middlewares=frontend-stripprefix"
+            - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+        # ports:
+        #     - "3000:3000"
         depends_on:
             - backend
     warehouse:
@@ -79,12 +80,15 @@ services:
             - dropin
         labels:
             - "traefik.enable=true"
-            - "traefik.http.routers.warehouse.rule=PathPrefix(`/warehouse`) && !PathPrefix(`/api`)"
+            - "traefik.http.routers.warehouse.rule=PathPrefix(`/warehouse`)"
             - "traefik.http.routers.warehouse.entrypoints=web"
-            - traefik.http.services.warehouse.loadbalancer.server.port=3001
-            # - "traefik.http.routers.frontend.tls.certresolver=myresolver"
-        ports:
-            - "3001:3001"
+            - "traefik.http.middlewares.warehouse-stripprefix.stripprefix.prefixes=/warehouse"
+            - "traefik.http.middlewares.warehouse-replacepath.replacepathregex.regex=^/warehouse/(.*)"
+            - "traefik.http.middlewares.warehouse-replacepath.replacepathregex.replacement=/$1"
+            - "traefik.http.routers.warehouse.middlewares=warehouse-stripprefix,warehouse-replacepath"
+            - "traefik.http.services.warehouse.loadbalancer.server.port=3001"
+        # ports:
+        #     - "3001:3001"
         depends_on:
             - backend
 
@@ -101,12 +105,15 @@ services:
             - dropin
         labels:
             - "traefik.enable=true"
-            - "traefik.http.routers.seller.rule=PathPrefix(`/seller`) && !PathPrefix(`/api`)"
+            - "traefik.http.routers.seller.rule=PathPrefix(`/seller`)"
             - "traefik.http.routers.seller.entrypoints=web"
-            - traefik.http.services.seller.loadbalancer.server.port=3002
-            # - "traefik.http.routers.frontend.tls.certresolver=myresolver"
-        ports:
-            - "3002:3002"
+            - "traefik.http.middlewares.seller-stripprefix.stripprefix.prefixes=/seller"
+            - "traefik.http.middlewares.seller-replacepath.replacepathregex.regex=^/seller/(.*)"
+            - "traefik.http.middlewares.seller-replacepath.replacepathregex.replacement=/$1"
+            - "traefik.http.routers.seller.middlewares=seller-stripprefix,seller-replacepath"
+            - "traefik.http.services.seller.loadbalancer.server.port=3002"
+        # ports:
+        #     - "3002:3002"
         depends_on:
             - backend
 
