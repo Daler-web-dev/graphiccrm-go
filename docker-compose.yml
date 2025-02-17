@@ -32,8 +32,9 @@ services:
             - "traefik.enable=true"
             - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
             - "traefik.http.routers.backend.entrypoints=web"
-            - traefik.http.services.backend.loadbalancer.server.port=8080
-            # - "traefik.http.routers.backend.tls.certresolver=myresolver"
+            - "traefik.http.middlewares.backend-stripprefix.stripprefix.prefixes=/api"
+            - "traefik.http.routers.backend.middlewares=backend-stripprefix"
+            - "traefik.http.services.backend.loadbalancer.server.port=8080"
         environment:
             - ENV=production
             - jwt_secret=${jwt_secret}
