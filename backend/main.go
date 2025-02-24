@@ -37,7 +37,7 @@ import (
 func main() {
 	godotenv.Load()
 	app := fiber.New()
-	app.Get("/api/swagger/*", swagger.HandlerDefault)
+	app.Get("/swagger/*", swagger.HandlerDefault)
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "*",
@@ -49,7 +49,7 @@ func main() {
 
 	database.ConnectDB()
 
-	app.Static("/api/uploads", "./uploads")
+	app.Static("/uploads", "./uploads")
 
 	router.Initalize(app)
 	log.Fatal(app.Listen(":" + utils.Getenv("PORT", "8080")))
