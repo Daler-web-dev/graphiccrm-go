@@ -8,17 +8,20 @@ services:
             - --api.insecure=true
             - --providers.docker=true
             - --entrypoints.web.address=:80
-            # - --entrypoints.websecure.address=:443
-            # - --certificatesresolvers.myresolver.acme.tlschallenge=true
-            # - --certificatesresolvers.myresolver.acme.email=dsarifkulo021@gmail.com
-            # - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+            - --entrypoints.websecure.address=:443
+            - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
+            - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+            - --certificatesresolvers.letsencrypt.acme.email=dsarifkulo021@gmail.com
+            - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
         ports:
             - "80:80"
+            - "443:443"
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
-            # - ./traefik_data:/letsencrypt
+            - ./traefik_data:/letsencrypt
         networks:
             - dropin
+
     backend:
         build:
             context: ./backend
@@ -26,12 +29,11 @@ services:
         container_name: backend
         networks:
             - dropin
-        ports:
-            - "8080:8080"
         labels:
             - "traefik.enable=true"
-            - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
-            - "traefik.http.routers.backend.entrypoints=web"
+            - "traefik.http.routers.backend.rule=Host(`sharifaka.com`) && PathPrefix(`/api`)"
+            - "traefik.http.routers.backend.entrypoints=websecure"
+            - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
             - "traefik.http.middlewares.backend-stripprefix.stripprefix.prefixes=/api"
             - "traefik.http.routers.backend.middlewares=backend-stripprefix"
             - "traefik.http.services.backend.loadbalancer.server.port=8080"
@@ -42,7 +44,6 @@ services:
         depends_on:
             db:
                 condition: service_healthy
-
         volumes:
             - ./uploads_host:/app/uploads
 
@@ -59,15 +60,13 @@ services:
             - dropin
         labels:
             - "traefik.enable=true"
-            - "traefik.http.routers.frontend.rule=PathPrefix(`/`) && !PathPrefix(`/api`, `/warehouse`, `/seller`)"
-            - "traefik.http.routers.frontend.entrypoints=web"
-            - "traefik.http.middlewares.frontend-stripprefix.stripprefix.prefixes=/"
-            - "traefik.http.routers.frontend.middlewares=frontend-stripprefix"
+            - "traefik.http.routers.frontend.rule=Host(`sharifaka.com`)"
+            - "traefik.http.routers.frontend.entrypoints=websecure"
+            - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
             - "traefik.http.services.frontend.loadbalancer.server.port=3000"
-        # ports:
-        #     - "3000:3000"
         depends_on:
             - backend
+
     warehouse:
         build:
             context: ./warehouse
@@ -81,15 +80,12 @@ services:
             - dropin
         labels:
             - "traefik.enable=true"
-            - "traefik.http.routers.warehouse.rule=PathPrefix(`/warehouse`)"
-            - "traefik.http.routers.warehouse.entrypoints=web"
+            - "traefik.http.routers.warehouse.rule=Host(`sharifaka.com`) && PathPrefix(`/warehouse`)"
+            - "traefik.http.routers.warehouse.entrypoints=websecure"
+            - "traefik.http.routers.warehouse.tls.certresolver=letsencrypt"
             - "traefik.http.middlewares.warehouse-stripprefix.stripprefix.prefixes=/warehouse"
-            - "traefik.http.middlewares.warehouse-replacepath.replacepathregex.regex=^/warehouse/(.*)"
-            - "traefik.http.middlewares.warehouse-replacepath.replacepathregex.replacement=/$1"
-            - "traefik.http.routers.warehouse.middlewares=warehouse-stripprefix,warehouse-replacepath"
+            - "traefik.http.routers.warehouse.middlewares=warehouse-stripprefix"
             - "traefik.http.services.warehouse.loadbalancer.server.port=3001"
-        # ports:
-        #     - "3001:3001"
         depends_on:
             - backend
 
@@ -106,18 +102,16 @@ services:
             - dropin
         labels:
             - "traefik.enable=true"
-            - "traefik.http.routers.seller.rule=PathPrefix(`/seller`)"
-            - "traefik.http.routers.seller.entrypoints=web"
+            - "traefik.http.routers.seller.rule=Host(`sharifaka.com`) && PathPrefix(`/seller`)"
+            - "traefik.http.routers.seller.entrypoints=websecure"
+            - "traefik.http.routers.seller.tls.certresolver=letsencrypt"
             - "traefik.http.middlewares.seller-stripprefix.stripprefix.prefixes=/seller"
-            - "traefik.http.middlewares.seller-replacepath.replacepathregex.regex=^/seller/(.*)"
-            - "traefik.http.middlewares.seller-replacepath.replacepathregex.replacement=/$1"
-            - "traefik.http.routers.seller.middlewares=seller-stripprefix,seller-replacepath"
+            - "traefik.http.routers.seller.middlewares=seller-stripprefix"
             - "traefik.http.services.seller.loadbalancer.server.port=3002"
-        # ports:
-        #     - "3002:3002"
         depends_on:
             - backend
 
+    # Остальные сервисы (db) остаются без изменений
     db:
         image: postgres:15-alpine
         container_name: postgres
