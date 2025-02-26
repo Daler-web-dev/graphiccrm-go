@@ -60,7 +60,7 @@ services:
             - dropin
         labels:
             - "traefik.enable=true"
-            - "traefik.http.routers.frontend.rule=Host(`sharifaka.com`)"
+            - "traefik.http.routers.frontend.rule=Host(`sharifaka.com`) && PathPrefix(`/`) && !PathPrefix(/api, /warehouse, /seller)"
             - "traefik.http.routers.frontend.entrypoints=websecure"
             - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
             - "traefik.http.services.frontend.loadbalancer.server.port=3000"
