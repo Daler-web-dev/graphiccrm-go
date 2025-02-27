@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
 import { getRequest, postRequest } from "@/lib/apiHandlers";
-import { formatPrice } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { IOrder } from "@/models/order";
 import { Check, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -101,9 +101,9 @@ export const Orders: React.FC = () => {
 											<TableCell>{item?.createdAt.split('T')[0]}</TableCell>
 											<TableCell>{formatPrice(item?.totalPrice)}</TableCell>
 											<TableCell>{item?.paymentMethod === 'cash' ? 'Наличными' : item?.paymentMethod === "transfer" ? "Переводом" : "Картой"}</TableCell>
-											<TableCell>
+											<TableCell className={cn(item.status === "accepted" ? "text-cDarkBlue" : "text-red-600")}>
 												{item.status !== "pending" ?
-													item.status.toLocaleUpperCase() : (
+													item.status === "accepted" ? "Принят" : "Отклонен" : (
 														<div className='z-10'>
 															<Button
 																variant="custom"

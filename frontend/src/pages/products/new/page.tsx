@@ -14,13 +14,15 @@ export const NewProduct: React.FC = () => {
     const navigate = useNavigate();
     const [categories, setCategories] = React.useState([{ id: '', name: '' }]);
     const [loading, setLoading] = React.useState<boolean>(false);
+    const [selectedImage, setSelectedImage] = React.useState<string>("");
+
     const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<IProduct>({ mode: "onChange" });
-    setValue('image', "")
+    setValue('image', selectedImage)
 
     useEffect(() => {
         const fetchCategories = async () => {
             setLoading(true);
-            const response = await getRequest({ url: '/categories' });
+            const response = await getRequest({ url: '/categories', params: { limit: 10000 } });
             if (response.status === 200) {
                 setCategories(response.data.data);
                 setLoading(false);
@@ -38,14 +40,13 @@ export const NewProduct: React.FC = () => {
     }, [reset])
 
     const onSubmit = async (data: IProduct) => {
-        if (data.image === "") return toast({
-            title: 'Ошибка',
-            description: 'Пожалуйста, загрузите изображение',
-            variant: 'destructive',
-        })
+        // if (data.image === "") return toast({
+        //     title: 'Ошибка',
+        //     description: 'Пожалуйста, загрузите изображение',
+        //     variant: 'destructive',
+        // })
 
         const resData = { ...data, amount: Number(data.amount), price: Number(data.price) }
-        console.log(resData);
 
         const response = await postRequest({ url: '/products', data: resData });
         if (response.status === 200 || response.status === 201) {
@@ -71,6 +72,7 @@ export const NewProduct: React.FC = () => {
                         <ImageUploader
                             onUploadSuccess={(url: string) => {
                                 setValue('image', url);
+                                setSelectedImage(url);
                             }}
                             className='border border-cGray'
                         />
