@@ -7,20 +7,23 @@ import { useNavigate } from 'react-router-dom';
 import ConfirmModal from '@/components/custom/ConfirmModal';
 import { Card } from '@/components/ui/card';
 import { IEmployeeCreateUpdate } from '@/models/employees'; // Import Roles
+import { useState } from 'react';
 
 export const AddEmployee = () => {
     const navigate = useNavigate();
+    const [selectedImage, setSelectedImage] = useState<string>("");
+
     const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<IEmployeeCreateUpdate>({ mode: 'onChange' });
-    setValue('image', "");
+    setValue('image', selectedImage);
 
     const onSubmit = async (data: any) => {
-        if (data.image === "") {
-            return toast({
-                title: 'Ошибка',
-                description: 'Пожалуйста, загрузите изображение',
-                variant: 'destructive',
-            });
-        }
+        // if (data.image === "") {
+        //     return toast({
+        //         title: 'Ошибка',
+        //         description: 'Пожалуйста, загрузите изображение',
+        //         variant: 'destructive',
+        //     });
+        // }
 
         const response = await postRequest({ url: '/users', data });
 
@@ -47,6 +50,7 @@ export const AddEmployee = () => {
                         <ImageUploader
                             onUploadSuccess={(url: string) => {
                                 setValue('image', url);
+                                setSelectedImage(url);
                             }}
                             className='border border-cGray'
                         />
@@ -86,9 +90,9 @@ export const AddEmployee = () => {
                                 className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                             >
                                 <option value="" disabled selected>Выберите роль</option>
-                                <option value="manager">Менеджер</option>
+                                <option value="manager">Работник склада</option>
                                 <option value="seller">Продавец</option>
-                                <option value="admin">Администратор</option>
+                                <option value="admin">Админ</option>
                             </select>
                             {errors.role && <p className="text-red-500 text-sm text-right">{errors.role.message}</p>}
                         </div>

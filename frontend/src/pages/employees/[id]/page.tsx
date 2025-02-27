@@ -65,7 +65,7 @@ export const Employee: React.FC = () => {
                 ) : (
                     <div className='flex gap-5'>
                         <div className='w-full max-w-[40%] space-y-3'>
-                            <img src={`${import.meta.env.VITE_API_URL}/${data?.image}` || "/images/humanPlaceholder.png"} alt="agent image" className='aspect-square w-full object-cover border border-cLightGray rounded-lg' loading='lazy' />
+                            <img src={data?.image !== "" ? import.meta.env.VITE_API_URL + "/" + data?.image : "/images/humanPlaceholder.png"} alt="agent image" className='aspect-square w-full object-cover border border-cLightGray rounded-lg' loading='lazy' />
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg bg-gray-100'>
                                 <h4 className='font-semibold text-base text-cDarkBlue'>Логин</h4>
                                 <p className='text-cDarkBlue text-base'>{data?.username}</p>
