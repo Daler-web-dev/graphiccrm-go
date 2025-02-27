@@ -126,9 +126,9 @@ export const EditEmployee: React.FC = () => {
                                     {...register('role', { required: 'Роль обязательна' })}
                                     className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
                                 >
-                                    <option value="manager">Менеджер</option>
+                                    <option value="manager">Работник склада</option>
                                     <option value="seller">Продавец</option>
-                                    <option value="admin">Администратор</option>
+                                    <option value="admin">Админ</option>
                                 </select>
                                 {errors.role && <p className="text-red-500 text-sm text-right">{errors.role.message}</p>}
                             </div>

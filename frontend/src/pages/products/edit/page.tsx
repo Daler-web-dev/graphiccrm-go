@@ -42,7 +42,7 @@ export const EditProduct: React.FC = () => {
                 return
             }
 
-            const getCategories = await getRequest({ url: '/categories' });
+            const getCategories = await getRequest({ url: '/categories', params: { limit: 10000 } });
             if (getCategories.status === 200 || getCategories.status === 201) {
                 setCategories(getCategories.data.data);
                 setLoading(false);

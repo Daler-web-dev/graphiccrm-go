@@ -60,7 +60,7 @@ export const Categories: React.FC = () => {
 				<CardHeader className="flex flex-col justify-center items-start">
 					<CardTitle>Категории</CardTitle>
 					<CardDescription>Список категорий.</CardDescription>
-					<AddCategoryForm>
+					<AddCategoryForm onUpdate={() => loadPageData(currentPage)}>
 						<Button
 							type="submit"
 							className="absolute right-5 -top-20"
@@ -96,18 +96,12 @@ export const Categories: React.FC = () => {
 												</TableCell>
 												<TableCell className="flex justify-end gap-2">
 													<EditCategory
-														onUpdate={() => { loadPageData(currentPage) }}
+														onUpdate={() => loadPageData(currentPage)}
 														categoryId={category.id}
-
 													>
 														<Button
 															variant="secondary"
 															size="icon"
-															onClick={() => {
-																console.log(
-																	category
-																);
-															}}
 														>
 															<Edit className="h-4 w-4 text-cLightBlue" />
 														</Button>
@@ -115,7 +109,7 @@ export const Categories: React.FC = () => {
 													<DeleteModal
 														item={category}
 														path="categories"
-														onUpdate={() => { loadPageData(currentPage) }}
+														onUpdate={() => loadPageData(currentPage)}
 													>
 														<Button
 															variant="secondary"
@@ -131,7 +125,7 @@ export const Categories: React.FC = () => {
 										<TableRow>
 											<TableCell
 												className="text-base text-center rounded-xl"
-												colSpan={2}
+												colSpan={3}
 											>
 												Нет данных по вашему запросу
 											</TableCell>

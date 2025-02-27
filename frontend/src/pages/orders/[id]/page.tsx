@@ -10,12 +10,13 @@ import { getRequest } from "@/lib/apiHandlers";
 import { formatPrice } from "@/lib/utils";
 import { IOrder } from "@/models/order";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export const Order: React.FC = () => {
 	const { id } = useParams();
 	const [loading, setLoading] = useState(false);
 	const [order, setOrder] = useState<IOrder>();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const fetchOrder = async () => {
@@ -121,13 +122,14 @@ export const Order: React.FC = () => {
 									<TableRow
 										key={item?.id}
 										className="bg-[#F2F2F2] hover:bg-[#F2F2F2]/80 border-none"
+										onClick={() => navigate(`/products/${item?.product?.id}`)}
 									>
 										<TableCell className="text-base rounded-s-xl">
 											{idx + 1}
 										</TableCell>
 										<TableCell className="text-base">
 											<div className='flex justify-start items-center gap-1'>
-												<img src={item?.product?.image} alt="product image" className='w-14 h-14 p-1 bg-white rounded-md border object-cover border-cGray' />
+												<img src={item?.product?.image !== "" ? import.meta.env.VITE_API_URL + "/" + item?.product?.image : "/images/humanPlaceholder.png"} alt="product image" className='w-14 h-14 bg-white rounded-md border object-cover border-cGray' />
 												{item?.product?.name}
 											</div>
 										</TableCell>

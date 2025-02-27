@@ -3,15 +3,14 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { ICategoryCreateUpdate } from '@/models/categories';
 import { postRequest } from '@/lib/apiHandlers';
-import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 
 
-export const AddCategoryForm = ({ children }: { children: React.ReactNode }) => {
+export const AddCategoryForm = ({ children, onUpdate }: { children: React.ReactNode, onUpdate: () => void }) => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<ICategoryCreateUpdate>({ mode: 'onChange' });
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
+    const [isOpen, setIsOpen] = useState(false);
 
     const onSubmit: SubmitHandler<ICategoryCreateUpdate> = async (data: any) => {
         setLoading(true);
@@ -20,7 +19,8 @@ export const AddCategoryForm = ({ children }: { children: React.ReactNode }) => 
         if (res.status === 200 || res.status === 201) {
             setLoading(false);
             reset();
-            navigate(0);
+            onUpdate();
+            setIsOpen(false);
             toast({
                 title: 'Успех',
                 description: 'Категория успешно добавлена',
@@ -32,11 +32,12 @@ export const AddCategoryForm = ({ children }: { children: React.ReactNode }) => 
                 description: 'Произошла ошибка при добавлении категории',
                 variant: 'destructive',
             });
+            setLoading(false);
         }
     };
 
     return (
-        <Dialog>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>

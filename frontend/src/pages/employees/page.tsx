@@ -109,7 +109,7 @@ export const Employees: React.FC = () => {
 												<img src={agent.image !== "" ? import.meta.env.VITE_API_URL + "/" + agent.image : "/images/humanPlaceholder.png"} alt="product image" loading='lazy' className='w-10 h-10 object-cover rounded-lg border border-gray-200' />
 												{agent.username}
 											</TableCell>
-											<TableCell>{agent?.role === "admin" ? "Администратор" : agent?.role === "manager" ? "Менеджер" : "Продавец"}</TableCell>
+											<TableCell>{agent?.role === "admin" ? "Админ" : agent?.role === "manager" ? "Работник склада" : "Продавец"}</TableCell>
 										</TableRow>
 									)) : (
 										<TableRow>

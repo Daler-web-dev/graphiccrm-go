@@ -60,7 +60,7 @@ export const Products: React.FC = () => {
     };
 
     const loadCategories = async () => {
-        const res = await getRequest({ url: `/categories` });
+        const res = await getRequest({ url: `/categories`, params: { limit: 10000 } });
         if (res.status === 200 || res.status === 201) {
             setCategories(res.data.data);
         } else {
