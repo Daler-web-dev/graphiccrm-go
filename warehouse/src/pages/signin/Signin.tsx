@@ -68,6 +68,7 @@ const Signin: React.FC<SigninProps> = () => {
 							{...register("username", { required: true })}
 							className="w-full border border-[#79747E] rounded-xl py-2 px-4 text-base font-normal placeholder:text-sm"
 							placeholder="Логин"
+							autoComplete="off"
 						/>
 						{errors.username && (
 							<span className="font-normal text-sm text-red-500">

@@ -80,14 +80,11 @@ export const Order: React.FC = () => {
 					<div className="absolute -top-20 right-5">
 						<Select onValueChange={(value) => onChangeStatus(value)}>
 							<SelectTrigger className="w-96">
-								<SelectValue placeholder="Изменить статус" />
+								<SelectValue placeholder={order?.status && order.status.charAt(0).toUpperCase() + order.status.slice(1)} />
 							</SelectTrigger>
 							<SelectContent>
-								<SelectItem value="accepted">Принят</SelectItem>
 								<SelectItem value="in_production">На производстве</SelectItem>
-								<SelectItem value="ready">Выполнен</SelectItem>
-								<SelectItem value="completed">Завершен</SelectItem>
-								<SelectItem value="rejected">Отклонен</SelectItem>
+								<SelectItem value="delivered">Доставлен</SelectItem>
 							</SelectContent>
 						</Select>
 					</div>
@@ -146,7 +143,7 @@ export const Order: React.FC = () => {
 										</TableCell>
 										<TableCell className="text-base">
 											<div className='flex justify-start items-center gap-1'>
-												<img src={item?.product?.image} alt="product image" className='w-14 h-14 p-1 bg-white rounded-md border object-cover border-cGray' />
+												<img src={item?.product?.image !== "" ? import.meta.env.VITE_API_URL + "/" + item?.product?.image : "/images/humanPlaceholder.png"} alt="product image" className='w-14 h-14 p-1 bg-white rounded-md border object-cover border-cGray' />
 												{item?.product?.name}
 											</div>
 										</TableCell>
