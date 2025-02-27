@@ -2629,7 +2629,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "ec2-13-61-141-144.eu-north-1.compute.amazonaws.com",
+	Host:             "sharifaka.com",
 	BasePath:         "/api",
 	Schemes:          []string{},
 	Title:            "Fiber CRM-API",

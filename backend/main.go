@@ -23,7 +23,7 @@ import (
 //	@in							header
 //	@name						Authorization
 
-//	@host		ec2-13-61-141-144.eu-north-1.compute.amazonaws.com
+//	@host		sharifaka.com
 //	@BasePath	/api
 
 //	@securityDefinitions.apikey	BearerAuth
