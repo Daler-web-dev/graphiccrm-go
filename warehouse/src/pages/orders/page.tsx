@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
 import { getRequest } from "@/lib/apiHandlers";
-import { formatPrice } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { IOrder } from "@/models/order";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -85,7 +85,9 @@ export const Orders: React.FC = () => {
 											<TableCell>{item?.createdAt.split('T')[0]}</TableCell>
 											<TableCell>{formatPrice(item?.totalPrice)}</TableCell>
 											<TableCell>{item?.paymentMethod === 'cash' ? 'Наличными' : item?.paymentMethod === "transfer" ? "Переводом" : "Картой"}</TableCell>
-											{item?.status === "paid" ? <TableCell className='text-black'>Оплачен</TableCell> : item?.status === 'completed' ? <TableCell className='text-cDarkBlue'>Готово</TableCell> : item?.status === 'in_production' ? <TableCell className='text-cLightBlue'>В процессе</TableCell> : <TableCell className='text-gray-400'>В ожидании</TableCell>}
+											<TableCell
+												className={cn(item?.status === "delivered" ? "text-green-600" : item?.status === "in_production" ? "text-cDarkBlue" : item?.status === "pending" ? "text-gray-400" : item?.status === "accepted" ? "text-cLightBlue" : "text-red-600")}
+											>{item?.status === "delivered" ? "Доставлен" : item?.status === "in_production" ? "В производстве" : item?.status === "pending" ? "В обработке" : item?.status === "accepted" ? "Принят" : "Отклонен"}</TableCell>
 										</TableRow>
 									)) : (
 										<TableRow>
