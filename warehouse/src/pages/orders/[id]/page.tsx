@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
-import { getRequest } from "@/lib/apiHandlers";
+import { getRequest, postRequest } from "@/lib/apiHandlers";
 import { formatPrice } from "@/lib/utils";
 import { IOrder } from "@/models/order";
 import React, { useEffect, useState } from "react";
@@ -39,7 +39,26 @@ export const Order: React.FC = () => {
 	}, [id]);
 
 	const onChangeStatus = async (status: string) => {
-		console.log(status);
+		const res = await postRequest({ url: `/warehouse/${id}/${status}` });
+
+		if (res.status === 200 || res.status === 201) {
+			toast({
+				title: 'Успех',
+				description: 'Статус заказа успешно изменен',
+			})
+		} else if (res.status === 403) {
+			toast({
+				title: 'Ошибка доступа',
+				description: 'Вы не можете изменить статус заказа. У вас недостаточно прав',
+				variant: 'destructive',
+			})
+		} else {
+			toast({
+				title: 'Ошибка',
+				description: 'Произошла ошибка при изменении статуса заказа',
+				variant: 'destructive',
+			})
+		}
 	}
 
 	return (

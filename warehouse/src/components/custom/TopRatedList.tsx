@@ -50,16 +50,16 @@ export default function TopRatedList() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {data && data.top_clients.length > 0 ? data.top_clients.map((client, idx) => (
+                            {data?.top_clients && data?.top_clients?.length > 0 ? data?.top_clients.map((client, idx) => (
                                 <TableRow
                                     className='text-left cursor-pointer'
                                     key={idx}
-                                    onClick={() => navigate(`/clients/${client.client_id}`)}
+                                    onClick={() => navigate(`/clients/${client?.client_id}`)}
                                 >
                                     <TableCell>{idx + 1}</TableCell>
-                                    <TableCell>{client.client_name}</TableCell>
-                                    <TableCell>{client.order_count}</TableCell>
-                                    <TableCell>{formatPrice(client.total_spent)}</TableCell>
+                                    <TableCell>{client?.client_name}</TableCell>
+                                    <TableCell>{client?.order_count}</TableCell>
+                                    <TableCell>{formatPrice(client?.total_spent)}</TableCell>
                                 </TableRow>
                             )) : (
                                 <TableRow>
@@ -89,16 +89,16 @@ export default function TopRatedList() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {data && data.top_products.length > 0 ? data.top_products.map((product, idx) => (
+                            {data?.top_products && data?.top_products?.length > 0 ? data?.top_products.map((product, idx) => (
                                 <TableRow
                                     className='text-left cursor-pointer'
                                     key={idx}
-                                    onClick={() => navigate(`/products/${product.product_id}`)}
+                                    onClick={() => navigate(`/products/${product?.product_id}`)}
                                 >
                                     <TableCell>{idx + 1}</TableCell>
-                                    <TableCell>{product.product_name}</TableCell>
-                                    <TableCell>{product.units_sold}</TableCell>
-                                    <TableCell>{formatPrice(product.total_sold)}</TableCell>
+                                    <TableCell>{product?.product_name}</TableCell>
+                                    <TableCell>{product?.units_sold}</TableCell>
+                                    <TableCell>{formatPrice(product?.total_sold)}</TableCell>
                                 </TableRow>
                             )) : (
                                 <TableRow>
