@@ -39,14 +39,19 @@ func Initalize(router *fiber.App) {
 	categoriesForAll.Get("/", handlers.GetAllCategories)
 	categoriesForAll.Get("/:id", handlers.GetCategoryById)
 
-	products := router.Group("/products", middleware.ProtectRoute("admin"))
+	products := router.Group("/products", middleware.ProtectRoute("admin", "manager"))
 	products.Get("/", handlers.GetAllProducts)
-	products.Post("/", handlers.CreateProduct)
 	products.Get("/search", handlers.SearchProducts)
 	products.Get("/:id/statistics", handlers.GetSingleProductStatistics)
+	products.Post("/", handlers.CreateProduct)
 	products.Patch("/:id", handlers.UpdateProduct)
 	products.Get("/:id", handlers.GetProductById)
 	products.Delete("/:id", handlers.DeleteProduct)
+
+	productsForSeller := router.Group("/products", middleware.ProtectRoute("seller"))
+	productsForSeller.Get("/", handlers.GetAllProducts)
+	productsForSeller.Get("/search", handlers.SearchProducts)
+	productsForSeller.Get("/:id", handlers.GetProductById)
 
 	exports := router.Group("/exports", middleware.ProtectRoute("admin"))
 	exports.Get("/products", handlers.ExportProductsHandler)
@@ -62,7 +67,7 @@ func Initalize(router *fiber.App) {
 	uploadMany := router.Group("/uploadmany", middleware.ProtectRoute("admin", "seller", "manager"))
 	uploadMany.Post("/", handlers.UploadMany)
 
-	orders := router.Group("/orders", middleware.ProtectRoute("admin", "seller"))
+	orders := router.Group("/orders", middleware.ProtectRoute("admin", "seller", "manager"))
 	orders.Post("/", handlers.CreateOrder)
 	orders.Get("/", handlers.GetAllOrders)
 	orders.Get("/:id", handlers.GetOrderByID)
