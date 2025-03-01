@@ -190,26 +190,28 @@ func GetSalesChart(c *fiber.Ctx) error {
 	db := database.DB
 
 	now := time.Now()
-	startDate := now.AddDate(0, 0, -30) // по умолчанию 30 дней
-	endDate := now
+	var startDate, endDate time.Time
 
 	switch period {
 	case "year":
-		startDate = now.AddDate(-1, 0, 0) // последние 12 месяцев
+		startDate = now.AddDate(-1, 0, 0) // Last 12 months
+		endDate = now
 	case "month":
-		startDate = now.AddDate(0, 0, -30) // последние 30 дней
+		startDate = now.AddDate(0, 0, -30) // Last 30 days
+		endDate = now
 	default:
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "invalid period parameter. Use 'month' or 'year'",
 		})
 	}
 
+	// Get sales data from database
 	var results []SalesData
-
+	dateFormat := getPeriodFormat(period)
 	query := db.Model(&model.Order{}).
 		Select(
-			"SUM(total_price) as total_amount",
-			fmt.Sprintf("to_char(created_at, '%s') as date", getDateFormat(period)),
+			"COALESCE(SUM(total_price), 0) as total_amount",
+			fmt.Sprintf("to_char(created_at, '%s') as date", dateFormat),
 		).
 		Where("status NOT IN (?)", []string{"rejected", "pending"}).
 		Where("created_at BETWEEN ? AND ?", startDate, endDate).
@@ -222,20 +224,58 @@ func GetSalesChart(c *fiber.Ctx) error {
 		})
 	}
 
-	if results == nil {
-		results = make([]SalesData, 0)
+	// Create map for quick lookup
+	resultMap := make(map[string]float64)
+	for _, res := range results {
+		resultMap[res.Date] = res.TotalAmount
 	}
 
-	return c.JSON(results)
+	// Generate all possible dates/months in period
+	var generated []SalesData
+	current := startDate
+	layout := getGoLayout(period)
+
+	for {
+		// Stop condition
+		if (period == "year" && current.After(endDate)) ||
+			(period == "month" && current.After(endDate.AddDate(0, 0, 1))) {
+			break
+		}
+
+		// Format date according to period
+		dateStr := current.Format(layout)
+		amount := resultMap[dateStr]
+
+		generated = append(generated, SalesData{
+			Date:        dateStr,
+			TotalAmount: amount,
+		})
+
+		// Increment based on period
+		if period == "year" {
+			current = current.AddDate(0, 1, 0)
+		} else {
+			current = current.AddDate(0, 0, 1)
+		}
+	}
+
+	return c.JSON(generated)
 }
 
-func getDateFormat(period string) string {
-	switch period {
-	case "year":
+// Helper to get PostgreSQL date format
+func getPeriodFormat(period string) string {
+	if period == "year" {
 		return "YYYY-MM"
-	default:
-		return "YYYY-MM-DD"
 	}
+	return "YYYY-MM-DD"
+}
+
+// Helper to get Go date layout
+func getGoLayout(period string) string {
+	if period == "year" {
+		return "2006-01"
+	}
+	return "2006-01-02"
 }
 
 func getDateRange(period string) (time.Time, time.Time, error) {
