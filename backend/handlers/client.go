@@ -11,6 +11,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	guuid "github.com/google/uuid"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type UpdateClientRequest struct {
@@ -176,7 +177,7 @@ func GetClientById(c *fiber.Ctx) error {
 		query = query.Where("salesperson_id = ?", user.ID)
 	}
 
-	err = query.Where("id = ?", id).First(&Client).Error
+	err = query.Where("id = ?", id).Preload(clause.Associations).First(&Client).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
