@@ -49,7 +49,7 @@ func CreateUser(c *fiber.Ctx) error {
 	json := new(CreateUserRequest)
 
 	if err := c.BodyParser(json); err != nil {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status":  400,
 			"message": "Invalid JSON",
 			"success": false,
@@ -105,7 +105,7 @@ func GetUserById(c *fiber.Ctx) error {
 	id, err := guuid.Parse(param)
 
 	if err != nil {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status":  400,
 			"message": "Invalid UUID Format",
 			"success": false,
@@ -117,7 +117,7 @@ func GetUserById(c *fiber.Ctx) error {
 	err = db.First(&user, &query).Error
 
 	if err == gorm.ErrRecordNotFound {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"status":  404,
 			"message": "User not found",
 			"success": false,
@@ -154,7 +154,7 @@ func GetUsers(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.JSON(respons)
+	return c.Status(fiber.StatusOK).JSON(respons)
 }
 
 // @Summary		Обновить данные пользователя
@@ -238,7 +238,7 @@ func UpdateUser(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"status":  200,
 		"message": "User updated successfully",
 		"success": true,
@@ -263,7 +263,7 @@ func DeleteUser(c *fiber.Ctx) error {
 	id, err := guuid.Parse(param)
 
 	if err != nil {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status":  400,
 			"message": "Invalid ID format",
 			"success": false,
@@ -273,7 +273,7 @@ func DeleteUser(c *fiber.Ctx) error {
 	var found model.User
 	err = db.First(&found, "id = ?", id).Error
 	if err == gorm.ErrRecordNotFound {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"status":  400,
 			"message": "User not found",
 			"success": false,
@@ -283,14 +283,14 @@ func DeleteUser(c *fiber.Ctx) error {
 	err = db.Delete(&model.User{}, "id = ?", id).Error
 
 	if err != nil {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"status":  500,
 			"message": "Failed to delete user",
 			"success": false,
 		})
 	}
 
-	return c.JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"status":  200,
 		"message": "User was removed",
 		"success": true,
@@ -332,7 +332,7 @@ func SearchUsers(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"data":    users,
 	})

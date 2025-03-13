@@ -178,7 +178,7 @@ func GetOrderByID(c *fiber.Ctx) error {
 	id, err := guuid.Parse(c.Params("id"))
 
 	if err != nil {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status":   400,
 			"succeess": false,
 			"message":  "Invalid UUID Format",
@@ -206,7 +206,7 @@ func GetOrderByID(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"status":   200,
 		"succeess": true,
 		"message":  "success",

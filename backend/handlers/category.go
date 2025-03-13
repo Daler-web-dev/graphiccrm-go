@@ -118,7 +118,7 @@ func GetCategoryById(c *fiber.Ctx) error {
 
 	id, err := guuid.Parse(param)
 	if err != nil {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status":  400,
 			"success": false,
 			"message": "Invalid UUID Format",
@@ -146,7 +146,7 @@ func GetCategoryById(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"status":  200,
 		"success": true,
 		"message": "success",
@@ -256,7 +256,7 @@ func DeleteCategory(c *fiber.Ctx) error {
 	id, err := guuid.Parse(param)
 
 	if err != nil {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status":  400,
 			"success": false,
 			"message": "Invalid ID format",

@@ -194,7 +194,7 @@ func RejectOrder(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"message": "Order rejected successfully",
 		"data":    order,
@@ -273,7 +273,7 @@ func InProduction(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"message": "Order in production",
 		"data":    order,
@@ -352,7 +352,7 @@ func OrderReady(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"message": "Order is ready",
 		"data":    order,
@@ -431,7 +431,7 @@ func Delivered(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"message": "Order is delivered",
 		"data":    order,

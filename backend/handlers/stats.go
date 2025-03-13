@@ -169,7 +169,7 @@ func GetDashboard(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.JSON(DashboardResponse{
+	return c.Status(fiber.StatusOK).JSON(DashboardResponse{
 		TopClients:  topClients,
 		TopProducts: topProducts,
 	})
@@ -259,7 +259,7 @@ func GetSalesChart(c *fiber.Ctx) error {
 		}
 	}
 
-	return c.JSON(generated)
+	return c.Status(fiber.StatusOK).JSON(generated)
 }
 
 // Helper to get PostgreSQL date format

@@ -323,7 +323,7 @@ func DeleteProduct(c *fiber.Ctx) error {
 	id, err := guuid.Parse(c.Params("id"))
 
 	if err != nil {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status":  400,
 			"success": false,
 			"message": "Invalid ID format",
@@ -334,14 +334,14 @@ func DeleteProduct(c *fiber.Ctx) error {
 	err = db.Where("id = ?", id).Delete(&model.Product{}).Error
 
 	if err != nil {
-		return c.JSON(fiber.Map{
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"status":  500,
 			"success": false,
 			"message": "Failed to delete Product",
 		})
 	}
 
-	return c.JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"status":  200,
 		"success": true,
 		"message": "Product was removed",
