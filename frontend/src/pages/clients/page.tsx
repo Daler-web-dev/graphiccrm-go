@@ -84,27 +84,26 @@ export const Clients: React.FC = () => {
                     <LoaderTable />
                 ) : (
                     <>
-                        <Table>
+                        <Table className='border-spacing-y-2 border-separate'>
                             <TableHeader>
                                 <TableRow className="border-none hover:bg-white">
-                                    <TableHead>#</TableHead>
-                                    <TableHead>Имя</TableHead>
-                                    <TableHead>Контакт</TableHead>
-                                    <TableHead>Адрес</TableHead>
-                                    <TableHead>Общий долг</TableHead>
+                                    <TableHead className='text-left text-base font-semibold'>#</TableHead>
+                                    <TableHead className='text-left text-base font-semibold'>Имя</TableHead>
+                                    <TableHead className='text-left text-base font-semibold'>Контакт</TableHead>
+                                    <TableHead className='text-left text-base font-semibold'>Адрес</TableHead>
+                                    <TableHead className='text-left text-base font-semibold'>Общий долг</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {data && data.length > 0 ? data.map((client, idx) => (
-                                    <TableRow className='text-left cursor-pointer' key={idx} onClick={() => navigate(`/clients/${client.id}`)}>
-                                        <TableCell>{idx + 1}</TableCell>
-                                        <TableCell className='flex gap-1 justify-start items-center'>
-                                            <img src={import.meta.env.VITE_API_URL + '/' + client.image} alt="client image" loading='lazy' className='w-10 h-10 object-cover rounded-lg' />
-                                            {client.name}
+                                    <TableRow className='bg-[#F2F2F2] hover:bg-[#F2F2F2]/80 border-none cursor-pointer' key={idx} onClick={() => navigate(`/clients/${client.id}`)}>
+                                        <TableCell className='text-base rounded-s-xl relative after:content-[""] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50'>{idx + 1}</TableCell>
+                                        <TableCell className='flex gap-1 justify-start items-center text-base rounded-s-xl relative after:content-[""] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50'>
+                                            {client.name} {client.surname}
                                         </TableCell>
-                                        <TableCell>{client.contactInfo}</TableCell>
-                                        <TableCell>{client.address}</TableCell>
-                                        <TableCell>{formatPrice(client.balance)}</TableCell>
+                                        <TableCell className='text-base text-left relative after:content-[""] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50'>{client.contactInfo}</TableCell>
+                                        <TableCell className='text-base text-left relative after:content-[""] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50'>{client.address}</TableCell>
+                                        <TableCell className='text-base text-left rounded-e-xl'>{formatPrice(client.balance)}</TableCell>
                                     </TableRow>
                                 )) : (
                                     <TableRow>

@@ -82,7 +82,7 @@ export const Orders: React.FC = () => {
 						<LoaderTable />
 					) : (
 						<>
-							<Table>
+							<Table className='border-spacing-y-2 border-separate'>
 								<TableHeader>
 									<TableRow className="hover:bg-white border-none">
 										<TableHead>#</TableHead>
@@ -95,40 +95,40 @@ export const Orders: React.FC = () => {
 								</TableHeader>
 								<TableBody>
 									{data.length > 0 ? data.map((item, index) => (
-										<TableRow className='text-left cursor-pointer' key={index} onClick={() => navigate(`/orders/${item?.id}`)}>
-											<TableCell>{index + 1}</TableCell>
-											<TableCell>{item?.id}</TableCell>
-											<TableCell>{item?.createdAt.split('T')[0]}</TableCell>
-											<TableCell>{formatPrice(item?.totalPrice)}</TableCell>
-											<TableCell>{item?.paymentMethod === 'cash' ? 'Наличными' : item?.paymentMethod === "transfer" ? "Переводом" : "Картой"}</TableCell>
-											<TableCell className={cn(item.status === "accepted" ? "text-cDarkBlue" : "text-red-600")}>
-												{item.status !== "pending" ?
-													item.status === "accepted" ? "Принят" : "Отклонен" : (
-														<div className='z-10'>
-															<Button
-																variant="custom"
-																onClick={(e) => {
-																	e.stopPropagation();
-																	handleStatusChange(item.id, 'accepted')
-																}}
-																className="bg-green-500 text-white py-2 px-3 rounded-lg"
-															>
-																<Check />
-															</Button>
-															<Button
-																variant="custom"
-																onClick={(e) => {
-																	e.stopPropagation();
-																	handleStatusChange(item.id, 'rejected')
-																}}
-																className="bg-red-500 text-white py-2 px-3 rounded-lg ml-1"
-															>
-																<X />
-															</Button>
-														</div>
-													)
-												}
-											</TableCell>
+										<TableRow className='bg-[#F2F2F2] hover:bg-[#F2F2F2]/80 border-none cursor-pointer text-left' key={index} onClick={() => navigate(`/orders/${item?.id}`)}>
+											<TableCell className='text-base rounded-s-xl relative after:content-[""] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50'>{index + 1}</TableCell>
+											<TableCell className='text-base text-left relative after:content-[""] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50'>{item?.id}</TableCell>
+											<TableCell className='text-base text-left relative after:content-[""] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50'>{item?.createdAt.split('T')[0]}</TableCell>
+											<TableCell className='text-base text-left relative after:content-[""] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50'>{formatPrice(item?.totalPrice)}</TableCell>
+											<TableCell className='text-base text-left relative after:content-[""] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50'>{item?.paymentMethod === 'cash' ? 'Наличными' : item?.paymentMethod === "transfer" ? "Переводом" : "Картой"}</TableCell>
+											{item?.status === "pending" ? (
+												<div className='z-10'>
+													<Button
+														variant="custom"
+														onClick={(e) => {
+															e.stopPropagation();
+															handleStatusChange(item.id, 'accepted')
+														}}
+														className="bg-green-500 text-white py-2 px-3 rounded-lg"
+													>
+														<Check />
+													</Button>
+													<Button
+														variant="custom"
+														onClick={(e) => {
+															e.stopPropagation();
+															handleStatusChange(item.id, 'rejected')
+														}}
+														className="bg-red-500 text-white py-2 px-3 rounded-lg ml-1"
+													>
+														<X />
+													</Button>
+												</div>
+											) : (
+												<TableCell
+													className={cn('text-base text-left rounded-e-xl', item?.status === "delivered" ? "text-green-600" : item?.status === "in_production" ? "text-cDarkBlue" : item?.status === "accepted" ? "text-cLightBlue" : item?.status === "rejected" ? "text-red-600" : "text-gray-400")}
+												>{item?.status === "delivered" ? "Доставлено" : item?.status === "in_production" ? "В производстве" : item?.status === "ready" ? "Готово" : item?.status === "accepted" ? "Принято" : item?.status === "rejected" ? "Отклонено" : "В ожидании"}</TableCell>
+											)}
 										</TableRow>
 									)) : (
 										<TableRow>

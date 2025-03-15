@@ -128,7 +128,7 @@ export const Products: React.FC = () => {
                         <LoaderTable />
                     ) : (
                         <>
-                            <Table>
+                            <Table className="border-spacing-y-2 border-separate">
                                 <TableHeader>
                                     <TableRow className='hover:bg-white border-none'>
                                         <TableHead>№</TableHead>
@@ -143,17 +143,17 @@ export const Products: React.FC = () => {
                                 <TableBody>
                                     {data && data.length > 0 ? (
                                         data.map((item: IProduct, idx: number) => (
-                                            <TableRow className='text-left cursor-pointer' key={idx} onClick={() => navigate(`/products/${item.id}`)}>
-                                                <TableCell>{idx + 1}</TableCell>
-                                                <TableCell className='flex gap-1 items-center'>
+                                            <TableRow className='bg-[#F2F2F2] hover:bg-[#F2F2F2]/80 border-none text-left cursor-pointer' key={idx} onClick={() => navigate(`/products/${item.id}`)}>
+                                                <TableCell className='text-base rounded-s-xl relative after:content-[""] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50'>{idx + 1}</TableCell>
+                                                <TableCell className='flex gap-1 items-center text-base text-left relative after:content-[""] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50'>
                                                     <img src={item.image !== "" ? import.meta.env.VITE_API_URL + "/" + item.image : "/images/humanPlaceholder.png"} alt="product image" loading='lazy' className='w-10 h-10 object-cover rounded-lg border border-gray-200' />
                                                     {item.name}
                                                 </TableCell>
-                                                <TableCell>{formatPrice(item.price)}</TableCell>
-                                                <TableCell>{item.amount} шт.</TableCell>
-                                                <TableCell>{formatPrice(item.price * item.amount)}</TableCell>
-                                                <TableCell>{item.unit === 'piece' ? 'В штуках' : 'В метрах'}</TableCell>
-                                                <TableCell>{item?.category?.name}</TableCell>
+                                                <TableCell className="text-base text-left relative after:content-[''] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50">{formatPrice(item.price)}</TableCell>
+                                                <TableCell className="text-base text-left relative after:content-[''] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50">{item.amount} шт.</TableCell>
+                                                <TableCell className="text-base text-left relative after:content-[''] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50">{formatPrice(item.price * item.amount)}</TableCell>
+                                                <TableCell className="text-base text-left relative after:content-[''] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50">{item.unit === 'piece' ? 'В штуках' : 'В метрах'}</TableCell>
+                                                <TableCell className="text-base rounded-e-xl">{item?.category?.name}</TableCell>
                                             </TableRow>
                                         ))
                                     ) : (

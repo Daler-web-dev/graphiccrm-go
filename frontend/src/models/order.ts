@@ -1,6 +1,8 @@
+import { PaymentMethod } from "@/types/paymentMethod"
 import { IClient } from "./clients"
 import { IEmployee } from "./employees"
 import { IProduct } from "./products"
+import { OrderStatus } from "@/types/orderStatus"
 
 export interface IOrder {
     id: string
@@ -9,8 +11,8 @@ export interface IOrder {
     clientId: string
     client: IClient
     products: IOrderItem[]
-    status: string
-    paymentMethod: string
+    status: OrderStatus
+    paymentMethod: PaymentMethod
     totalPrice: number
     createdAt: string
     updatedAt: string

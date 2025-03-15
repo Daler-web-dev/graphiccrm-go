@@ -1,76 +1,111 @@
-"use client";
+import React, { useEffect, useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Area, AreaChart, XAxis, YAxis } from "recharts"
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { getRequest } from '@/lib/apiHandlers';
+import { toast } from '@/hooks/use-toast';
 
-import { TrendingUp } from "lucide-react";
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+interface IChart {
+	month: string;
+	value: number;
+}
 
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
-import {
-	ChartConfig,
-	ChartContainer,
-	ChartTooltip,
-	ChartTooltipContent,
-} from "@/components/ui/chart";
+const formatData = (data: { total_amount: number, date: string }[], interval: string) => {
+	const monthNames = ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"];
 
-const chartData = [
-	{ month: "Январь", desktop: 100 },
-	{ month: "Февраль", desktop: 125 },
-	{ month: "Март", desktop: 140 },
-	{ month: "Апрель", desktop: 100 },
-	{ month: "Май", desktop: 130 },
-	{ month: "Июнь", desktop: 160 },
-	{ month: "Июль", desktop: 200 },
-	{ month: "Август", desktop: 230 },
-	{ month: "Сентябрь", desktop: 210 },
-	{ month: "Октябрь", desktop: 180 },
-	{ month: "Ноябрь", desktop: 150 },
-	{ month: "Декабрь", desktop: 200 },
-];
+	return data.map(item => {
+		const date = new Date(item.date);
 
-const chartConfig = {
-	desktop: {
-		label: "Продажи:",
-		color: "hsl(var(--chart-1))",
-	},
-} satisfies ChartConfig;
+		let label = "";
+		if (interval === "year") {
+			label = monthNames[date.getUTCMonth()];
+		} else if (interval === "month") {
+			const day = date.getUTCDate();
+			label = `${day.toString().padStart(2, '0')}.${(date.getUTCMonth() + 1).toString().padStart(2, '0')}`;  // dd.mm
+		}
 
-export function Chart() {
+		return {
+			month: label,
+			value: item.total_amount,
+		};
+	});
+};
+
+interface Props {
+	className?: string;
+}
+
+export const Chart: React.FC<Props> = ({ className }) => {
+	const [revenuePeriod, setRevenuePeriod] = useState("year");
+	const [revenueData, setRevenueData] = useState<IChart[]>();
+
+	useEffect(() => {
+		const fetchData = async () => {
+			const revenueRes = await getRequest({ url: '/statistics/chart', params: { period: 'year' } });
+
+			if (revenueRes.status === 200 || revenueRes.status === 201) {
+				const formattedRevenueData = formatData(revenueRes.data, 'year');
+				setRevenueData(formattedRevenueData);
+			} else {
+				toast({
+					title: 'Ошибка',
+					description: 'Произошла ошибка при загрузке выручки',
+					variant: 'destructive',
+				})
+			}
+		}
+
+		fetchData();
+	}, []);
+
+	const handleRevenueChange = async (value: string) => {
+		if (revenuePeriod === value) return;
+		setRevenuePeriod(value);
+		const res = await getRequest({ url: '/statistics/chart', params: { period: value } });
+		if (res.status === 200 || res.status === 201) {
+			const formattedRevenueData = formatData(res.data, value);
+			setRevenueData(formattedRevenueData);
+		} else {
+			toast({
+				title: 'Ошибка',
+				description: 'Произошла ошибка при загрузке выручки',
+				variant: 'destructive',
+			});
+		}
+	};
+
 	return (
-		<Card>
-			<CardHeader className="w-full flex justify-between items-center px-8">
-				<div>
-					<CardTitle className="text-cBlack">Дэшборд</CardTitle>
-					<CardDescription className="text-cLightBlue">
-						Годовой оборот
-					</CardDescription>
-				</div>
-				<div>
-					<CardDescription className="text-cLightBlue">
-						Общая сумма
-					</CardDescription>
-					<CardTitle className="flex justify-center items-center gap-5 text-cBlack">
-						77,777,777 сум
-						<div className="text-white p-2 rounded-3xl bg-cLightBlue flex justify-center items-center gap-2 font-medium text-xs">
-							<TrendingUp className="h-4 w-4" />
-							23.5%
-						</div>
-					</CardTitle>
-				</div>
+		<Card className={className}>
+			<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-7">
+				<CardTitle className="text-xl font-normal">Выручка</CardTitle>
+				<Select value={revenuePeriod} onValueChange={handleRevenueChange}>
+					<SelectTrigger className="w-[120px]">
+						<SelectValue placeholder="Месяц" />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectItem value="month">Месяц</SelectItem>
+						<SelectItem value="year">Год</SelectItem>
+					</SelectContent>
+				</Select>
 			</CardHeader>
 			<CardContent>
-				<ChartContainer config={chartConfig}>
+				<ChartContainer
+					config={{
+						value: {
+							label: "Выручка",
+							color: "hsl(24.6 95% 53.1%)",
+						},
+					}}
+					className="w-full h-[200px]"
+				>
 					<AreaChart
-						accessibilityLayer
-						data={chartData}
+						data={revenueData}
 						margin={{
-							top: 10,
-							left: -20,
-							right: 0,
+							top: 5,
+							right: 10,
+							left: 10,
+							bottom: 20,
 						}}
 					>
 						<defs>
@@ -93,34 +128,31 @@ export function Chart() {
 								/>
 							</linearGradient>
 						</defs>
-						<YAxis
-							tickLine={false}
-							axisLine={false}
-							tickMargin={8}
-							tickFormatter={(value) => `${value}`}
-						/>
-						<CartesianGrid vertical={false} />
 						<XAxis
 							dataKey="month"
+							stroke="hsl(var(--muted-foreground))"
 							tickLine={false}
 							axisLine={false}
-							tickMargin={8}
-							tickFormatter={(value) => value.slice(0, 3)}
+							dy={10}
 						/>
-						<ChartTooltip
-							cursor={false}
-							content={<ChartTooltipContent indicator="line" />}
+						<YAxis
+							stroke="hsl(var(--muted-foreground))"
+							tickLine={false}
+							axisLine={false}
+							tickFormatter={(value) => `${value / 1000}к`}
+							dx={-10}
 						/>
 						<Area
-							dataKey="desktop"
-							type="natural"
+							type="monotone"
+							dataKey="value"
 							fill="url(#desktopGradient)"
 							fillOpacity={1}
 							stroke="#002395"
 						/>
+						<ChartTooltip content={<ChartTooltipContent />} />
 					</AreaChart>
 				</ChartContainer>
 			</CardContent>
 		</Card>
 	);
-}
+};
