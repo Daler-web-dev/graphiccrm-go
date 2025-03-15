@@ -1,6 +1,7 @@
 import { LoaderTable } from "@/components/custom/LoaderTable";
 import { OrdersQuery } from "@/components/custom/OrdersQuery";
 import Pagination from "@/components/custom/Pagination";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
 	Table,
@@ -11,9 +12,10 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
-import { getRequest } from "@/lib/apiHandlers";
+import { getRequest, postRequest } from "@/lib/apiHandlers";
 import { cn, formatPrice } from "@/lib/utils";
 import { IOrder } from "@/models/order";
+import { Check, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -23,8 +25,8 @@ export const Orders: React.FC = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
 	const [loading, setLoading] = useState(true);
+	const [isStatusChanged, setIsStatusChanged] = useState(false);
 	const [queryParams, setQueryParams] = useState({});
-
 
 	const loadPageData = async (page: number, params: any) => {
 		setLoading(true);
@@ -47,6 +49,24 @@ export const Orders: React.FC = () => {
 		loadPageData(currentPage, queryParams);
 	}, [currentPage, queryParams]);
 
+	const handleStatusChange = async (id: string, status: string) => {
+		const res = await postRequest({ url: `/orders/${id}/${status.split('ed')[0]}` });
+
+		if (res.status === 200 || res.status === 201) {
+			toast({
+				title: 'Успешно',
+				description: 'Статус успешно изменен',
+			})
+			setIsStatusChanged(!isStatusChanged);
+		} else {
+			toast({
+				title: 'Ошибка',
+				description: 'Произошла ошибка при изменении статуса',
+				variant: 'destructive',
+			})
+		}
+	};
+
 	return (
 		<div className="w-full relative">
 			<Card>
@@ -62,9 +82,9 @@ export const Orders: React.FC = () => {
 						<LoaderTable />
 					) : (
 						<>
-							<Table>
+							<Table className='border-spacing-y-2 border-separate'>
 								<TableHeader>
-									<TableRow className="hover:bg-white border-none text-base">
+									<TableRow className="hover:bg-white border-none">
 										<TableHead>#</TableHead>
 										<TableHead>Номер</TableHead>
 										<TableHead>Дата</TableHead>
@@ -75,23 +95,44 @@ export const Orders: React.FC = () => {
 								</TableHeader>
 								<TableBody>
 									{data.length > 0 ? data.map((item, index) => (
-										<TableRow
-											className='text-left cursor-pointer text-base'
-											key={index}
-											onClick={() => navigate(`/orders/${item?.id}`)}
-										>
-											<TableCell>{index + 1}</TableCell>
-											<TableCell>№ {item?.id}</TableCell>
-											<TableCell>{item?.createdAt.split('T')[0]}</TableCell>
-											<TableCell>{formatPrice(item?.totalPrice)}</TableCell>
-											<TableCell>{item?.paymentMethod === 'cash' ? 'Наличными' : item?.paymentMethod === "transfer" ? "Переводом" : "Картой"}</TableCell>
-											<TableCell
-												className={cn(item?.status === "delivered" ? "text-green-600" : item?.status === "in_production" ? "text-cDarkBlue" : item?.status === "pending" ? "text-gray-400" : item?.status === "accepted" ? "text-cLightBlue" : "text-red-600")}
-											>{item?.status === "delivered" ? "Доставлен" : item?.status === "in_production" ? "В производстве" : item?.status === "pending" ? "В обработке" : item?.status === "accepted" ? "Принят" : "Отклонен"}</TableCell>
+										<TableRow className='bg-[#F2F2F2] hover:bg-[#F2F2F2]/80 border-none cursor-pointer text-left' key={index} onClick={() => navigate(`/orders/${item?.id}`)}>
+											<TableCell className='text-base rounded-s-xl relative after:content-[""] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50'>{index + 1}</TableCell>
+											<TableCell className='text-base text-left relative after:content-[""] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50'>{item?.id}</TableCell>
+											<TableCell className='text-base text-left relative after:content-[""] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50'>{item?.createdAt.split('T')[0]}</TableCell>
+											<TableCell className='text-base text-left relative after:content-[""] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50'>{formatPrice(item?.totalPrice)}</TableCell>
+											<TableCell className='text-base text-left relative after:content-[""] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50'>{item?.paymentMethod === 'cash' ? 'Наличными' : item?.paymentMethod === "transfer" ? "Переводом" : "Картой"}</TableCell>
+											{item?.status === "pending" ? (
+												<div className='z-10'>
+													<Button
+														variant="custom"
+														onClick={(e) => {
+															e.stopPropagation();
+															handleStatusChange(item.id, 'accepted')
+														}}
+														className="bg-green-500 text-white py-2 px-3 rounded-lg"
+													>
+														<Check />
+													</Button>
+													<Button
+														variant="custom"
+														onClick={(e) => {
+															e.stopPropagation();
+															handleStatusChange(item.id, 'rejected')
+														}}
+														className="bg-red-500 text-white py-2 px-3 rounded-lg ml-1"
+													>
+														<X />
+													</Button>
+												</div>
+											) : (
+												<TableCell
+													className={cn('text-base text-left rounded-e-xl', item?.status === "delivered" ? "text-green-600" : item?.status === "in_production" ? "text-cDarkBlue" : item?.status === "ready" ? "text-cDarkBlue/80" : item?.status === "accepted" ? "text-cLightBlue" : item?.status === "rejected" ? "text-red-600" : "text-gray-400")}
+												>{item?.status === "delivered" ? "Доставлено" : item?.status === "in_production" ? "В производстве" : item?.status === "ready" ? "Готово" : item?.status === "accepted" ? "Принято" : item?.status === "rejected" ? "Отклонено" : "В ожидании"}</TableCell>
+											)}
 										</TableRow>
 									)) : (
 										<TableRow>
-											<TableCell className="text-base text-center rounded-xl" colSpan={6}>
+											<TableCell className="text-base text-center rounded-xl" colSpan={7}>
 												Нет данных по вашему запросу
 											</TableCell>
 										</TableRow>
