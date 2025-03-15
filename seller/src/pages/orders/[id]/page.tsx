@@ -98,7 +98,7 @@ export const Order: React.FC = () => {
 								</div>
 								<div className="flex justify-between items-center text-black/80">
 									<p className="text-base font-normal">Статус заказа:</p>
-									<span className={cn("text-base font-semibold", order?.status === "delivered" ? "text-green-600" : order?.status === "in_production" ? "text-cDarkBlue" : order?.status === "pending" ? "text-gray-400" : order?.status === "accepted" ? "text-cLightBlue" : "text-red-600")}>{order?.status === "delivered" ? "Доставлено" : order?.status === "in_production" ? "В производстве" : order?.status === "pending" ? "В ожидании" : order?.status === "ready" ? "Готово" : order?.status === "accepted" ? "Принято" : "Отклонено"}</span>
+									<span className={cn("text-base font-semibold", order?.status === "delivered" ? "text-green-600" : order?.status === "ready" ? "text-cDarkBlue/80" : order?.status === "in_production" ? "text-cDarkBlue" : order?.status === "pending" ? "text-gray-400" : order?.status === "accepted" ? "text-cLightBlue" : "text-red-600")}>{order?.status === "delivered" ? "Доставлено" : order?.status === "in_production" ? "В производстве" : order?.status === "pending" ? "В ожидании" : order?.status === "ready" ? "Готово" : order?.status === "accepted" ? "Принято" : "Отклонено"}</span>
 								</div>
 								<div className="flex justify-between items-center text-black/80">
 									<p className="text-base font-normal">Сумма заказа:</p>
