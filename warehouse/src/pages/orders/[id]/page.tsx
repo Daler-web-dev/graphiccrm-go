@@ -8,12 +8,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
 import { getRequest, postRequest } from "@/lib/apiHandlers";
-import { formatPrice } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { IOrder } from "@/models/order";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export const Order: React.FC = () => {
+	const navigate = useNavigate();
 	const { id } = useParams();
 	const [loading, setLoading] = useState(false);
 	const [order, setOrder] = useState<IOrder>();
@@ -99,44 +100,45 @@ export const Order: React.FC = () => {
 					<div className="absolute -top-20 right-5">
 						<Select onValueChange={(value) => onChangeStatus(value)}>
 							<SelectTrigger className="w-96">
-								<SelectValue placeholder={order?.status && order.status.charAt(0).toUpperCase() + order.status.slice(1)} />
+								<SelectValue placeholder={order?.status === "delivered" ? "Доставлено" : order?.status === "in_production" ? "На производстве" : order?.status === "ready" ? "Готово" : order?.status === "accepted" ? "Принято" : order?.status === "rejected" ? "Отклонено" : "В ожидании"} />
 							</SelectTrigger>
 							<SelectContent>
 								<SelectItem value="in_production">На производстве</SelectItem>
-								<SelectItem value="delivered">Доставлен</SelectItem>
+								<SelectItem value="ready">Готово</SelectItem>
+								<SelectItem value="delivered">Доставлено</SelectItem>
 							</SelectContent>
 						</Select>
 					</div>
 					<Card className="flex flex-col items-start gap-5 p-5">
-						<CardTitle>Заказ № {id}</CardTitle>
+						<CardTitle className="text-xl font-semibold text-black/80">Заказ № {id}</CardTitle>
 						<div className="w-full flex justify-between items-center gap-5">
 							<div className="w-full space-y-2">
-								<div className="flex justify-between items-center">
-									<p className="text-xl font-normal">Взял заказ:</p>
-									<span className="text-xl font-semibold">{order?.salesperson?.username}</span>
+								<div className="flex justify-between items-center text-black/80">
+									<p className="text-base font-normal">Взял заказ:</p>
+									<span className="text-base font-semibold">{order?.salesperson?.username}</span>
 								</div>
-								<div className="flex justify-between items-center">
-									<p className="text-xl font-normal">Клиент:</p>
-									<span className="text-xl font-semibold">{order?.client?.name}</span>
+								<div className="flex justify-between items-center text-black/80">
+									<p className="text-base font-normal">Клиент:</p>
+									<span className="text-base font-semibold">{order?.client?.name} {order?.client?.surname}</span>
 								</div>
-								<div className="flex justify-between items-center">
-									<p className="text-xl font-normal">Догл клиент:</p>
-									<span className="text-xl font-semibold">{formatPrice(order?.client?.balance || 0)}</span>
+								<div className="flex justify-between items-center text-black/80">
+									<p className="text-base font-normal">Догл клиент:</p>
+									<span className="text-base font-semibold">{formatPrice(order?.client?.balance as number)}</span>
 								</div>
 							</div>
-							<div className="w-px h-20 bg-black"></div>
+							<div className="w-px h-20 bg-black/80"></div>
 							<div className="w-full space-y-2">
-								<div className="flex justify-between items-center">
-									<p className="text-xl font-normal">Тип оплаты:</p>
-									<span className="text-xl font-semibold">{order?.paymentMethod && order?.paymentMethod.charAt(0).toUpperCase() + order?.paymentMethod.slice(1)}</span>
+								<div className="flex justify-between items-center text-black/80">
+									<p className="text-base font-normal">Тип оплаты:</p>
+									<span className="text-base font-semibold">{order?.paymentMethod === 'cash' ? 'Наличные' : order?.paymentMethod === "transfer" ? "Перевод" : "Догл"}</span>
 								</div>
-								<div className="flex justify-between items-center">
-									<p className="text-xl font-normal">Статус заказа:</p>
-									<span className="text-xl font-semibold">{order?.status && order?.status.charAt(0).toUpperCase() + order?.status.slice(1)}</span>
+								<div className="flex justify-between items-center text-black/80">
+									<p className="text-base font-normal">Статус заказа:</p>
+									<span className={cn("text-base font-semibold", order?.status === "delivered" ? "text-green-600" : order?.status === "ready" ? "text-cDarkBlue/80" : order?.status === "in_production" ? "text-cDarkBlue" : order?.status === "pending" ? "text-gray-400" : order?.status === "accepted" ? "text-cLightBlue" : "text-red-600")}>{order?.status === "delivered" ? "Доставлено" : order?.status === "in_production" ? "В производстве" : order?.status === "pending" ? "В ожидании" : order?.status === "ready" ? "Готово" : order?.status === "accepted" ? "Принято" : "Отклонено"}</span>
 								</div>
-								<div className="flex justify-between items-center">
-									<p className="text-xl font-normal">Сумма заказа:</p>
-									<span className="text-xl font-semibold">{formatPrice(order?.totalPrice as number)}</span>
+								<div className="flex justify-between items-center text-black/80">
+									<p className="text-base font-normal">Сумма заказа:</p>
+									<span className="text-base font-semibold">{formatPrice(order?.totalPrice as number)}</span>
 								</div>
 							</div>
 						</div>
@@ -155,21 +157,22 @@ export const Order: React.FC = () => {
 								{order?.products && order.products.length > 0 ? order.products.map((item, idx) => (
 									<TableRow
 										key={item?.id}
-										className="bg-[#F2F2F2] hover:bg-[#F2F2F2]/80 border-none"
+										className="bg-[#F2F2F2] hover:bg-[#F2F2F2]/80 border-none cursor-pointer text-left"
+										onClick={() => navigate(`/products/${item?.product?.id}`)}
 									>
-										<TableCell className="text-base rounded-s-xl">
+										<TableCell className='text-base rounded-s-xl relative after:content-[""] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50'>
 											{idx + 1}
 										</TableCell>
-										<TableCell className="text-base">
+										<TableCell className="text-base text-left relative after:content-[''] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50">
 											<div className='flex justify-start items-center gap-1'>
-												<img src={item?.product?.image !== "" ? import.meta.env.VITE_API_URL + "/" + item?.product?.image : "/images/humanPlaceholder.png"} alt="product image" className='w-14 h-14 p-1 bg-white rounded-md border object-cover border-cGray' />
+												<img src={item?.product?.image !== "" ? import.meta.env.VITE_API_URL + "/" + item?.product?.image : "/images/humanPlaceholder.png"} alt="product image" className='w-10 h-10 bg-white rounded-md border object-cover border-cGray' />
 												{item?.product?.name}
 											</div>
 										</TableCell>
-										<TableCell className="text-base text-left">
+										<TableCell className="text-base text-left relative after:content-[''] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50">
 											{item?.quantity} шт.
 										</TableCell>
-										<TableCell className="text-base text-left rounded-e-xl">
+										<TableCell className="text-base rounded-e-xl">
 											{formatPrice(item?.totalPrice)}
 										</TableCell>
 									</TableRow>

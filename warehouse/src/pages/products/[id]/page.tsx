@@ -53,7 +53,7 @@ export const Product: React.FC = () => {
             ) : (
                 <div className='flex justify-center items-start gap-5'>
                     <div className='w-[40%]'>
-                        <img src={data?.image !== "" ? import.meta.env.VITE_API_URL + "/" + data?.image : "/images/humanPlaceholder.png"} alt="product image" className='object-cover rounded-3xl w-full aspect-square border border-gray-200' />
+                        <img src={data?.image !== "" ? import.meta.env.VITE_API_URL + "/" + data?.image : "/images/humanPlaceholder.png"} alt="product image" className='object-cover rounded-3xl w-full aspect-square border border-gray-200 bg-[#F2F2F2]' />
                         <div className='flex gap-3 absolute -top-24 right-5'>
                             <Button
                                 variant={"customOutline"}
@@ -74,34 +74,34 @@ export const Product: React.FC = () => {
                             </DeleteModal>
                         </div>
                     </div>
-                    <div className='w-[60%]'>
-                        <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                            <h4 className='font-semibold text-lg text-cDarkBlue'>Имя</h4>
-                            <p className='text-cDarkBlue text-xl'>{data?.name}</p>
+                    <div className='w-[60%] flex flex-col gap-2'>
+                        <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg bg-[#F2F2F2]'>
+                            <h4 className='font-semibold text-base text-cDarkBlue'>Имя</h4>
+                            <p className='text-cDarkBlue text-base'>{data?.name}</p>
                         </div>
-                        <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                            <h4 className='font-semibold text-lg text-cDarkBlue'>Стоимость</h4>
-                            <p className='text-cDarkBlue text-xl'>{formatPrice(data?.price || 0)}</p>
+                        <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg bg-[#F2F2F2]'>
+                            <h4 className='font-semibold text-base text-cDarkBlue'>Стоимость</h4>
+                            <p className='text-cDarkBlue text-base'>{formatPrice(data?.price || 0)}</p>
                         </div>
-                        <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                            <h4 className='font-semibold text-lg text-cDarkBlue'>Кол-во на складе</h4>
-                            <p className='text-cDarkBlue text-xl'>{data?.amount || 0} {data?.unit === "piece" ? "шт." : "см."}</p>
+                        <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg bg-[#F2F2F2]'>
+                            <h4 className='font-semibold text-base text-cDarkBlue'>Кол-во на складе</h4>
+                            <p className='text-cDarkBlue text-base'>{data?.amount || 0} шт.</p>
                         </div>
-                        <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                            <h4 className='font-semibold text-lg text-cDarkBlue'>Сумма на складе</h4>
-                            <p className='text-cDarkBlue text-xl'>{formatPrice((data?.amount || 0) * (data?.price || 0))}</p>
+                        <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg bg-[#F2F2F2]'>
+                            <h4 className='font-semibold text-base text-cDarkBlue'>Сумма на складе</h4>
+                            <p className='text-cDarkBlue text-base'>{formatPrice((data?.amount || 0) * (data?.price || 0))}</p>
                         </div>
-                        <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                            <h4 className='font-semibold text-lg text-cDarkBlue'>Высота</h4>
-                            <p className='text-cDarkBlue text-xl'>{data?.height || 0}</p>
+                        <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg bg-[#F2F2F2]'>
+                            <h4 className='font-semibold text-base text-cDarkBlue'>Высота</h4>
+                            <p className='text-cDarkBlue text-base'>{data?.height || 0} см.</p>
                         </div>
-                        <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                            <h4 className='font-semibold text-lg text-cDarkBlue'>Ширина</h4>
-                            <p className='text-cDarkBlue text-xl'>{data?.width || 0}</p>
+                        <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg bg-[#F2F2F2]'>
+                            <h4 className='font-semibold text-base text-cDarkBlue'>Ширина</h4>
+                            <p className='text-cDarkBlue text-base'>{data?.width || 0} см.</p>
                         </div>
-                        <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                            <h4 className='font-semibold text-lg text-cDarkBlue'>Единица измерения</h4>
-                            <p className='text-cDarkBlue text-xl'>{data?.unit === "piece" ? "В штуках" : "В сантиметрах"}</p>
+                        <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg bg-[#F2F2F2]'>
+                            <h4 className='font-semibold text-base text-cDarkBlue'>Единица измерения</h4>
+                            <p className='text-cDarkBlue text-base'>{data?.unit === "piece" ? "В штуках" : "В сантиметрах"}</p>
                         </div>
                     </div>
                 </div>
