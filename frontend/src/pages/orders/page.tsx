@@ -126,7 +126,7 @@ export const Orders: React.FC = () => {
 												</div>
 											) : (
 												<TableCell
-													className={cn('text-base text-left rounded-e-xl', item?.status === "delivered" ? "text-green-600" : item?.status === "in_production" ? "text-cDarkBlue" : item?.status === "accepted" ? "text-cLightBlue" : item?.status === "rejected" ? "text-red-600" : "text-gray-400")}
+													className={cn('text-base text-left rounded-e-xl', item?.status === "delivered" ? "text-green-600" : item?.status === "ready" ? "text-cDarkBlue/80" : item?.status === "in_production" ? "text-cDarkBlue" : item?.status === "accepted" ? "text-cLightBlue" : item?.status === "rejected" ? "text-red-600" : "text-gray-400")}
 												>{item?.status === "delivered" ? "Доставлено" : item?.status === "in_production" ? "В производстве" : item?.status === "ready" ? "Готово" : item?.status === "accepted" ? "Принято" : item?.status === "rejected" ? "Отклонено" : "В ожидании"}</TableCell>
 											)}
 										</TableRow>
