@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Line, LineChart, XAxis, YAxis } from "recharts"
+import { Area, AreaChart, XAxis, YAxis } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { getRequest } from '@/lib/apiHandlers';
 import { toast } from '@/hooks/use-toast';
@@ -29,7 +29,6 @@ const formatData = (data: { total_amount: number, date: string }[], interval: st
             month: label,
             value: item.total_amount,
         };
-
     });
 };
 
@@ -48,8 +47,6 @@ export const Chart: React.FC<Props> = ({ className }) => {
             if (revenueRes.status === 200 || revenueRes.status === 201) {
                 const formattedRevenueData = formatData(revenueRes.data, 'year');
                 setRevenueData(formattedRevenueData);
-                console.log(revenueRes);
-
             } else {
                 toast({
                     title: 'Ошибка',
@@ -102,7 +99,7 @@ export const Chart: React.FC<Props> = ({ className }) => {
                     }}
                     className="w-full h-[200px]"
                 >
-                    <LineChart
+                    <AreaChart
                         data={revenueData}
                         margin={{
                             top: 5,
@@ -111,6 +108,26 @@ export const Chart: React.FC<Props> = ({ className }) => {
                             bottom: 20,
                         }}
                     >
+                        <defs>
+                            <linearGradient
+                                id="desktopGradient"
+                                x1="0"
+                                y1="0"
+                                x2="0"
+                                y2="1"
+                            >
+                                <stop
+                                    offset="10%"
+                                    stopColor="#4991EF"
+                                    stopOpacity={1}
+                                />
+                                <stop
+                                    offset="100%"
+                                    stopColor="#4991EF"
+                                    stopOpacity={0}
+                                />
+                            </linearGradient>
+                        </defs>
                         <XAxis
                             dataKey="month"
                             stroke="hsl(var(--muted-foreground))"
@@ -122,21 +139,20 @@ export const Chart: React.FC<Props> = ({ className }) => {
                             stroke="hsl(var(--muted-foreground))"
                             tickLine={false}
                             axisLine={false}
-                            tickFormatter={(value) => `${value / 1000}k`}
+                            tickFormatter={(value) => `${value / 1000}к`}
                             dx={-10}
                         />
-                        <Line
-                            stroke='#ED6E08'
+                        <Area
                             type="monotone"
                             dataKey="value"
-                            strokeWidth={2}
-                            strokeDasharray="5 5"
-                            dot={false}
+                            fill="url(#desktopGradient)"
+                            fillOpacity={1}
+                            stroke="#002395"
                         />
                         <ChartTooltip content={<ChartTooltipContent />} />
-                    </LineChart>
+                    </AreaChart>
                 </ChartContainer>
             </CardContent>
-        </Card >
+        </Card>
     );
 };

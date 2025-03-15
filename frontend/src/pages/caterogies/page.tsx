@@ -74,7 +74,7 @@ export const Categories: React.FC = () => {
 						<LoaderTable />
 					) : (
 						<>
-							<Table>
+							<Table className="border-spacing-y-2 border-separate">
 								<TableHeader>
 									<TableRow className="border-none hover:bg-white">
 										<TableHead>№</TableHead>
@@ -87,14 +87,14 @@ export const Categories: React.FC = () => {
 								<TableBody>
 									{data.length > 0 ? (
 										data.map((category, idx) => (
-											<TableRow key={category.id}>
-												<TableCell className="w-10 text-left">
+											<TableRow key={category.id} className="bg-[#F2F2F2] hover:bg-[#F2F2F2]/80 border-none text-left">
+												<TableCell className="text-base rounded-s-xl relative after:content-[''] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50 pr-10">
 													{idx + 1}
 												</TableCell>
-												<TableCell className="text-left">
+												<TableCell className="w-full text-base text-left relative after:content-[''] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50">
 													{category.name}
 												</TableCell>
-												<TableCell className="flex justify-end gap-2">
+												<TableCell className="rounded-e-xl">
 													<EditCategory
 														onUpdate={() => loadPageData(currentPage)}
 														categoryId={category.id}

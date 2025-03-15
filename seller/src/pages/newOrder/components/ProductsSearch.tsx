@@ -132,15 +132,15 @@ export function ProductSearch({ setValue }: ProductSearchProps) {
                                         return (
                                             <TableRow
                                                 key={item.id}
-                                                className="bg-[#F2F2F2] hover:bg-[#F2F2F2]/80 border-none cursor-pointer"
+                                                className="bg-[#F2F2F2] hover:bg-[#F2F2F2]/80 border-none cursor-pointer text-left"
                                             >
-                                                <TableCell className="text-base rounded-s-xl">
+                                                <TableCell className='text-base rounded-s-xl relative after:content-[""] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50'>
                                                     {idx + 1}
                                                 </TableCell>
-                                                <TableCell className="text-base text-left">{item.name}</TableCell>
-                                                <TableCell className="text-base text-left">{formatPrice(item.price)}</TableCell>
-                                                <TableCell className="text-base text-left">{item.amount} шт.</TableCell>
-                                                <TableCell className="text-base text-left">
+                                                <TableCell className="text-base text-left relative after:content-[''] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50">{item.name}</TableCell>
+                                                <TableCell className="text-base text-left relative after:content-[''] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50">{formatPrice(item.price)}</TableCell>
+                                                <TableCell className="text-base text-left relative after:content-[''] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50">{item.amount} шт.</TableCell>
+                                                <TableCell className="text-base text-left rounded-e-xl">
                                                     {cartItem ? (
                                                         <div className="space-x-3">
                                                             <input

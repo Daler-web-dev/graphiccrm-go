@@ -40,7 +40,7 @@ export default function TopRatedList() {
                 {loading ? (
                     <LoaderTable />
                 ) : (
-                    <Table>
+                    <Table className="border-spacing-y-2 border-separate">
                         <TableHeader>
                             <TableRow className="border-none hover:bg-white">
                                 <TableHead>#</TableHead>
@@ -52,14 +52,14 @@ export default function TopRatedList() {
                         <TableBody>
                             {data && data?.top_clients?.length > 0 ? data?.top_clients.map((client, idx) => (
                                 <TableRow
-                                    className='text-left cursor-pointer'
+                                    className='text-left cursor-pointer bg-[#F2F2F2] hover:bg-[#F2F2F2]/80'
                                     key={idx}
                                     onClick={() => navigate(`/clients/${client?.client_id}`)}
                                 >
-                                    <TableCell>{idx + 1}</TableCell>
-                                    <TableCell>{client?.client_name}</TableCell>
-                                    <TableCell>{client?.order_count}</TableCell>
-                                    <TableCell>{formatPrice(client?.total_spent)}</TableCell>
+                                    <TableCell className="text-base rounded-s-xl relative after:content-[''] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50">{idx + 1}</TableCell>
+                                    <TableCell className="text-base text-left relative after:content-[''] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50">{client?.client_name}</TableCell>
+                                    <TableCell className="text-base text-left relative after:content-[''] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50">{client?.order_count} шт.</TableCell>
+                                    <TableCell className="text-base rounded-e-xl">{formatPrice(client?.total_spent)}</TableCell>
                                 </TableRow>
                             )) : (
                                 <TableRow>
@@ -79,7 +79,7 @@ export default function TopRatedList() {
                 {loading ? (
                     <LoaderTable />
                 ) : (
-                    <Table>
+                    <Table className="border-spacing-y-2 border-separate">
                         <TableHeader>
                             <TableRow className="border-none hover:bg-white">
                                 <TableHead>#</TableHead>
@@ -91,14 +91,14 @@ export default function TopRatedList() {
                         <TableBody>
                             {data && data?.top_products?.length > 0 ? data?.top_products.map((product, idx) => (
                                 <TableRow
-                                    className='text-left cursor-pointer'
+                                    className='text-left cursor-pointer bg-[#F2F2F2] hover:bg-[#F2F2F2]/80'
                                     key={idx}
                                     onClick={() => navigate(`/products/${product?.product_id}`)}
                                 >
-                                    <TableCell>{idx + 1}</TableCell>
-                                    <TableCell>{product?.product_name}</TableCell>
-                                    <TableCell>{product?.units_sold}</TableCell>
-                                    <TableCell>{formatPrice(product?.total_sold)}</TableCell>
+                                    <TableCell className="text-base rounded-s-xl relative after:content-[''] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50">{idx + 1}</TableCell>
+                                    <TableCell className="text-base text-left relative after:content-[''] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50">{product?.product_name}</TableCell>
+                                    <TableCell className="text-base text-left relative after:content-[''] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50">{product?.units_sold} шт.</TableCell>
+                                    <TableCell className="text-base rounded-e-xl">{formatPrice(product?.total_sold)}</TableCell>
                                 </TableRow>
                             )) : (
                                 <TableRow>

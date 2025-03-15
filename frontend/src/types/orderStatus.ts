@@ -1,0 +1,1 @@
+export type OrderStatus = "pending" | "accepted" | "rejected" | "in_production" | "ready" | "delivered";
