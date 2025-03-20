@@ -71,6 +71,7 @@ func Initalize(router *fiber.App) {
 	orders.Post("/", handlers.CreateOrder)
 	orders.Get("/", handlers.GetAllOrders)
 	orders.Get("/:id", handlers.GetOrderByID)
+	orders.Get("/pdf/:id", handlers.GetOrderPDF)
 	// orders.Patch("/:id", handlers.UpdateOrder)
 	// orders.Delete("/:id", handlers.DeleteOrder)
 

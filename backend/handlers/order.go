@@ -5,14 +5,19 @@ import (
 	"backend/database"
 	"backend/model"
 	"backend/utils"
+	"bytes"
 	"errors"
 	"fmt"
+	"image/color"
 	"log"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	guuid "github.com/google/uuid"
+	"github.com/signintech/gopdf"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -494,4 +499,228 @@ func DeleteOrder(c *fiber.Ctx) error {
 		"success": true,
 		"message": "Order was removed",
 	})
+}
+
+func GetOrderPDF(c *fiber.Ctx) error {
+	id := c.Params("id")
+	db := database.DB
+
+	var order model.Order
+	if err := db.Preload(clause.Associations).Preload("Products.Product").First(&order, "id = ?", id).Error; err != nil {
+		return c.Status(404).SendString("Заказ не найден")
+	}
+
+	pdfData, err := generatePDF(order)
+	log.Println(err)
+	if err != nil {
+		return c.Status(500).SendString("Ошибка генерации PDF")
+	}
+
+	c.Set("Content-Type", "application/pdf")
+	c.Set("Content-Disposition", "attachment; filename=order.pdf")
+	return c.Send(pdfData)
+}
+
+func generatePDF(order model.Order) ([]byte, error) {
+	pdf := gopdf.GoPdf{}
+	pdf.Start(gopdf.Config{PageSize: *gopdf.PageSizeA4})
+	pdf.AddPage()
+
+	// Константы стилей
+	const (
+		margin         = 40.0
+		headerFontSize = 24.0
+		titleFontSize  = 18.0
+		bodyFontSize   = 12.0
+		smallFontSize  = 10.0
+		primaryColor   = "#2d3436"
+		secondaryColor = "#636e72"
+		accentColor    = "#0984e3"
+		lineHeight     = 1.4
+		logoPath       = "assets/logo.png"
+	)
+
+	// Хелпер-функции
+	setFont := func(font string, size float64) {
+		pdf.SetFont(font, "", size)
+	}
+
+	setColor := func(hex string) {
+		if hex == "" {
+			hex = primaryColor
+		}
+		c := parseHexColor(hex)
+		pdf.SetTextColor(c.R, c.G, c.B)
+	}
+
+	addText := func(x, y float64, text string, font string, size float64, color string) {
+		setFont(font, size)
+		setColor(color)
+		pdf.SetX(x)
+		pdf.SetY(y)
+		pdf.Cell(nil, text)
+	}
+
+	// Загрузка шрифтов
+	if err := pdf.AddTTFFont("roboto", "assets/Roboto-Regular.ttf"); err != nil {
+		return nil, err
+	}
+	if err := pdf.AddTTFFont("roboto-bold", "assets/Roboto-Bold.ttf"); err != nil {
+		return nil, err
+	}
+
+	// Логотип
+	if err := pdf.Image(logoPath, margin, margin, &gopdf.Rect{
+		W: 60,
+		H: 60,
+	}); err != nil {
+		return nil, fmt.Errorf("failed to add logo: %v", err)
+	}
+
+	// Заголовок
+	addText(margin+80, margin+15, "INVOICE", "roboto-bold", headerFontSize, accentColor)
+
+	// Информация о компании
+	companyInfo := []string{
+		"Awesome Company Inc.",
+		"123 Business Street, City, Country",
+		"Phone: +1 234 567 890",
+		"Email: contact@company.com",
+	}
+	currentY := margin + 40
+	for _, line := range companyInfo {
+		addText(margin+80, currentY, line, "roboto", smallFontSize, secondaryColor)
+		currentY += 15
+	}
+
+	// Основная информация
+	infoBlockY := margin + 120
+	colWidth := 250.0
+	infoPairs := []struct {
+		Label string
+		Value string
+	}{
+		{"Invoice Number", order.ID.String()},
+		{"Date Issued", order.CreatedAt.Format("02 Jan 2006")},
+		{"Due Date", order.CreatedAt.AddDate(0, 0, 7).Format("02 Jan 2006")},
+		{"Client", order.Client.Name},
+		{"Salesperson", order.Salesperson.Username},
+		{"Status", order.Status},
+		{"Payment Method", order.PaymentMethod},
+	}
+
+	for i, pair := range infoPairs {
+		x := margin + float64(i%2)*colWidth
+		y := infoBlockY + float64(i/2)*20
+
+		addText(x, y, pair.Label+":", "roboto-bold", bodyFontSize, secondaryColor)
+		addText(x+80, y, pair.Value, "roboto", bodyFontSize, primaryColor)
+	}
+
+	// Таблица товаров
+	tableTop := infoBlockY + 80.0
+	header := []struct {
+		Title string
+		Width float64
+		Align string
+	}{
+		{"Description", 300, "left"},
+		{"Quantity", 80, "right"},
+		{"Unit Price", 100, "right"},
+		{"Total", 100, "right"},
+	}
+
+	// Заголовок таблицы
+	pdf.SetLineWidth(0.5)
+	pdf.SetStrokeColor(223, 230, 233)
+	pdf.SetFillColor(241, 242, 246)
+	pdf.Rectangle(margin, tableTop, margin+580, tableTop+30, "FD", 0, 0)
+
+	xPos := margin
+	for _, h := range header {
+		addText(xPos+10, tableTop+8, h.Title, "roboto-bold", bodyFontSize, primaryColor)
+		xPos += h.Width
+	}
+
+	// Строки таблицы
+	currentY = tableTop + 30
+	for _, item := range order.Products {
+		if currentY > 750 { // Проверка на новый лист
+			pdf.AddPage()
+			currentY = margin + 30
+		}
+
+		x := margin
+		pdf.SetLineWidth(0.2)
+		pdf.Line(margin, currentY+20, margin+580, currentY+20)
+
+		// Название товара
+		addText(x+10, currentY+5, item.Product.Name, "roboto", bodyFontSize, primaryColor)
+		x += header[0].Width
+
+		// Количество
+		addText(x-10, currentY+5, fmt.Sprintf("%.2f", item.Quantity), "roboto", bodyFontSize, primaryColor)
+		x += header[1].Width
+
+		// Цена
+		addText(x-10, currentY+5, fmt.Sprintf("$%.2f", item.Product.Price), "roboto", bodyFontSize, primaryColor)
+		x += header[2].Width
+
+		// Сумма
+		addText(x-10, currentY+5, fmt.Sprintf("$%.2f", item.TotalPrice), "roboto-bold", bodyFontSize, accentColor)
+
+		currentY += 25
+	}
+
+	// Итоги
+	totalsY := currentY + 30
+	totals := []struct {
+		Label string
+		Value float64
+	}{
+		{"Subtotal", order.TotalPrice},
+		{"Tax (10%)", order.TotalPrice * 0.1},
+		{"Total", order.TotalPrice * 1.1},
+	}
+
+	for _, t := range totals {
+		addText(margin+400, totalsY, t.Label+":", "roboto-bold", bodyFontSize, secondaryColor)
+		addText(margin+500, totalsY, fmt.Sprintf("$%.2f", t.Value), "roboto-bold", bodyFontSize, primaryColor)
+		totalsY += 20
+	}
+
+	// Подпись и номера страниц
+	pdf.SetFont("roboto", "", smallFontSize)
+	pdf.SetTextColor(99, 110, 114)
+	addText(margin, 780, "Thank you for your business!", "roboto-bold", smallFontSize, accentColor)
+	addText(500, 780, fmt.Sprintf("Page %d of 1", 1), "roboto", smallFontSize, secondaryColor)
+
+	// Графическая подпись
+	pdf.SetLineWidth(1)
+	pdf.Line(margin, 760, margin+200, 760)
+	addText(margin, 765, "Authorized Signature", "roboto", smallFontSize, secondaryColor)
+
+	// Сохранение в буфер
+	var buf bytes.Buffer
+	if _, err := pdf.WriteTo(&buf); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func parseHexColor(hex string) (c color.RGBA) {
+	hex = strings.TrimPrefix(hex, "#")
+	if len(hex) == 3 {
+		hex = string([]byte{hex[0], hex[0], hex[1], hex[1], hex[2], hex[2]})
+	}
+	if len(hex) != 6 {
+		panic("invalid color format")
+	}
+	rgb, _ := strconv.ParseUint(hex, 16, 32)
+	return color.RGBA{
+		R: uint8(rgb >> 16),
+		G: uint8(rgb >> 8),
+		B: uint8(rgb),
+		A: 255,
+	}
 }
