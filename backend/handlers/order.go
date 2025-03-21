@@ -501,6 +501,15 @@ func DeleteOrder(c *fiber.Ctx) error {
 	})
 }
 
+// GetOrderPDF Экспорт заказа в PDF
+//
+//	@Summary		Экспорт заказа в PDF
+//	@Description	Эта функция позволяет экспортировать информацию о заказе в формате PDF
+//	@Tags			Orders
+//	@Produce		application/pdf
+//	@Success		200	{file}		file					"PDF-файл с информацией о заказе"
+//	@Failure		500	{object}	map[string]interface{}	"Ошибка генерации PDF"
+//	@Router			/orders/pdf/{id} [get]
 func GetOrderPDF(c *fiber.Ctx) error {
 	id := c.Params("id")
 	db := database.DB
@@ -511,7 +520,6 @@ func GetOrderPDF(c *fiber.Ctx) error {
 	}
 
 	pdfData, err := generatePDF(order)
-	log.Println(err)
 	if err != nil {
 		return c.Status(500).SendString("Ошибка генерации PDF")
 	}
@@ -595,18 +603,18 @@ func generatePDF(order model.Order) ([]byte, error) {
 
 	// Основная информация
 	infoBlockY := margin + 120
-	colWidth := 250.0
+	colWidth := 350.0
 	infoPairs := []struct {
 		Label string
 		Value string
 	}{
-		{"Invoice Number", order.ID.String()},
+		{"Invoice ID", order.ID.String()},
 		{"Date Issued", order.CreatedAt.Format("02 Jan 2006")},
 		{"Due Date", order.CreatedAt.AddDate(0, 0, 7).Format("02 Jan 2006")},
 		{"Client", order.Client.Name},
 		{"Salesperson", order.Salesperson.Username},
 		{"Status", order.Status},
-		{"Payment Method", order.PaymentMethod},
+		{"Payment", order.PaymentMethod},
 	}
 
 	for i, pair := range infoPairs {
@@ -624,17 +632,17 @@ func generatePDF(order model.Order) ([]byte, error) {
 		Width float64
 		Align string
 	}{
-		{"Description", 300, "left"},
-		{"Quantity", 80, "right"},
-		{"Unit Price", 100, "right"},
-		{"Total", 100, "right"},
+		{"Наименование", 160, "left"},
+		{"Количество", 120, "right"},
+		{"Цена за м/шт", 120, "right"},
+		{"Сумма", 120, "right"},
 	}
 
 	// Заголовок таблицы
 	pdf.SetLineWidth(0.5)
 	pdf.SetStrokeColor(223, 230, 233)
 	pdf.SetFillColor(241, 242, 246)
-	pdf.Rectangle(margin, tableTop, margin+580, tableTop+30, "FD", 0, 0)
+	pdf.Rectangle(margin, tableTop, margin+530, tableTop+30, "FD", 0, 0)
 
 	xPos := margin
 	for _, h := range header {
@@ -659,15 +667,15 @@ func generatePDF(order model.Order) ([]byte, error) {
 		x += header[0].Width
 
 		// Количество
-		addText(x-10, currentY+5, fmt.Sprintf("%.2f", item.Quantity), "roboto", bodyFontSize, primaryColor)
+		addText(x+10, currentY+5, fmt.Sprint(int(item.Quantity)), "roboto", bodyFontSize, primaryColor)
 		x += header[1].Width
 
 		// Цена
-		addText(x-10, currentY+5, fmt.Sprintf("$%.2f", item.Product.Price), "roboto", bodyFontSize, primaryColor)
+		addText(x+10, currentY+5, fmt.Sprintf("%.2f", item.Product.Price), "roboto", bodyFontSize, primaryColor)
 		x += header[2].Width
 
 		// Сумма
-		addText(x-10, currentY+5, fmt.Sprintf("$%.2f", item.TotalPrice), "roboto-bold", bodyFontSize, accentColor)
+		addText(x+10, currentY+5, fmt.Sprintf("%.2f", item.TotalPrice), "roboto-bold", bodyFontSize, accentColor)
 
 		currentY += 25
 	}
@@ -678,14 +686,14 @@ func generatePDF(order model.Order) ([]byte, error) {
 		Label string
 		Value float64
 	}{
-		{"Subtotal", order.TotalPrice},
-		{"Tax (10%)", order.TotalPrice * 0.1},
-		{"Total", order.TotalPrice * 1.1},
+		{"Total", order.TotalPrice},
+		// {"Tax (10%)", order.TotalPrice * 0.1},
+		// {"Total", order.TotalPrice * 1.1},
 	}
 
 	for _, t := range totals {
 		addText(margin+400, totalsY, t.Label+":", "roboto-bold", bodyFontSize, secondaryColor)
-		addText(margin+500, totalsY, fmt.Sprintf("$%.2f", t.Value), "roboto-bold", bodyFontSize, primaryColor)
+		addText(margin+470, totalsY, fmt.Sprintf("%.2f", t.Value), "roboto-bold", bodyFontSize, primaryColor)
 		totalsY += 20
 	}
 
