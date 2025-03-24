@@ -8,6 +8,7 @@ import { postRequest } from '@/lib/apiHandlers';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { IOrder } from '@/models/order';
+import MultiImageUploader from './components/MultiImageUploader';
 
 export const NewOrder: React.FC = () => {
     const navigate = useNavigate();
@@ -70,6 +71,11 @@ export const NewOrder: React.FC = () => {
                 </div>
                 <ProductSearch setValue={setProducts} />
             </Card>
+            <MultiImageUploader onUploadSuccess={(data) => {
+                console.log(data);
+
+                setValue('attachments', data);
+            }} />
         </form>
     );
 };
