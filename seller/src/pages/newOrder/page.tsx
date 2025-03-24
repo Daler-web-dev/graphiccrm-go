@@ -28,8 +28,6 @@ export const NewOrder: React.FC = () => {
                 title: 'Успех',
                 description: 'Заказ успешно создан',
             });
-
-            navigate('/orders');
         } else {
             toast({
                 title: 'Ошибка',
