@@ -46,56 +46,51 @@ type SalesData struct {
 func GetProductStatistics(c *fiber.Ctx) error {
 	type ProductStats struct {
 		ProductID        guuid.UUID `json:"productId"`
-		ProductName      string     `json:"productName"`
-		SoldQuantity     float64    `json:"soldQuantity"`
-		ProducedQuantity float64    `json:"producedQuantity"`
+		ProductName      string     `json:"product_name"`
+		SoldQuantity     float64    `json:"units_sold"`
+		ProducedQuantity float64    `json:"produced_quantity"`
 	}
 
 	var stats []ProductStats
 	currentMonth := time.Now().Month()
 
-	// Подсчет проданных продуктов
-	err := database.DB.Table("order_items").
-		Select("products.id as product_id, products.name as product_name, SUM(order_items.quantity) as sold_quantity").
-		Joins("JOIN products ON products.id = order_items.product_id").
-		Joins("JOIN orders ON orders.id = order_items.order_id").
-		Where("EXTRACT(MONTH FROM orders.created_at) = ?", currentMonth).
-		Group("products.id, products.name").
+	// Основной запрос с объединением данных
+	err := database.DB.Table("products").
+		Select(`
+            products.id as product_id,
+            products.name as product_name,
+            COALESCE(sales.sold_quantity, 0) as sold_quantity,
+            COALESCE(production.produced_quantity, 0) as produced_quantity
+        `).
+		Joins(`
+            LEFT JOIN (
+                SELECT 
+                    oi.product_id, 
+                    SUM(oi.quantity) as sold_quantity 
+                FROM order_items oi
+                JOIN orders o ON o.id = oi.order_id 
+                WHERE EXTRACT(MONTH FROM o.created_at) = ?
+                GROUP BY oi.product_id
+            ) sales ON products.id = sales.product_id
+        `, currentMonth).
+		Joins(`
+            LEFT JOIN (
+                SELECT 
+                    product_id, 
+                    SUM(quantity) as produced_quantity 
+                FROM production_logs 
+                WHERE EXTRACT(MONTH FROM created_at) = ?
+                GROUP BY product_id
+            ) production ON products.id = production.product_id
+        `, currentMonth).
 		Scan(&stats).Error
+
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"status":  500,
 			"success": false,
-			"message": "Failed to fetch sold product statistics",
+			"message": "Failed to fetch product statistics",
 		})
-	}
-
-	// Подсчет произведенных продуктов
-	var productionStats []struct {
-		ProductID        guuid.UUID `json:"productId"`
-		ProducedQuantity float64    `json:"producedQuantity"`
-	}
-	err = database.DB.Table("production_logs").
-		Select("product_id, SUM(quantity) as produced_quantity").
-		Where("EXTRACT(MONTH FROM created_at) = ?", currentMonth).
-		Group("product_id").
-		Scan(&productionStats).Error
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":  500,
-			"success": false,
-			"message": "Failed to fetch produced product statistics",
-		})
-	}
-
-	// Слияние данных о продажах и производстве
-	for i, stat := range stats {
-		for _, prod := range productionStats {
-			if stat.ProductID == prod.ProductID {
-				stats[i].ProducedQuantity = prod.ProducedQuantity
-				break
-			}
-		}
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{

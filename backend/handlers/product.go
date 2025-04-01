@@ -401,9 +401,9 @@ func SearchProducts(c *fiber.Ctx) error {
 //	@Failure		400	{object}	APIError			"Неверный формат запроса или отсутствующий ID"
 //	@Failure		404	{object}	APIError			"Продукт не найден"
 //	@Failure		500	{object}	APIError			"Ошибка сервера"
-//	@Router			/products/{id}/statistics [get]
+//	@Router			/products/stat/{id} [get]
 func GetSingleProductStatistics(c *fiber.Ctx) error {
-	productID := c.Params("id") // Получение ID продукта из URL
+	productID := c.Params("id")
 	if productID == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status":  400,
@@ -412,42 +412,64 @@ func GetSingleProductStatistics(c *fiber.Ctx) error {
 		})
 	}
 
+	// Проверка валидности UUID
+	_, err := guuid.Parse(productID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status":  400,
+			"success": false,
+			"message": "Invalid Product ID format",
+		})
+	}
+
 	type SingleProductStats struct {
 		ProductID        guuid.UUID `json:"productId"`
-		ProductName      string     `json:"productName"`
-		SoldQuantity     float64    `json:"soldQuantity"`
-		ProducedQuantity float64    `json:"producedQuantity"`
+		ProductName      string     `json:"product_name"`
+		SoldQuantity     float64    `json:"units_sold"`
+		ProducedQuantity float64    `json:"produced_quantity"`
 	}
 
 	var stats SingleProductStats
 	currentMonth := time.Now().Month()
 
-	// Данные о продажах
-	err := database.DB.Table("order_items").
-		Select("products.id as product_id, products.name as product_name, SUM(order_items.quantity) as sold_quantity").
-		Joins("JOIN products ON products.id = order_items.product_id").
-		Joins("JOIN orders ON orders.id = order_items.order_id").
-		Where("products.id = ? AND EXTRACT(MONTH FROM orders.created_at) = ?", productID, currentMonth).
+	// Запрос данных о продукте и продажах (с LEFT JOIN)
+	err = database.DB.Table("products").
+		Select("products.id as product_id, products.name as product_name, COALESCE(SUM(order_items.quantity), 0) as sold_quantity").
+		Joins("LEFT JOIN order_items ON products.id = order_items.product_id").
+		Joins("LEFT JOIN orders ON orders.id = order_items.order_id AND EXTRACT(MONTH FROM orders.created_at) = ?", currentMonth).
+		Where("products.id = ?", productID).
 		Group("products.id, products.name").
 		Scan(&stats).Error
+
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"status":  500,
 			"success": false,
-			"message": "Failed to fetch sold product statistics",
+			"message": "Failed to fetch product data",
 		})
 	}
 
+	// Проверка существования продукта
+	if stats.ProductID == guuid.Nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"status":  404,
+			"success": false,
+			"message": "Product not found",
+		})
+	}
+
+	// Запрос произведенного количества
 	var producedQuantity sql.NullFloat64
 	err = database.DB.Table("production_logs").
 		Select("COALESCE(SUM(quantity), 0) as produced_quantity").
 		Where("product_id = ? AND EXTRACT(MONTH FROM created_at) = ?", productID, currentMonth).
 		Scan(&producedQuantity).Error
+
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"status":  500,
 			"success": false,
-			"message": "Failed to fetch produced product statistics",
+			"message": "Failed to fetch production data",
 		})
 	}
 
