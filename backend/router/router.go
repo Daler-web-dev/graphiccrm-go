@@ -55,6 +55,7 @@ func Initalize(router *fiber.App) {
 
 	exports := router.Group("/exports", middleware.ProtectRoute("admin"))
 	exports.Get("/products", handlers.ExportProductsHandler)
+	exports.Get("/clients", handlers.ExportClientsHandler)
 
 	stats := router.Group("/statistics", middleware.ProtectRoute("admin"))
 	stats.Get("/products", handlers.GetProductStatistics)

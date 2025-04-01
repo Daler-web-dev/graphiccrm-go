@@ -266,6 +266,10 @@ definitions:
     type: object
   model.CreateOrderRequest:
     properties:
+      attachments:
+        items:
+          type: string
+        type: array
       clientId:
         example: 123e4567-e89b-12d3-a456-426614174001
         type: string
@@ -331,6 +335,10 @@ definitions:
     type: object
   model.Order:
     properties:
+      attachments:
+        items:
+          type: string
+        type: array
       client:
         $ref: '#/definitions/model.Client'
       clientId:
@@ -465,7 +473,7 @@ definitions:
       username:
         type: string
     type: object
-host: ec2-13-61-141-144.eu-north-1.compute.amazonaws.com
+host: sharifaka.com
 info:
   contact: {}
   description: This is a sample swagger for Fiber
@@ -873,6 +881,25 @@ paths:
       summary: Поиск клиентов
       tags:
       - Clients
+  /exports/clients:
+    get:
+      description: Эта функция позволяет экспортировать список клиентов в формате
+        Excel
+      produces:
+      - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+      responses:
+        "200":
+          description: Excel-файл с клиентами
+          schema:
+            type: file
+        "500":
+          description: Ошибка при поиске клиентов
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Экспорт клиентов в Excel
+      tags:
+      - Exports
   /exports/products:
     get:
       description: Эта функция позволяет экспортировать список продуктов в формате
@@ -1151,6 +1178,25 @@ paths:
       security:
       - BearerAuth: []
       summary: Отклонить заказ
+      tags:
+      - Orders
+  /orders/pdf/{id}:
+    get:
+      description: Эта функция позволяет экспортировать информацию о заказе в формате
+        PDF
+      produces:
+      - application/pdf
+      responses:
+        "200":
+          description: PDF-файл с информацией о заказе
+          schema:
+            type: file
+        "500":
+          description: Ошибка генерации PDF
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Экспорт заказа в PDF
       tags:
       - Orders
   /products:

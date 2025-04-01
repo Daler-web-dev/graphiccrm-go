@@ -604,6 +604,33 @@ const docTemplate = `{
                 }
             }
         },
+        "/exports/clients": {
+            "get": {
+                "description": "Эта функция позволяет экспортировать список клиентов в формате Excel",
+                "produces": [
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                ],
+                "tags": [
+                    "Exports"
+                ],
+                "summary": "Экспорт клиентов в Excel",
+                "responses": {
+                    "200": {
+                        "description": "Excel-файл с клиентами",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка при поиске клиентов",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/exports/products": {
             "get": {
                 "description": "Эта функция позволяет экспортировать список продуктов в формате Excel",
@@ -862,6 +889,33 @@ const docTemplate = `{
                         "description": "Ошибка сервера при обновлении данных",
                         "schema": {
                             "$ref": "#/definitions/handlers.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/pdf/{id}": {
+            "get": {
+                "description": "Эта функция позволяет экспортировать информацию о заказе в формате PDF",
+                "produces": [
+                    "application/pdf"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Экспорт заказа в PDF",
+                "responses": {
+                    "200": {
+                        "description": "PDF-файл с информацией о заказе",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка генерации PDF",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     }
                 }
@@ -2343,6 +2397,12 @@ const docTemplate = `{
                 "salespersonId"
             ],
             "properties": {
+                "attachments": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "clientId": {
                     "type": "string",
                     "example": "123e4567-e89b-12d3-a456-426614174001"
@@ -2428,6 +2488,12 @@ const docTemplate = `{
                 "status"
             ],
             "properties": {
+                "attachments": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "client": {
                     "$ref": "#/definitions/model.Client"
                 },
