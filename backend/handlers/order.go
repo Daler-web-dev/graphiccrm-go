@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"image/color"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -544,7 +545,12 @@ func GetOrderPDF(c *fiber.Ctx) error {
 
 func generatePDF(order model.Order) ([]byte, error) {
 	pdf := gopdf.GoPdf{}
-	pdf.Start(gopdf.Config{PageSize: *gopdf.PageSizeA4})
+
+	pdf.Start(gopdf.Config{
+		PageSize: *gopdf.PageSizeA4,
+		Unit:     gopdf.UnitPT,
+	})
+
 	pdf.AddPage()
 
 	// Константы стилей
@@ -560,6 +566,14 @@ func generatePDF(order model.Order) ([]byte, error) {
 		lineHeight     = 1.4
 		logoPath       = "assets/logo.png"
 	)
+
+	// 3. Загрузка шрифтов перед использованием
+	if err := pdf.AddTTFFont("roboto", "assets/Roboto-Regular.ttf"); err != nil {
+		return nil, fmt.Errorf("font load error: %v", err)
+	}
+	if err := pdf.AddTTFFont("roboto-bold", "assets/Roboto-Bold.ttf"); err != nil {
+		return nil, fmt.Errorf("bold font load error: %v", err)
+	}
 
 	// Хелпер-функции
 	setFont := func(font string, size float64) {
@@ -582,20 +596,12 @@ func generatePDF(order model.Order) ([]byte, error) {
 		pdf.Cell(nil, text)
 	}
 
-	// Загрузка шрифтов
-	if err := pdf.AddTTFFont("roboto", "assets/Roboto-Regular.ttf"); err != nil {
-		return nil, err
+	// 4. Безопасная загрузка изображения
+	if _, err := os.Stat(logoPath); os.IsNotExist(err) {
+		return nil, fmt.Errorf("logo file not found: %s", logoPath)
 	}
-	if err := pdf.AddTTFFont("roboto-bold", "assets/Roboto-Bold.ttf"); err != nil {
-		return nil, err
-	}
-
-	// Логотип
-	if err := pdf.Image(logoPath, margin, margin, &gopdf.Rect{
-		W: 60,
-		H: 60,
-	}); err != nil {
-		return nil, fmt.Errorf("failed to add logo: %v", err)
+	if err := pdf.Image(logoPath, margin, margin, &gopdf.Rect{W: 60, H: 60}); err != nil {
+		return nil, fmt.Errorf("image load failed: %v", err)
 	}
 
 	// Заголовок
