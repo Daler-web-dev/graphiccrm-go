@@ -95,6 +95,7 @@ export const Client: React.FC = () => {
                             </div>
                         </div>
                         <div className='w-full'>
+                            <h4 className='text-2xl font-semibold text-left'>Заказы</h4>
                             <ClientHistory data={data?.purchaseHistory || []} />
                         </div>
                     </div>
