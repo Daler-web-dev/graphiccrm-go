@@ -80,14 +80,41 @@ export const Products: React.FC = () => {
         loadPageData(currentPage, debouncedSearch, selectedCategory);
     }, [currentPage, debouncedSearch, selectedCategory]);
 
+    const getProductsList = async () => {
+        const res = await getRequest({ url: "/exports/products" });
+
+        if (res.status === 200 || res.status === 201) {
+            console.log(res);
+            toast({
+                title: 'Успех',
+                description: 'Список товаров успешно скачан',
+            })
+        } else {
+            toast({
+                title: 'Ошибка',
+                description: 'Произошла ошибка при скачивании списка товаров',
+                variant: 'destructive',
+            });
+        }
+    }
+
     return (
-        <div className='relative'>
-            <Button
-                onClick={() => navigate('/products/new')}
-                className='absolute -top-20 right-5 px-10'
-            >
-                Добавить товар
-            </Button>
+        <div>
+            <div className='relative'>
+                <Button
+                    variant={"customOutline"}
+                    className='absolute right-[220px] -top-20 px-10'
+                    onClick={getProductsList}
+                >
+                    Получить список товаров
+                </Button>
+                <Button
+                    onClick={() => navigate('/products/new')}
+                    className='absolute -top-20 right-5 px-10'
+                >
+                    Добавить товар
+                </Button>
+            </div>
             <Card>
                 <CardHeader className='flex justify-between items-center gap-3'>
                     <div className='w-full flex flex-col justify-start items-start gap-1'>

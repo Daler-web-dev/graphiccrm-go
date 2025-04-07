@@ -60,14 +60,41 @@ export const Clients: React.FC = () => {
         loadPageData(currentPage, searchDebounced);
     }, [currentPage, searchDebounced]);
 
+    const getClientList = async () => {
+        const res = await getRequest({ url: "/exports/clients" });
+
+        if (res.status === 200 || res.status === 201) {
+            console.log(res);
+            toast({
+                title: 'Успех',
+                description: 'Список клиентов успешно скачан',
+            })
+        } else {
+            toast({
+                title: 'Ошибка',
+                description: 'Произошла ошибка при скачивании списка клиентов',
+                variant: 'destructive',
+            });
+        }
+    }
+
     return (
-        <Card className='relative'>
-            <Button
-                className='absolute right-5 -top-20 px-10'
-                onClick={() => {
-                    navigate('/clients/new');
-                }}
-            >Добавить клиента</Button>
+        <Card>
+            <div className='relative'>
+                <Button
+                    variant={"customOutline"}
+                    className='absolute right-[235px] -top-20 px-10'
+                    onClick={getClientList}
+                >
+                    Получить список клиентов
+                </Button>
+                <Button
+                    className='absolute right-5 -top-20 px-10'
+                    onClick={() => {
+                        navigate('/clients/new');
+                    }}
+                >Добавить клиента</Button>
+            </div>
             <CardHeader className='flex justify-between items-center'>
                 <div className='w-full flex flex-col justify-start items-start gap-1'>
                     <CardTitle>Список клиентов</CardTitle>

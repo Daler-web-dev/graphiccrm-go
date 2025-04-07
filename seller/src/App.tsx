@@ -2,8 +2,6 @@ import { Outlet, Route, Routes } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import Signin from "./pages/signin/Signin";
 import { Dashboard } from "./pages/page";
-import { Orders } from "./pages/orders/page";
-import { Order } from "./pages/orders/[id]/page";
 import { EditClient } from "./pages/clients/edit/page";
 import { AddClient } from "./pages/clients/new/page";
 import { Client } from "./pages/clients/[id]/page";
@@ -21,8 +19,6 @@ function App() {
 					<Route path="/clients/:id" element={<Client />} />
 					<Route path="/clients/new" element={<AddClient />} />
 					<Route path="/clients/edit/:id" element={<EditClient />} />
-					<Route path="/orders" element={<Orders />} />
-					<Route path="/orders/:id" element={<Order />} />
 					<Route path="/newOrder" element={<NewOrder />} />
 				</Route>
 				<Route path="/newOrder/editor" element={<Editor />} />

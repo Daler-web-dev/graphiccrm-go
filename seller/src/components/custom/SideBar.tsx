@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { LayoutGrid, Users, History, LogOut, ListOrdered } from 'lucide-react'
+import { LayoutGrid, Users, LogOut, ListOrdered } from 'lucide-react'
 import Cookies from 'js-cookie';
 import { toast } from '@/hooks/use-toast';
 import ConfirmModal from './ConfirmModal';
@@ -28,7 +28,6 @@ export default function Sidebar() {
             <nav className="flex-1 px-4 py-6 space-y-2 select-none">
                 <SidebarItem href="/" icon={LayoutGrid} label="Панель управления" isActive={currentPath === '/'} />
                 <SidebarItem href="/clients" icon={Users} label="Клиенты" isActive={currentPath === '/clients'} />
-                <SidebarItem href="/orders" icon={History} label="История" isActive={currentPath === '/orders'} />
                 <SidebarItem href="/newOrder" icon={ListOrdered} label="Новый заказ" isActive={currentPath === '/newOrder'} />
             </nav>
 

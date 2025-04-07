@@ -13,6 +13,7 @@ export interface IOrder {
     status: string
     paymentMethod: PaymentMethod
     totalPrice: number
+    attachments: string[]
     createdAt: string
     updatedAt: string
 }
