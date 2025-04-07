@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {
 	Card,
 	CardTitle,
@@ -11,6 +12,49 @@ import { cn, formatPrice } from "@/lib/utils";
 import { IOrder } from "@/models/order";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+
+const DownloadPDFButton = ({ orderId }: { orderId: string }) => {
+	const downloadPDF = async () => {
+		try {
+			const response = await fetch(`/api/orders/${orderId}/pdf`);
+
+			if (!response.ok) {
+				const error = await response.text();
+				throw new Error(error || 'Failed to download PDF');
+			}
+
+			const blob = await response.blob();
+			const downloadUrl = window.URL.createObjectURL(blob);
+
+			// Создаем скрытую ссылку для скачивания
+			const link = document.createElement('a');
+			link.href = downloadUrl;
+			link.setAttribute('download', `order_${orderId}.pdf`);
+			document.body.appendChild(link);
+
+			// Имитируем клик
+			link.click();
+
+			// Убираем ссылку и освобождаем память
+			link.parentNode!.removeChild(link);
+			window.URL.revokeObjectURL(downloadUrl);
+
+		} catch (error) {
+			console.error('PDF download error:', error);
+		}
+	};
+
+	return (
+		<Button
+			onClick={downloadPDF}
+			className="absolute right-5 -top-20 px-10"
+		>
+			Получить PDF заказа
+		</Button>
+	);
+};
+
+
 
 export const Order: React.FC = () => {
 	const { id } = useParams();
@@ -72,7 +116,8 @@ export const Order: React.FC = () => {
 					</Card>
 				</>
 			) : (
-				<div className="space-y-5">
+				<div className="space-y-5 relative">
+					<DownloadPDFButton orderId={id as string} />
 					<Card className="flex flex-col items-start gap-5 p-5">
 						<CardTitle className="text-xl font-semibold text-black/80">Заказ № {id}</CardTitle>
 						<div className="w-full flex justify-between items-center gap-5">

@@ -9,19 +9,30 @@ import { Edit, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+interface IStatistics {
+    produced_quantity: number;
+    productId: string;
+    product_name: string;
+    units_sold: number;
+}
+
 export const Product: React.FC = () => {
     const navigate = useNavigate();
     const { id } = useParams();
     const [data, setData] = useState<IProduct>();
+    const [statistics, setStatistics] = useState<IStatistics>();
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchProduct = async () => {
             setLoading(true);
-            const res = await getRequest({ url: `/products/${id}` });
+            const [product, statistics] = await Promise.all([
+                getRequest({ url: `/products/${id}` }),
+                getRequest({ url: `/products/stat/${id}` }),
+            ])
 
-            if (res.status === 200 || res.status === 201) {
-                setData(res.data.data);
+            if (product.status === 200 || product.status === 201) {
+                setData(product.data.data);
                 setLoading(false);
             } else {
                 toast({
@@ -30,6 +41,16 @@ export const Product: React.FC = () => {
                     variant: 'destructive',
                 })
                 return
+            }
+            if (statistics.status === 200 || statistics.status === 201) {
+                setStatistics(statistics.data.data);
+                setLoading(false);
+            } else {
+                toast({
+                    title: 'Ошибка',
+                    description: 'Произошла ошибка при загрузке информации о товаре',
+                    variant: 'destructive',
+                })
             }
         }
 
@@ -75,6 +96,7 @@ export const Product: React.FC = () => {
                         </div>
                     </div>
                     <div className='w-[60%] flex flex-col gap-2'>
+                        <h2 className='text-xl font-semibold text-cDarkBlue text-left'>Информация</h2>
                         <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg bg-[#F2F2F2]'>
                             <h4 className='font-semibold text-base text-cDarkBlue'>Имя</h4>
                             <p className='text-cDarkBlue text-base'>{data?.name}</p>
@@ -102,6 +124,15 @@ export const Product: React.FC = () => {
                         <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg bg-[#F2F2F2]'>
                             <h4 className='font-semibold text-base text-cDarkBlue'>Единица измерения</h4>
                             <p className='text-cDarkBlue text-base'>{data?.unit === "piece" ? "В штуках" : "В сантиметрах"}</p>
+                        </div>
+                        <h2 className='text-xl font-semibold text-cDarkBlue text-left'>Статистика</h2>
+                        <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg bg-[#F2F2F2]'>
+                            <h4 className='font-semibold text-base text-cDarkBlue'>Количество произведенных товаров</h4>
+                            <p className='text-cDarkBlue text-base'>{statistics?.produced_quantity} шт.</p>
+                        </div>
+                        <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg bg-[#F2F2F2]'>
+                            <h4 className='font-semibold text-base text-cDarkBlue'>Количество проданных товаров</h4>
+                            <p className='text-cDarkBlue text-base'>{statistics?.units_sold} шт.</p>
                         </div>
                     </div>
                 </div>
