@@ -515,17 +515,30 @@ func GetOrderPDF(c *fiber.Ctx) error {
 	db := database.DB
 
 	var order model.Order
-	if err := db.Preload(clause.Associations).Preload("Products.Product").First(&order, "id = ?", id).Error; err != nil {
-		return c.Status(404).SendString("Заказ не найден")
+	if err := db.Preload(clause.Associations).Preload("Products.Product").
+		First(&order, "id = ?", id).Error; err != nil {
+
+		// Добавляем логирование ошибок
+		log.Printf("Order not found: %v | ID: %s", err, id)
+		return c.Status(404).JSON(fiber.Map{
+			"error": "Заказ не найден",
+		})
 	}
 
 	pdfData, err := generatePDF(order)
 	if err != nil {
-		return c.Status(500).SendString("Ошибка генерации PDF")
+		// Логирование ошибок генерации PDF
+		log.Printf("PDF generation failed: %v | OrderID: %s", err, id)
+		return c.Status(500).JSON(fiber.Map{
+			"error": "Ошибка генерации PDF",
+		})
 	}
 
+	// Устанавливаем правильные заголовки
 	c.Set("Content-Type", "application/pdf")
-	c.Set("Content-Disposition", "attachment; filename=order.pdf")
+	c.Set("Content-Disposition", fmt.Sprintf("attachment; filename=order_%s.pdf", id))
+
+	// Отправка бинарных данных
 	return c.Send(pdfData)
 }
 
