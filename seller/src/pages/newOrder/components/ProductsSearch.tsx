@@ -108,7 +108,7 @@ export function ProductSearch({ setValue }: ProductSearchProps) {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Поиск по артиклю или названию..."
-                className="w-full p-2 border text-sm rounded-lg outline-none bg-[#fafafa]"
+                className="w-full p-2 border text-sm rounded-lg outline-none bg-[#fafafa] mb-3"
             />
             <div>
                 {loading ? (
