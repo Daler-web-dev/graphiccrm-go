@@ -23,7 +23,7 @@ type CreateUserRequest struct {
 type UpdateUserRequest struct {
 	Username *string     `json:"username" validate:"required,min=3,max=50"`
 	Password *string     `json:"password" validate:"required,min=4,max=100"`
-	Image    *string     `json:"image" validate:"omitempty,min=5"`
+	Image    *string     `json:"image" validate:"omitempty"`
 	Role     *model.Role `json:"role" validate:"required,oneof=admin manager seller"`
 }
 
