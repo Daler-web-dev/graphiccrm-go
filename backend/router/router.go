@@ -57,6 +57,9 @@ func Initalize(router *fiber.App) {
 	stats.Get("/dashboard", handlers.GetDashboard)
 	stats.Get("/chart", handlers.GetSalesChart)
 
+	individualStats := router.Group("/getstatsof", middleware.ProtectRoute("admin", "seller", "manager"))
+	individualStats.Get("/seller", handlers.GetSellerSalesChart)
+
 	upload := router.Group("/upload", middleware.ProtectRoute("admin", "seller", "manager"))
 	upload.Post("/", handlers.UploadImage)
 
