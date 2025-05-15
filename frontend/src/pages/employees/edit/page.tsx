@@ -92,14 +92,14 @@ export const EditEmployee: React.FC = () => {
                                 }}
                             />
                         </div>
-                        <div className="w-full space-y-3">
+                        <div className="w-full">
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                                <label htmlFor='username' className="text-base font-semibold text-cDarkBlue cursor-pointer">Логин</label>
+                                <label htmlFor='username' className="text-base font-semibold text-cDarkBlue cursor-pointer text-left truncate">Логин</label>
                                 <input
                                     id='username'
                                     type="text"
                                     {...register('username', { required: 'Логин обязателен', minLength: { value: 3, message: 'Минимум 3 символа' } })}
-                                    className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                                    className="mt-2 p-2 w-72 border rounded-lg outline-none bg-transparent"
                                     placeholder='Логин'
                                     autoComplete='off'
                                 />
@@ -107,12 +107,12 @@ export const EditEmployee: React.FC = () => {
                             </div>
 
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                                <label htmlFor='password' className="text-base font-semibold text-cDarkBlue cursor-pointer">Пароль</label>
+                                <label htmlFor='password' className="text-base font-semibold text-cDarkBlue cursor-pointer text-left truncate">Пароль</label>
                                 <input
                                     id='password'
                                     type="password"
                                     {...register('password', { required: 'Пароль обязателен', minLength: { value: 4, message: 'Минимум 4 символа' } })}
-                                    className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                                    className="mt-2 p-2 w-72 border rounded-lg outline-none bg-transparent"
                                     placeholder='Пароль'
                                     autoComplete='off'
                                 />
@@ -120,11 +120,11 @@ export const EditEmployee: React.FC = () => {
                             </div>
 
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                                <label htmlFor='role' className="text-base font-semibold text-cDarkBlue cursor-pointer">Роль</label>
+                                <label htmlFor='role' className="text-base font-semibold text-cDarkBlue cursor-pointer text-left truncate">Роль</label>
                                 <select
                                     id='role'
                                     {...register('role', { required: 'Роль обязательна' })}
-                                    className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                                    className="mt-2 p-2 w-72 border rounded-lg outline-none bg-transparent"
                                 >
                                     <option value="manager">Работник склада</option>
                                     <option value="seller">Продавец</option>

@@ -122,7 +122,7 @@ export const Clients: React.FC = () => {
                 </div>
                 <Input
                     placeholder='Поиск...'
-                    className='max-w-[300px] px-10'
+                    className='max-w-[300px] p-2'
                     onChange={(e) => setSearch(e.target.value)}
                 />
             </CardHeader>

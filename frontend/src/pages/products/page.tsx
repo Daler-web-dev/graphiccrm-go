@@ -143,14 +143,14 @@ export const Products: React.FC = () => {
                     </div>
                     <Input
                         placeholder='Поиск...'
-                        className='max-w-[300px] px-10'
+                        className='w-1/2 p-2'
                         onChange={(e) => setSearch(e.target.value)}
                     />
                     <Select
                         onValueChange={(value) => setSelectedCategory(value)}
                         defaultValue=""
                     >
-                        <SelectTrigger className="w-1/3">
+                        <SelectTrigger className="w-1/2">
                             <SelectValue placeholder="Выберите категорию" />
                         </SelectTrigger>
                         <SelectContent>
