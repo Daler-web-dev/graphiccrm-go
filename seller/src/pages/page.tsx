@@ -1,17 +1,12 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Chart } from "@/components/custom/Chart";
+// import TopRatedList from "@/components/custom/TopRatedList";
 
 export const Dashboard = () => {
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        navigate('/clients');
-    }, [navigate])
     return (
         <div className="">
-            {/* <Chart />
+            <Chart />
             <br />
-            <TopRatedList /> */}
+            {/* <TopRatedList /> */}
         </div>
     );
 };

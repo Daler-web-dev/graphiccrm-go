@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"backend/auth"
 	"backend/database"
 	"backend/model"
 	"fmt"
@@ -247,6 +248,82 @@ func GetSalesChart(c *fiber.Ctx) error {
 		})
 
 		// Increment based on period
+		if period == "year" {
+			current = current.AddDate(0, 1, 0)
+		} else {
+			current = current.AddDate(0, 0, 1)
+		}
+	}
+
+	return c.Status(fiber.StatusOK).JSON(generated)
+}
+
+func GetSellerSalesChart(c *fiber.Ctx) error {
+	period := c.Query("period", "month")
+	db := database.DB
+
+	user := c.Locals("user").(*auth.Claims)
+	sellerID := user.ID
+
+	now := time.Now()
+	var startDate, endDate time.Time
+
+	switch period {
+	case "year":
+		startDate = now.AddDate(-1, 0, 0)
+		endDate = now
+	case "month":
+		startDate = now.AddDate(0, 0, -30)
+		endDate = now
+	default:
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "invalid period parameter. Use 'month' or 'year'",
+		})
+	}
+
+	dateFormat := getPeriodFormat(period)
+	var results []SalesData
+
+	query := db.Model(&model.Order{}).
+		Select(
+			"COALESCE(SUM(total_price), 0) as total_amount",
+			fmt.Sprintf("to_char(created_at, '%s') as date", dateFormat),
+		).
+		Where("status NOT IN (?)", []string{"rejected", "pending"}).
+		Where("created_at BETWEEN ? AND ?", startDate, endDate).
+		Where("salesperson_id = ?", sellerID). // Фильтрация по продавцу
+		Group("date").
+		Order("date ASC")
+
+	if err := query.Scan(&results).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to fetch sales data",
+		})
+	}
+
+	resultMap := make(map[string]float64)
+	for _, res := range results {
+		resultMap[res.Date] = res.TotalAmount
+	}
+
+	var generated []SalesData
+	current := startDate
+	layout := getGoLayout(period)
+
+	for {
+		if (period == "year" && current.After(endDate)) ||
+			(period == "month" && current.After(endDate.AddDate(0, 0, 1))) {
+			break
+		}
+
+		dateStr := current.Format(layout)
+		amount := resultMap[dateStr]
+
+		generated = append(generated, SalesData{
+			Date:        dateStr,
+			TotalAmount: amount,
+		})
+
 		if period == "year" {
 			current = current.AddDate(0, 1, 0)
 		} else {

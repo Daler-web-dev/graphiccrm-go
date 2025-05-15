@@ -39,7 +39,7 @@ func Initalize(router *fiber.App) {
 	categoriesForAll.Get("/", handlers.GetAllCategories)
 	categoriesForAll.Get("/:id", handlers.GetCategoryById)
 
-	products := router.Group("/products", middleware.ProtectRoute("admin", "manager"))
+	products := router.Group("/products", middleware.ProtectRoute("admin", "manager", "seller"))
 	products.Get("/", handlers.GetAllProducts)
 	products.Get("/search", handlers.SearchProducts)
 	products.Get("/stat/:id", handlers.GetSingleProductStatistics)
@@ -47,11 +47,6 @@ func Initalize(router *fiber.App) {
 	products.Patch("/:id", handlers.UpdateProduct)
 	products.Get("/:id", handlers.GetProductById)
 	products.Delete("/:id", handlers.DeleteProduct)
-
-	productsForSeller := router.Group("/products", middleware.ProtectRoute("seller"))
-	productsForSeller.Get("/", handlers.GetAllProducts)
-	productsForSeller.Get("/search", handlers.SearchProducts)
-	productsForSeller.Get("/:id", handlers.GetProductById)
 
 	exports := router.Group("/exports", middleware.ProtectRoute("admin"))
 	exports.Get("/products", handlers.ExportProductsHandler)
@@ -61,6 +56,9 @@ func Initalize(router *fiber.App) {
 	stats.Get("/products", handlers.GetProductStatistics)
 	stats.Get("/dashboard", handlers.GetDashboard)
 	stats.Get("/chart", handlers.GetSalesChart)
+
+	individualStats := router.Group("/getstatsof", middleware.ProtectRoute("admin", "seller", "manager"))
+	individualStats.Get("/seller", handlers.GetSellerSalesChart)
 
 	upload := router.Group("/upload", middleware.ProtectRoute("admin", "seller", "manager"))
 	upload.Post("/", handlers.UploadImage)
@@ -80,7 +78,7 @@ func Initalize(router *fiber.App) {
 	ordersFlow.Post("/:id/accept", handlers.AcceptOrder)
 	ordersFlow.Post("/:id/reject", handlers.RejectOrder)
 
-	warehouseOrderFlow := router.Group("/warehouse", middleware.ProtectRoute("manager"))
+	warehouseOrderFlow := router.Group("/warehouse", middleware.ProtectRoute("admin", "manager"))
 	warehouseOrderFlow.Post("/:id/in_production", handlers.InProduction)
 	warehouseOrderFlow.Post("/:id/ready", handlers.OrderReady)
 	warehouseOrderFlow.Post("/:id/delivered", handlers.Delivered)

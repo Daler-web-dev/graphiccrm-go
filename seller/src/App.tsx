@@ -8,6 +8,7 @@ import { Client } from "./pages/clients/[id]/page";
 import { Clients } from "./pages/clients/page";
 import Editor from "./pages/newOrder/editor/page";
 import { NewOrder } from "./pages/newOrder/page";
+import { Threejs } from "./pages/threejs/page";
 
 function App() {
 	return (
@@ -21,6 +22,7 @@ function App() {
 					<Route path="/clients/edit/:id" element={<EditClient />} />
 					<Route path="/newOrder" element={<NewOrder />} />
 				</Route>
+				<Route path="/threejs" element={<Threejs />} />
 				<Route path="/newOrder/editor" element={<Editor />} />
 				<Route
 					path="/auth"
