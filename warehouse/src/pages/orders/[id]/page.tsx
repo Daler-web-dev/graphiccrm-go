@@ -1,13 +1,13 @@
+import { HandleStatusChangeDialog } from "@/components/custom/HandleStatusDialog";
 import {
 	Card,
 	CardTitle,
 } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
-import { getRequest, postRequest } from "@/lib/apiHandlers";
+import { getRequest } from "@/lib/apiHandlers";
 import { cn, formatPrice } from "@/lib/utils";
 import { IOrder } from "@/models/order";
 import React, { useEffect, useState } from "react";
@@ -38,29 +38,6 @@ export const Order: React.FC = () => {
 
 		fetchOrder();
 	}, [id]);
-
-	const onChangeStatus = async (status: string) => {
-		const res = await postRequest({ url: `/warehouse/${id}/${status}` });
-
-		if (res.status === 200 || res.status === 201) {
-			toast({
-				title: 'Успех',
-				description: 'Статус заказа успешно изменен',
-			})
-		} else if (res.status === 403) {
-			toast({
-				title: 'Ошибка доступа',
-				description: 'Вы не можете изменить статус заказа. У вас недостаточно прав',
-				variant: 'destructive',
-			})
-		} else {
-			toast({
-				title: 'Ошибка',
-				description: 'Произошла ошибка при изменении статуса заказа',
-				variant: 'destructive',
-			})
-		}
-	}
 
 	return (
 		<div>
@@ -98,16 +75,13 @@ export const Order: React.FC = () => {
 			) : (
 				<div className="space-y-5 relative">
 					<div className="absolute -top-20 right-5">
-						<Select onValueChange={(value) => onChangeStatus(value)}>
-							<SelectTrigger className="w-96">
-								<SelectValue placeholder={order?.status === "delivered" ? "Доставлено" : order?.status === "in_production" ? "На производстве" : order?.status === "ready" ? "Готово" : order?.status === "accepted" ? "Принято" : order?.status === "rejected" ? "Отклонено" : "В ожидании"} />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="in_production">На производстве</SelectItem>
-								<SelectItem value="ready">Готово</SelectItem>
-								<SelectItem value="delivered">Доставлено</SelectItem>
-							</SelectContent>
-						</Select>
+						<HandleStatusChangeDialog
+							orderId={id as string}
+							currentStatus={order?.status as any}
+							onChanged={(newStatus) =>
+								setOrder((prev) => prev ? { ...prev, status: newStatus } : prev)
+							}
+						/>
 					</div>
 					<Card className="flex flex-col items-start gap-5 p-5">
 						<CardTitle className="text-xl font-semibold text-black/80">Заказ № {id}</CardTitle>

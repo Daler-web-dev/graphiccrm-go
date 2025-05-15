@@ -96,14 +96,14 @@ export const Products: React.FC = () => {
                     </div>
                     <Input
                         placeholder='Поиск...'
-                        className='max-w-[300px] px-10'
+                        className='w-1/2 p-2 text-sm'
                         onChange={(e) => setSearch(e.target.value)}
                     />
                     <Select
                         onValueChange={(value) => setSelectedCategory(value)}
                         defaultValue=""
                     >
-                        <SelectTrigger className="w-1/3">
+                        <SelectTrigger className="w-1/2 p-2">
                             <SelectValue placeholder="Выберите категорию" />
                         </SelectTrigger>
                         <SelectContent>
@@ -174,28 +174,6 @@ export const Products: React.FC = () => {
                     )}
                 </CardContent>
             </Card>
-            {/* <Card className='w-full mt-5'>
-                <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow className='hover:bg-transparent'>
-                                <TableHead className='font-medium text-xl text-cLightBlue'>Продано за месяц</TableHead>
-                                <TableHead className='font-medium text-xl text-cLightBlue'>Произведено</TableHead>
-                                <TableHead className='font-medium text-xl text-cLightBlue'>Итого на складе</TableHead>
-                                <TableHead className='font-medium text-xl text-cLightBlue'>Итого сумма</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            <TableRow className='text-left hover:bg-transparent'>
-                                <TableCell className='font-bold text-2xl'>{products.reduce((acc, order) => acc + order.soldLastMonth, 0)}</TableCell>
-                                <TableCell className='font-bold text-2xl'>{products.reduce((acc, order) => acc + order.producedLastMonth, 0)}</TableCell>
-                                <TableCell className='font-bold text-2xl'>{products.reduce((acc, order) => acc + order.overallLeft, 0)}</TableCell>
-                                <TableCell className='font-bold text-2xl'>{products.reduce((acc, order) => acc + (order.price * order.overallLeft), 0)} сум</TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card> */}
         </div>
     );
 };
