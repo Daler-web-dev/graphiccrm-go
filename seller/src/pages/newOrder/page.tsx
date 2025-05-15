@@ -72,8 +72,6 @@ export const NewOrder: React.FC = () => {
                 <ProductSearch setValue={setProducts} />
             </Card>
             <MultiImageUploader onUploadSuccess={(data) => {
-                console.log(data);
-
                 setValue('attachments', data);
             }} />
         </form>

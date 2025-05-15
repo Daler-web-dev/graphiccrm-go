@@ -124,7 +124,7 @@ const MultiImageUploader: React.FC<MultiImageUploaderProps> = ({
             />
 
             {previewList.length === 0 && !isUploading && (
-                <div className="text-center text-sm text-gray-500 h-20 flex justify-center items-center">
+                <div className="text-center text-base text-gray-500 h-20 flex justify-center items-center">
                     Нажмите, чтобы загрузить изображения
                 </div>
             )}

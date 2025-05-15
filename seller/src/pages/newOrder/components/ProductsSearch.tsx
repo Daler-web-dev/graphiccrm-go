@@ -132,7 +132,7 @@ export function ProductSearch({ setValue }: ProductSearchProps) {
                                         return (
                                             <TableRow
                                                 key={item.id}
-                                                className="bg-[#F2F2F2] hover:bg-[#F2F2F2]/80 border-none cursor-pointer text-left"
+                                                className="bg-[#F2F2F2] hover:bg-[#F2F2F2]/80 border-none text-left"
                                             >
                                                 <TableCell className='text-base rounded-s-xl relative after:content-[""] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-[#CBCBCB]/50'>
                                                     {idx + 1}

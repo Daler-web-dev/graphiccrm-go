@@ -25,8 +25,8 @@ export const BreadCrumb: React.FC<BreadCrumbProps> = ({ path }) => {
                             <BreadcrumbLink
                                 href={
                                     index === 0
-                                        ? '/'
-                                        : `/${pathSegments.slice(0, index).join('/')}`
+                                        ? '/seller/'
+                                        : `/seller/${pathSegments.slice(0, index).join('/')}`
                                 }
                             >
                                 {item.charAt(0).toUpperCase() + item.slice(1)}

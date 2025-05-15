@@ -36,7 +36,7 @@ const Signin: React.FC<SigninProps> = () => {
 				description: "Вы успешно авторизовались",
 			})
 			setLoading(false);
-			navigate("/clients");
+			navigate("/");
 		} else {
 			toast({
 				title: "Ошибка при авторизации",

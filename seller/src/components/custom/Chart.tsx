@@ -76,7 +76,7 @@ export const Chart: React.FC<Props> = ({ className }) => {
 			if (revenueRes.status === 200 || revenueRes.status === 201) {
 				const formattedRevenueData = formatData(
 					revenueRes.data,
-					"year"
+					revenuePeriod
 				);
 				setRevenueData(formattedRevenueData);
 			} else {
@@ -90,26 +90,6 @@ export const Chart: React.FC<Props> = ({ className }) => {
 
 		fetchData();
 	}, [revenuePeriod]);
-
-	// Мунис бля че за хуйня !!!
-	// const handleRevenueChange = async (value: string) => {
-	// 	if (revenuePeriod === value) return;
-	// 	setRevenuePeriod(value);
-	// 	const res = await getRequest({
-	// 		url: "/statistics/chart",
-	// 		params: { period: value },
-	// 	});
-	// 	if (res.status === 200 || res.status === 201) {
-	// 		const formattedRevenueData = formatData(res.data, value);
-	// 		setRevenueData(formattedRevenueData);
-	// 	} else {
-	// 		toast({
-	// 			title: "Ошибка",
-	// 			description: "Произошла ошибка при загрузке выручки",
-	// 			variant: "destructive",
-	// 		});
-	// 	}
-	// };
 
 	return (
 		<Card className={className}>
