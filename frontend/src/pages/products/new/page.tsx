@@ -79,71 +79,71 @@ export const NewProduct: React.FC = () => {
                     </div>
                     <div className="w-full">
                         <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                            <label htmlFor='name' className="text-base font-semibold text-cDarkBlue cursor-pointer">Наименование</label>
+                            <label htmlFor='name' className="text-base font-semibold text-cDarkBlue cursor-pointer text-left truncate">Наименование</label>
                             <input
                                 id='name'
                                 type="text"
                                 {...register('name', { required: 'Наименование обязательно' })}
-                                className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                                className="mt-2 p-2 w-72 border rounded-lg outline-none bg-transparent"
                                 placeholder='Наименование'
                                 autoComplete="off"
                             />
                             {errors.name && <p className="text-red-500 text-sm text-right">{errors.name.message}</p>}
                         </div>
                         <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                            <label htmlFor='price' className="text-base font-semibold text-cDarkBlue cursor-pointer">Цена</label>
+                            <label htmlFor='price' className="text-base font-semibold text-cDarkBlue cursor-pointer text-left truncate">Цена</label>
                             <input
                                 id='price'
                                 type="text"
                                 {...register('price', { required: 'Цена обязательна' })}
-                                className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                                className="mt-2 p-2 w-72 border rounded-lg outline-none bg-transparent"
                                 placeholder='Цена'
                                 autoComplete="off"
                             />
                             {errors.price && <p className="text-red-500 text-sm text-right">{errors.price.message}</p>}
                         </div>
                         <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                            <label htmlFor='amount' className="text-base font-semibold text-cDarkBlue cursor-pointer">Кол-во на складе</label>
+                            <label htmlFor='amount' className="text-base font-semibold text-cDarkBlue cursor-pointer text-left truncate">Кол-во на складе</label>
                             <input
                                 id='amount'
                                 type="text"
                                 {...register('amount', { required: 'Кол-во на складе обязателен' })}
-                                className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                                className="mt-2 p-2 w-72 border rounded-lg outline-none bg-transparent"
                                 placeholder='Кол-во на складе'
                                 autoComplete="off"
                             />
                             {errors.amount && <p className="text-red-500 text-sm text-right">{errors.amount.message}</p>}
                         </div>
                         <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                            <label htmlFor='height' className="text-base font-semibold text-cDarkBlue cursor-pointer">Высота</label>
+                            <label htmlFor='height' className="text-base font-semibold text-cDarkBlue cursor-pointer text-left truncate">Высота</label>
                             <input
                                 id='height'
                                 type="text"
                                 {...register('height', { required: 'Высота обязательна' })}
-                                className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                                className="mt-2 p-2 w-72 border rounded-lg outline-none bg-transparent"
                                 placeholder='Высота'
                                 autoComplete="off"
                             />
                             {errors.height && <p className="text-red-500 text-sm text-right">{errors.height.message}</p>}
                         </div>
                         <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                            <label htmlFor='width' className="text-base font-semibold text-cDarkBlue cursor-pointer">Ширина</label>
+                            <label htmlFor='width' className="text-base font-semibold text-cDarkBlue cursor-pointer text-left truncate">Ширина</label>
                             <input
                                 id='width'
                                 type="text"
                                 {...register('width', { required: 'Ширина обязательна' })}
-                                className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                                className="mt-2 p-2 w-72 border rounded-lg outline-none bg-transparent"
                                 placeholder='Ширина'
                                 autoComplete="off"
                             />
                             {errors.width && <p className="text-red-500 text-sm text-right">{errors.width.message}</p>}
                         </div>
                         <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                            <label htmlFor='unit' className="text-base font-semibold text-cDarkBlue cursor-pointer">Единица измерения</label>
+                            <label htmlFor='unit' className="text-base font-semibold text-cDarkBlue cursor-pointer text-left truncate">Единица измерения</label>
                             <select
                                 id='unit'
                                 {...register('unit', { required: 'Единица измерения обязательна' })}
-                                className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                                className="mt-2 p-2 w-72 border rounded-lg outline-none bg-transparent"
                             >
                                 <option value="" disabled selected hidden className="text-base font-semibold text-cDarkBlue">Выберите eдиницу измерения</option>
                                 <option value={"piece"}>В штуках</option>
@@ -156,11 +156,11 @@ export const NewProduct: React.FC = () => {
                                 <Skeleton className="w-full h-16" />
                             ) : (
                                 <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                                    <label htmlFor='categoryId' className="text-base font-semibold text-cDarkBlue cursor-pointer">Категория</label>
+                                    <label htmlFor='categoryId' className="text-base font-semibold text-cDarkBlue cursor-pointer text-left truncate">Категория</label>
                                     <select
                                         id='categoryId'
                                         {...register('categoryId', { required: 'Цена обязательна' })}
-                                        className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                                        className="mt-2 p-2 w-72 border rounded-lg outline-none bg-transparent"
                                     >
                                         <option value="" disabled selected hidden className="text-base font-semibold text-cDarkBlue">Выберите категорию</option>
                                         {categories && categories.map((category) => (

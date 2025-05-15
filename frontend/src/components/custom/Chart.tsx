@@ -42,44 +42,34 @@ export const Chart: React.FC<Props> = ({ className }) => {
 
 	useEffect(() => {
 		const fetchData = async () => {
-			const revenueRes = await getRequest({ url: '/statistics/chart', params: { period: 'year' } });
+			const revenueRes = await getRequest({
+				url: "/statistics/chart",
+				params: { period: revenuePeriod },
+			});
 
 			if (revenueRes.status === 200 || revenueRes.status === 201) {
-				const formattedRevenueData = formatData(revenueRes.data, 'year');
+				const formattedRevenueData = formatData(
+					revenueRes.data,
+					revenuePeriod
+				);
 				setRevenueData(formattedRevenueData);
 			} else {
 				toast({
-					title: 'Ошибка',
-					description: 'Произошла ошибка при загрузке выручки',
-					variant: 'destructive',
-				})
+					title: "Ошибка",
+					description: "Произошла ошибка при загрузке выручки",
+					variant: "destructive",
+				});
 			}
-		}
+		};
 
 		fetchData();
-	}, []);
-
-	const handleRevenueChange = async (value: string) => {
-		if (revenuePeriod === value) return;
-		setRevenuePeriod(value);
-		const res = await getRequest({ url: '/statistics/chart', params: { period: value } });
-		if (res.status === 200 || res.status === 201) {
-			const formattedRevenueData = formatData(res.data, value);
-			setRevenueData(formattedRevenueData);
-		} else {
-			toast({
-				title: 'Ошибка',
-				description: 'Произошла ошибка при загрузке выручки',
-				variant: 'destructive',
-			});
-		}
-	};
+	}, [revenuePeriod]);
 
 	return (
 		<Card className={className}>
 			<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-7">
 				<CardTitle className="text-xl font-normal">Выручка</CardTitle>
-				<Select value={revenuePeriod} onValueChange={handleRevenueChange}>
+				<Select value={revenuePeriod} onValueChange={setRevenuePeriod}>
 					<SelectTrigger className="w-[120px]">
 						<SelectValue placeholder="Месяц" />
 					</SelectTrigger>

@@ -84,7 +84,7 @@ export const Employees: React.FC = () => {
 					</div>
 					<Input
 						placeholder="Поиск..."
-						className="max-w-[300px] px-10"
+						className="w-1/2 p-2"
 						onChange={(e) => setSearch(e.target.value)}
 					/>
 				</CardHeader>

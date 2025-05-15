@@ -92,14 +92,14 @@ export const EditClient: React.FC = () => {
                                 className='border border-cLightGray rounded-lg'
                             />
                         </div>
-                        <div className="w-full space-y-2">
+                        <div className="w-full">
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                                <label htmlFor='name' className="text-base font-semibold text-cDarkBlue cursor-pointer">Имя</label>
+                                <label htmlFor='name' className="text-base font-semibold text-cDarkBlue cursor-pointer text-left truncate">Имя</label>
                                 <input
                                     id='name'
                                     type="text"
                                     {...register('name', { required: 'Имя обязательно' })}
-                                    className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                                    className="mt-2 p-2 w-72 border rounded-lg outline-none bg-transparent"
                                     placeholder='Имя'
                                     autoComplete='off'
                                 />
@@ -107,12 +107,12 @@ export const EditClient: React.FC = () => {
                             </div>
 
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                                <label htmlFor='surname' className="text-base font-semibold text-cDarkBlue cursor-pointer">Фамилия</label>
+                                <label htmlFor='surname' className="text-base font-semibold text-cDarkBlue cursor-pointer text-left truncate">Фамилия</label>
                                 <input
                                     id='surname'
                                     type="text"
                                     {...register('surname', { required: 'Фамилия обязательна' })}
-                                    className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                                    className="mt-2 p-2 w-72 border rounded-lg outline-none bg-transparent"
                                     placeholder='Фамилия'
                                     autoComplete='off'
                                 />
@@ -120,7 +120,7 @@ export const EditClient: React.FC = () => {
                             </div>
 
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                                <label htmlFor='phoneNumber' className="text-base font-semibold text-cDarkBlue cursor-pointer">Номер телефона</label>
+                                <label htmlFor='phoneNumber' className="text-base font-semibold text-cDarkBlue cursor-pointer text-left truncate">Номер телефона</label>
                                 <input
                                     id='phoneNumber'
                                     type="text"
@@ -132,19 +132,19 @@ export const EditClient: React.FC = () => {
                                             message: "Введите в формате +998XXXXXXXXX",
                                         },
                                     })}
-                                    className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                                    className="mt-2 p-2 w-72 border rounded-lg outline-none bg-transparent"
                                     autoComplete='off'
                                 />
                                 {errors.contactInfo && <p className="text-red-500 text-sm text-right">{errors.contactInfo.message}</p>}
                             </div>
 
                             <div className='w-full flex justify-between items-center gap-5 bg-cLightGray px-3 py-2 rounded-lg'>
-                                <label htmlFor='address' className="text-base font-semibold text-cDarkBlue cursor-pointer">Адрес</label>
+                                <label htmlFor='address' className="text-base font-semibold text-cDarkBlue cursor-pointer text-left truncate">Адрес</label>
                                 <input
                                     id='address'
                                     type="text"
                                     {...register('address', { required: 'Адрес обязателен' })}
-                                    className="mt-2 p-2 w-1/2 border rounded-lg outline-none bg-transparent"
+                                    className="mt-2 p-2 w-72 border rounded-lg outline-none bg-transparent"
                                     placeholder='Адрес'
                                     autoComplete='off'
                                 />
@@ -152,7 +152,7 @@ export const EditClient: React.FC = () => {
                             </div>
 
                             <div className='w-full flex justify-start items-start flex-col bg-cLightGray px-3 py-2 rounded-lg'>
-                                <label htmlFor='note' className="text-base font-semibold text-cDarkBlue cursor-pointer">Дополнительная информация</label>
+                                <label htmlFor='note' className="text-base font-semibold text-cDarkBlue cursor-pointer text-left truncate">Дополнительная информация</label>
                                 <textarea
                                     id='note'
                                     {...register('Note')}
