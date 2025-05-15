@@ -9,6 +9,7 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { getRequest } from '@/lib/apiHandlers';
 import { formatPrice } from '@/lib/utils';
 import { IClient } from '@/models/clients';
+import Cookies from 'js-cookie';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -61,20 +62,39 @@ export const Clients: React.FC = () => {
     }, [currentPage, searchDebounced]);
 
     const getClientList = async () => {
-        const res = await getRequest({ url: "/exports/clients" });
+        try {
+            const response = await fetch(
+                `${import.meta.env.VITE_API_URL}/exports/clients`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${Cookies.get("accessToken")}`,
+                    },
+                }
+            );
 
-        if (res.status === 200 || res.status === 201) {
-            console.log(res);
-            toast({
-                title: 'Успех',
-                description: 'Список клиентов успешно скачан',
-            })
-        } else {
-            toast({
-                title: 'Ошибка',
-                description: 'Произошла ошибка при скачивании списка клиентов',
-                variant: 'destructive',
-            });
+            if (!response.ok) {
+                const error = await response.text();
+                throw new Error(error || "Failed to download PDF");
+            }
+
+            const blob = await response.blob();
+            const downloadUrl = window.URL.createObjectURL(blob);
+
+            // Создаем скрытую ссылку для скачивания
+            const link = document.createElement("a");
+            link.href = downloadUrl;
+            link.setAttribute("download", `clients_list.XLSX`);
+            document.body.appendChild(link);
+
+            // Имитируем клик
+            link.click();
+
+            // Убираем ссылку и освобождаем память
+            link.parentNode!.removeChild(link);
+            window.URL.revokeObjectURL(downloadUrl);
+        } catch (error: any) {
+            // toast.error(`Ошибка: ${error.message}`);
+            console.error("PDF download error:", error);
         }
     }
 

@@ -11,6 +11,7 @@ import { getRequest } from '@/lib/apiHandlers';
 import { formatPrice } from '@/lib/utils';
 import { ICategory } from '@/models/categories';
 import { IProduct } from '@/models/products';
+import Cookies from 'js-cookie';
 import { RotateCcw } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -81,22 +82,41 @@ export const Products: React.FC = () => {
     }, [currentPage, debouncedSearch, selectedCategory]);
 
     const getProductsList = async () => {
-        const res = await getRequest({ url: "/exports/products" });
+        try {
+            const response = await fetch(
+                `${import.meta.env.VITE_API_URL}/exports/products`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${Cookies.get("accessToken")}`,
+                    },
+                }
+            );
 
-        if (res.status === 200 || res.status === 201) {
-            console.log(res);
-            toast({
-                title: 'Успех',
-                description: 'Список товаров успешно скачан',
-            })
-        } else {
-            toast({
-                title: 'Ошибка',
-                description: 'Произошла ошибка при скачивании списка товаров',
-                variant: 'destructive',
-            });
+            if (!response.ok) {
+                const error = await response.text();
+                throw new Error(error || "Failed to download PDF");
+            }
+
+            const blob = await response.blob();
+            const downloadUrl = window.URL.createObjectURL(blob);
+
+            // Создаем скрытую ссылку для скачивания
+            const link = document.createElement("a");
+            link.href = downloadUrl;
+            link.setAttribute("download", `products_list.XLSX`);
+            document.body.appendChild(link);
+
+            // Имитируем клик
+            link.click();
+
+            // Убираем ссылку и освобождаем память
+            link.parentNode!.removeChild(link);
+            window.URL.revokeObjectURL(downloadUrl);
+        } catch (error: any) {
+            // toast.error(`Ошибка: ${error.message}`);
+            console.error("PDF download error:", error);
         }
-    }
+    };
 
     return (
         <div>

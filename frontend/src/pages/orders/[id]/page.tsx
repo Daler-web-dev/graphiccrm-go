@@ -172,7 +172,7 @@ export const Order: React.FC = () => {
 										{order?.paymentMethod === "cash"
 											? "Наличные"
 											: order?.paymentMethod ===
-												  "transfer"
+												"transfer"
 												? "Перевод"
 												: "Догл"}
 									</span>
@@ -189,13 +189,13 @@ export const Order: React.FC = () => {
 												: order?.status === "ready"
 													? "text-cDarkBlue/80"
 													: order?.status ===
-														  "in_production"
+														"in_production"
 														? "text-cDarkBlue"
 														: order?.status ===
-															  "pending"
+															"pending"
 															? "text-gray-400"
 															: order?.status ===
-																  "accepted"
+																"accepted"
 																? "text-cLightBlue"
 																: "text-red-600"
 										)}
@@ -209,7 +209,7 @@ export const Order: React.FC = () => {
 													: order?.status === "ready"
 														? "Готово"
 														: order?.status ===
-															  "accepted"
+															"accepted"
 															? "Принято"
 															: "Отклонено"}
 									</span>
@@ -247,7 +247,7 @@ export const Order: React.FC = () => {
 							</TableHeader>
 							<TableBody>
 								{order?.products &&
-								order.products.length > 0 ? (
+									order.products.length > 0 ? (
 									order.products.map((item, idx) => (
 										<TableRow
 											key={item?.id}
@@ -268,12 +268,12 @@ export const Order: React.FC = () => {
 															item?.product
 																?.image !== ""
 																? import.meta
-																		.env
-																		.VITE_API_URL +
-																	"/" +
-																	item
-																		?.product
-																		?.image
+																	.env
+																	.VITE_API_URL +
+																"/" +
+																item
+																	?.product
+																	?.image
 																: "/images/humanPlaceholder.png"
 														}
 														alt="product image"
