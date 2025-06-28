@@ -7,21 +7,21 @@ export const Threejs = () => {
     const [frame, setFrame] = useState({
         width: 2,
         height: 3,
-        profileWidth: 0.1,
+        depth: 0.1,
         elements: {
-            zamok: true,
-            podokonnik: true,
             nalichnik: true,
-            sandrik: false,
-            kronshtein: false,
+            podokonnik: true,
+            zamok: true,
+            sandrik: true,
+            kronshtein: true,
         },
     })
 
     function getEstimate() {
-        const { width, height, profileWidth } = frame
+        const { width, height, depth } = frame
         const perimeter = 2 * (width + height)
-        const innerWidth = width - 2 * profileWidth
-        const innerHeight = height - 2 * profileWidth
+        const innerWidth = width - 2 * depth
+        const innerHeight = height - 2 * depth
         const area = (width * height) - (innerWidth * innerHeight)
         const pricePerMeter = 15
         const cost = perimeter * pricePerMeter
@@ -40,7 +40,7 @@ export const Threejs = () => {
                     <p>💸 Стоимость: ${cost.toFixed(2)}</p>
                 </div>
             </div>
-            <div className="flex-1">
+            <div className="w-[calc(100%-320px)] flex-1">
                 <FrameScene {...frame} />
             </div>
         </div>

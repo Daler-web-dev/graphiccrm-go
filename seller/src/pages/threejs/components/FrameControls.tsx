@@ -4,15 +4,23 @@ import { Input } from "@/components/ui/input"
 interface FrameControlsProps {
     width: number
     height: number
-    profileWidth: number
+    depth: number
     elements: Record<string, boolean>
     onChange: (data: any) => void
+}
+
+const Elements: any = {
+    nalichnik: "Наличник",
+    podokonnik: "Подоконник",
+    zamok: "Замок",
+    sandrik: "Сандрик",
+    kronshtein: "Кронштеин"
 }
 
 export function FrameControls({
     width,
     height,
-    profileWidth,
+    depth,
     elements,
     onChange,
 }: FrameControlsProps) {
@@ -23,7 +31,7 @@ export function FrameControls({
                 <Input
                     type="number"
                     value={width}
-                    onChange={(e) => onChange({ width: +e.target.value, height, profileWidth, elements })}
+                    onChange={(e) => onChange({ width: +e.target.value, height, depth, elements })}
                 />
             </div>
             <div>
@@ -31,16 +39,17 @@ export function FrameControls({
                 <Input
                     type="number"
                     value={height}
-                    onChange={(e) => onChange({ width, height: +e.target.value, profileWidth, elements })}
+                    onChange={(e) => onChange({ width, height: +e.target.value, depth, elements })}
                 />
             </div>
             <div>
                 <Label>Толщина профиля (м)</Label>
                 <Input
                     type="number"
-                    step="0.05"
-                    value={profileWidth}
+                    step="0.1"
+                    value={depth}
                     onChange={(e) => onChange({ width, height, profileWidth: +e.target.value, elements })}
+                    min={0.1}
                 />
             </div>
             <div className="space-y-2">
@@ -54,12 +63,12 @@ export function FrameControls({
                                 onChange({
                                     width,
                                     height,
-                                    profileWidth,
+                                    depth,
                                     elements: { ...elements, [key]: !value },
                                 })
                             }
                         />
-                        <span className="capitalize">{key}</span>
+                        <span className="capitalize">{Elements[key]}</span>
                     </div>
                 ))}
             </div>
