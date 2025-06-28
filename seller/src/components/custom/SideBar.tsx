@@ -26,7 +26,7 @@ export default function Sidebar() {
             <div className="text-4xl font-bold bg-cGradientBg bg-clip-text text-transparent py-5 text-start px-3.5">Графичекий редактор</div>
 
             <nav className="flex-1 px-4 py-6 space-y-2 select-none">
-                <SidebarItem href="/" icon={LayoutGrid} label="Панель управления" isActive={currentPath === '/seller/'} />
+                <SidebarItem href="/" icon={LayoutGrid} label="Панель управления" isActive={currentPath === '/seller'} />
                 <SidebarItem href="/clients" icon={Users} label="Клиенты" isActive={currentPath === '/seller/clients'} />
                 <SidebarItem href="/newOrder" icon={ListOrdered} label="Новый заказ" isActive={currentPath === '/seller/newOrder'} />
             </nav>
