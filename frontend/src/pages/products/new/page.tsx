@@ -2,13 +2,13 @@ import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import ImageUploader from "@/components/custom/ImageUploader";
 import { toast } from "@/hooks/use-toast";
 import { getRequest, postRequest } from "@/lib/apiHandlers";
 import ConfirmModal from "@/components/custom/ConfirmModal";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { IProduct } from "@/models/products";
+import { ModelUploader } from "@/components/custom/ModelUploader";
 
 export const NewProduct: React.FC = () => {
     const navigate = useNavigate();
@@ -69,12 +69,12 @@ export const NewProduct: React.FC = () => {
             <Card className="w-full overflow-x-auto p-5 mb-5">
                 <form onSubmit={handleSubmit(onSubmit)} className="flex gap-5">
                     <div className="w-1/2 aspect-square">
-                        <ImageUploader
+                        <ModelUploader
                             onUploadSuccess={(url: string) => {
                                 setValue('image', url);
                                 setSelectedImage(url);
                             }}
-                            className='border border-cGray'
+                            className="border border-cGray"
                         />
                     </div>
                     <div className="w-full">

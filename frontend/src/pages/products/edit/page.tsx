@@ -1,5 +1,5 @@
 import ConfirmModal from '@/components/custom/ConfirmModal';
-import ImageUploader from '@/components/custom/ImageUploader';
+import { ModelUploader } from '@/components/custom/ModelUploader';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -100,7 +100,7 @@ export const EditProduct: React.FC = () => {
                 ) : (
                     <form onSubmit={handleSubmit(onSubmit)} className="flex justify-start items-start gap-5">
                         <div className='w-full max-w-[40%] aspect-square border border-cLightGray rounded-lg'>
-                            <ImageUploader
+                            <ModelUploader
                                 previewPlaceholder={`${data?.image}`}
                                 onUploadSuccess={(url: string) => {
                                     setValue('image', url, { shouldDirty: true });
