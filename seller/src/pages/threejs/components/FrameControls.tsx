@@ -42,7 +42,7 @@ export function FrameControls({
                     onChange={(e) => onChange({ width, height: +e.target.value, depth, elements })}
                 />
             </div>
-            <div>
+            {/* <div>
                 <Label>Толщина профиля (м)</Label>
                 <Input
                     type="number"
@@ -51,7 +51,7 @@ export function FrameControls({
                     onChange={(e) => onChange({ width, height, profileWidth: +e.target.value, elements })}
                     min={0.1}
                 />
-            </div>
+            </div> */}
             <div className="space-y-2">
                 <Label>Элементы оформления:</Label>
                 {Object.entries(elements).map(([key, value]) => (

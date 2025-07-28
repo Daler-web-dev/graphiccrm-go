@@ -64,7 +64,7 @@ export const NewOrder: React.FC = () => {
                     <Button
                         variant={"customOutline"}
                         className='px-10'
-                        onClick={() => navigate('/newOrder/editor')}
+                        onClick={() => navigate('/threejs')}
                     >
                         Перейти в редактор
                     </Button>
